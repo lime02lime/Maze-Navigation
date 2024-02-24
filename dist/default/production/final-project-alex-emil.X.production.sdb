@@ -27,12 +27,18 @@
 [v ___lmul __lmul `(ul  1 e 4 0 ]
 "91 C:\Program Files\Microchip\xc8\v2.45\pic\sources\c99\common\Umul64.c
 [v ___omul __omul `(uo  1 e 8 0 ]
-"5 C:\Users\emile\OneDrive - Imperial College London\Documents\GitHub\final-project-alex-emil.X\color.c
+"6 C:\Users\emile\OneDrive - Imperial College London\Documents\GitHub\final-project-alex-emil.X\color.c
 [v _color_click_init color_click_init `(v  1 e 1 0 ]
-"23
+"24
 [v _color_writetoaddr color_writetoaddr `(v  1 e 1 0 ]
-"31
+"32
 [v _readRedColor readRedColor `(ui  1 e 2 0 ]
+"46
+[v _readGreenColor readGreenColor `(ui  1 e 2 0 ]
+"60
+[v _readBlueColor readBlueColor `(ui  1 e 2 0 ]
+"74
+[v _readClearColor readClearColor `(ui  1 e 2 0 ]
 "4 C:\Users\emile\OneDrive - Imperial College London\Documents\GitHub\final-project-alex-emil.X\i2c.c
 [v _I2C_2_Master_Init I2C_2_Master_Init `(v  1 e 1 0 ]
 "22
@@ -47,7 +53,13 @@
 [v _I2C_2_Master_Write I2C_2_Master_Write `(v  1 e 1 0 ]
 "51
 [v _I2C_2_Master_Read I2C_2_Master_Read `(uc  1 e 1 0 ]
-"16 C:\Users\emile\OneDrive - Imperial College London\Documents\GitHub\final-project-alex-emil.X\main.c
+"6 C:\Users\emile\OneDrive - Imperial College London\Documents\GitHub\final-project-alex-emil.X\interact.c
+[v _init_buttons_LED init_buttons_LED `(v  1 e 1 0 ]
+"20
+[v _LEDturnON LEDturnON `(v  1 e 1 0 ]
+"26
+[v _LEDturnOFF LEDturnOFF `(v  1 e 1 0 ]
+"17 C:\Users\emile\OneDrive - Imperial College London\Documents\GitHub\final-project-alex-emil.X\main.c
 [v _main main `(v  1 e 1 0 ]
 "3796 C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h
 [v _SSP2CLKPPS SSP2CLKPPS `VEuc  1 e 1 @3612 ]
@@ -57,7 +69,7 @@
 [v _RD5PPS RD5PPS `VEuc  1 e 1 @3695 ]
 "8558
 [v _RD6PPS RD6PPS `VEuc  1 e 1 @3696 ]
-[s S135 . 1 `uc 1 ANSELD0 1 0 :1:0 
+[s S141 . 1 `uc 1 ANSELD0 1 0 :1:0 
 `uc 1 ANSELD1 1 0 :1:1 
 `uc 1 ANSELD2 1 0 :1:2 
 `uc 1 ANSELD3 1 0 :1:3 
@@ -67,27 +79,27 @@
 `uc 1 ANSELD7 1 0 :1:7 
 ]
 "11513
-[u S144 . 1 `S135 1 . 1 0 ]
-[v _ANSELDbits ANSELDbits `VES144  1 e 1 @3751 ]
+[u S150 . 1 `S141 1 . 1 0 ]
+[v _ANSELDbits ANSELDbits `VES150  1 e 1 @3751 ]
 "14100
 [v _SSP2BUF SSP2BUF `VEuc  1 e 1 @3797 ]
 "14120
 [v _SSP2ADD SSP2ADD `VEuc  1 e 1 @3798 ]
 "14310
 [v _SSP2STAT SSP2STAT `VEuc  1 e 1 @3800 ]
-[s S68 . 1 `uc 1 SSPM 1 0 :4:0 
+[s S74 . 1 `uc 1 SSPM 1 0 :4:0 
 `uc 1 CKP 1 0 :1:4 
 `uc 1 SSPEN 1 0 :1:5 
 `uc 1 SSPOV 1 0 :1:6 
 `uc 1 WCOL 1 0 :1:7 
 ]
 "14794
-[s S74 . 1 `uc 1 SSPM0 1 0 :1:0 
+[s S80 . 1 `uc 1 SSPM0 1 0 :1:0 
 `uc 1 SSPM1 1 0 :1:1 
 `uc 1 SSPM2 1 0 :1:2 
 `uc 1 SSPM3 1 0 :1:3 
 ]
-[s S79 . 1 `uc 1 SSPM02 1 0 :1:0 
+[s S85 . 1 `uc 1 SSPM02 1 0 :1:0 
 `uc 1 SSPM12 1 0 :1:1 
 `uc 1 SSPM22 1 0 :1:2 
 `uc 1 SSPM32 1 0 :1:3 
@@ -96,11 +108,11 @@
 `uc 1 SSPOV2 1 0 :1:6 
 `uc 1 WCOL2 1 0 :1:7 
 ]
-[u S88 . 1 `S68 1 . 1 0 `S74 1 . 1 0 `S79 1 . 1 0 ]
-[v _SSP2CON1bits SSP2CON1bits `VES88  1 e 1 @3801 ]
+[u S94 . 1 `S74 1 . 1 0 `S80 1 . 1 0 `S85 1 . 1 0 ]
+[v _SSP2CON1bits SSP2CON1bits `VES94  1 e 1 @3801 ]
 "14884
 [v _SSP2CON2 SSP2CON2 `VEuc  1 e 1 @3802 ]
-[s S162 . 1 `uc 1 SEN 1 0 :1:0 
+[s S168 . 1 `uc 1 SEN 1 0 :1:0 
 `uc 1 RSEN 1 0 :1:1 
 `uc 1 PEN 1 0 :1:2 
 `uc 1 RCEN 1 0 :1:3 
@@ -110,17 +122,17 @@
 `uc 1 GCEN 1 0 :1:7 
 ]
 "14931
-[s S171 . 1 `uc 1 . 1 0 :1:0 
+[s S177 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 ADMSK 1 0 :5:1 
 ]
-[s S174 . 1 `uc 1 . 1 0 :1:0 
+[s S180 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 ADMSK1 1 0 :1:1 
 `uc 1 ADMSK2 1 0 :1:2 
 `uc 1 ADMSK3 1 0 :1:3 
 `uc 1 ADMSK4 1 0 :1:4 
 `uc 1 ADMSK5 1 0 :1:5 
 ]
-[s S181 . 1 `uc 1 SEN2 1 0 :1:0 
+[s S187 . 1 `uc 1 SEN2 1 0 :1:0 
 `uc 1 ADMSK12 1 0 :1:1 
 `uc 1 ADMSK22 1 0 :1:2 
 `uc 1 ADMSK32 1 0 :1:3 
@@ -129,16 +141,37 @@
 `uc 1 ACKSTAT2 1 0 :1:6 
 `uc 1 GCEN2 1 0 :1:7 
 ]
-[s S190 . 1 `uc 1 . 1 0 :1:0 
+[s S196 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 RSEN2 1 0 :1:1 
 `uc 1 PEN2 1 0 :1:2 
 `uc 1 RCEN2 1 0 :1:3 
 `uc 1 ADMSK42 1 0 :1:4 
 `uc 1 ADMSK52 1 0 :1:5 
 ]
-[u S197 . 1 `S162 1 . 1 0 `S171 1 . 1 0 `S174 1 . 1 0 `S181 1 . 1 0 `S190 1 . 1 0 ]
-[v _SSP2CON2bits SSP2CON2bits `VES197  1 e 1 @3802 ]
-[s S293 . 1 `uc 1 LATD0 1 0 :1:0 
+[u S203 . 1 `S168 1 . 1 0 `S177 1 . 1 0 `S180 1 . 1 0 `S187 1 . 1 0 `S196 1 . 1 0 ]
+[v _SSP2CON2bits SSP2CON2bits `VES203  1 e 1 @3802 ]
+[s S516 . 1 `uc 1 LATA0 1 0 :1:0 
+`uc 1 LATA1 1 0 :1:1 
+`uc 1 LATA2 1 0 :1:2 
+`uc 1 LATA3 1 0 :1:3 
+`uc 1 LATA4 1 0 :1:4 
+`uc 1 LATA5 1 0 :1:5 
+`uc 1 LATA6 1 0 :1:6 
+`uc 1 LATA7 1 0 :1:7 
+]
+"28172
+[s S525 . 1 `uc 1 LA0 1 0 :1:0 
+`uc 1 LA1 1 0 :1:1 
+`uc 1 LA2 1 0 :1:2 
+`uc 1 LA3 1 0 :1:3 
+`uc 1 LA4 1 0 :1:4 
+`uc 1 LA5 1 0 :1:5 
+`uc 1 LA6 1 0 :1:6 
+`uc 1 LA7 1 0 :1:7 
+]
+[u S534 . 1 `S516 1 . 1 0 `S525 1 . 1 0 ]
+[v _LATAbits LATAbits `VES534  1 e 1 @3961 ]
+[s S303 . 1 `uc 1 LATD0 1 0 :1:0 
 `uc 1 LATD1 1 0 :1:1 
 `uc 1 LATD2 1 0 :1:2 
 `uc 1 LATD3 1 0 :1:3 
@@ -148,7 +181,7 @@
 `uc 1 LATD7 1 0 :1:7 
 ]
 "28508
-[s S302 . 1 `uc 1 LD0 1 0 :1:0 
+[s S312 . 1 `uc 1 LD0 1 0 :1:0 
 `uc 1 LD1 1 0 :1:1 
 `uc 1 LD2 1 0 :1:2 
 `uc 1 LD3 1 0 :1:3 
@@ -157,9 +190,60 @@
 `uc 1 LD6 1 0 :1:6 
 `uc 1 LD7 1 0 :1:7 
 ]
-[u S311 . 1 `S293 1 . 1 0 `S302 1 . 1 0 ]
-[v _LATDbits LATDbits `VES311  1 e 1 @3964 ]
-[s S114 . 1 `uc 1 TRISD0 1 0 :1:0 
+[u S321 . 1 `S303 1 . 1 0 `S312 1 . 1 0 ]
+[v _LATDbits LATDbits `VES321  1 e 1 @3964 ]
+[s S476 . 1 `uc 1 LATE0 1 0 :1:0 
+`uc 1 LATE1 1 0 :1:1 
+`uc 1 LATE2 1 0 :1:2 
+`uc 1 LATE3 1 0 :1:3 
+`uc 1 LATE4 1 0 :1:4 
+`uc 1 LATE5 1 0 :1:5 
+`uc 1 LATE6 1 0 :1:6 
+`uc 1 LATE7 1 0 :1:7 
+]
+"28620
+[s S485 . 1 `uc 1 LE0 1 0 :1:0 
+`uc 1 LE1 1 0 :1:1 
+`uc 1 LE2 1 0 :1:2 
+`uc 1 LE3 1 0 :1:3 
+`uc 1 LE4 1 0 :1:4 
+`uc 1 LE5 1 0 :1:5 
+`uc 1 LE6 1 0 :1:6 
+`uc 1 LE7 1 0 :1:7 
+]
+[u S494 . 1 `S476 1 . 1 0 `S485 1 . 1 0 ]
+[v _LATEbits LATEbits `VES494  1 e 1 @3965 ]
+[s S442 . 1 `uc 1 LATG0 1 0 :1:0 
+`uc 1 LATG1 1 0 :1:1 
+`uc 1 LATG2 1 0 :1:2 
+`uc 1 LATG3 1 0 :1:3 
+`uc 1 LATG4 1 0 :1:4 
+`uc 1 . 1 0 :1:5 
+`uc 1 LATG6 1 0 :1:6 
+`uc 1 LATG7 1 0 :1:7 
+]
+"28841
+[s S451 . 1 `uc 1 LG0 1 0 :1:0 
+`uc 1 LG1 1 0 :1:1 
+`uc 1 LG2 1 0 :1:2 
+`uc 1 LG3 1 0 :1:3 
+`uc 1 LG4 1 0 :1:4 
+]
+[u S457 . 1 `S442 1 . 1 0 `S451 1 . 1 0 ]
+[v _LATGbits LATGbits `VES457  1 e 1 @3967 ]
+[s S421 . 1 `uc 1 TRISA0 1 0 :1:0 
+`uc 1 TRISA1 1 0 :1:1 
+`uc 1 TRISA2 1 0 :1:2 
+`uc 1 TRISA3 1 0 :1:3 
+`uc 1 TRISA4 1 0 :1:4 
+`uc 1 TRISA5 1 0 :1:5 
+`uc 1 TRISA6 1 0 :1:6 
+`uc 1 TRISA7 1 0 :1:7 
+]
+"29028
+[u S430 . 1 `S421 1 . 1 0 ]
+[v _TRISAbits TRISAbits `VES430  1 e 1 @3969 ]
+[s S120 . 1 `uc 1 TRISD0 1 0 :1:0 
 `uc 1 TRISD1 1 0 :1:1 
 `uc 1 TRISD2 1 0 :1:2 
 `uc 1 TRISD3 1 0 :1:3 
@@ -169,21 +253,72 @@
 `uc 1 TRISD7 1 0 :1:7 
 ]
 "29394
-[u S123 . 1 `S114 1 . 1 0 ]
-[v _TRISDbits TRISDbits `VES123  1 e 1 @3972 ]
-"16 C:\Users\emile\OneDrive - Imperial College London\Documents\GitHub\final-project-alex-emil.X\main.c
+[u S129 . 1 `S120 1 . 1 0 ]
+[v _TRISDbits TRISDbits `VES129  1 e 1 @3972 ]
+[s S400 . 1 `uc 1 TRISE0 1 0 :1:0 
+`uc 1 TRISE1 1 0 :1:1 
+`uc 1 TRISE2 1 0 :1:2 
+`uc 1 TRISE3 1 0 :1:3 
+`uc 1 TRISE4 1 0 :1:4 
+`uc 1 TRISE5 1 0 :1:5 
+`uc 1 TRISE6 1 0 :1:6 
+`uc 1 TRISE7 1 0 :1:7 
+]
+"29516
+[u S409 . 1 `S400 1 . 1 0 ]
+[v _TRISEbits TRISEbits `VES409  1 e 1 @3973 ]
+[s S379 . 1 `uc 1 TRISG0 1 0 :1:0 
+`uc 1 TRISG1 1 0 :1:1 
+`uc 1 TRISG2 1 0 :1:2 
+`uc 1 TRISG3 1 0 :1:3 
+`uc 1 TRISG4 1 0 :1:4 
+`uc 1 . 1 0 :1:5 
+`uc 1 TRISG6 1 0 :1:6 
+`uc 1 TRISG7 1 0 :1:7 
+]
+"29695
+[u S388 . 1 `S379 1 . 1 0 ]
+[v _TRISGbits TRISGbits `VES388  1 e 1 @3975 ]
+"17 C:\Users\emile\OneDrive - Imperial College London\Documents\GitHub\final-project-alex-emil.X\main.c
 [v _main main `(v  1 e 1 0 ]
 {
-"26
+"30
+[v main@clear clear `ui  1 a 2 19 ]
+"29
+[v main@blue blue `ui  1 a 2 17 ]
+"28
+[v main@green green `ui  1 a 2 15 ]
+"27
 [v main@red red `ui  1 a 2 13 ]
-"34
+"60
 } 0
-"31 C:\Users\emile\OneDrive - Imperial College London\Documents\GitHub\final-project-alex-emil.X\color.c
+"32 C:\Users\emile\OneDrive - Imperial College London\Documents\GitHub\final-project-alex-emil.X\color.c
 [v _readRedColor readRedColor `(ui  1 e 2 0 ]
 {
-"33
+"34
 [v readRedColor@tmp tmp `ui  1 a 2 9 ]
-"43
+"44
+} 0
+"46
+[v _readGreenColor readGreenColor `(ui  1 e 2 0 ]
+{
+"48
+[v readGreenColor@tmp tmp `ui  1 a 2 9 ]
+"58
+} 0
+"74
+[v _readClearColor readClearColor `(ui  1 e 2 0 ]
+{
+"76
+[v readClearColor@tmp tmp `ui  1 a 2 9 ]
+"86
+} 0
+"60
+[v _readBlueColor readBlueColor `(ui  1 e 2 0 ]
+{
+"62
+[v readBlueColor@tmp tmp `ui  1 a 2 9 ]
+"72
 } 0
 "33 C:\Users\emile\OneDrive - Imperial College London\Documents\GitHub\final-project-alex-emil.X\i2c.c
 [v _I2C_2_Master_RepStart I2C_2_Master_RepStart `(v  1 e 1 0 ]
@@ -202,19 +337,24 @@
 [v I2C_2_Master_Read@ack ack `uc  1 a 1 2 ]
 "62
 } 0
-"5 C:\Users\emile\OneDrive - Imperial College London\Documents\GitHub\final-project-alex-emil.X\color.c
+"6 C:\Users\emile\OneDrive - Imperial College London\Documents\GitHub\final-project-alex-emil.X\interact.c
+[v _init_buttons_LED init_buttons_LED `(v  1 e 1 0 ]
+{
+"17
+} 0
+"6 C:\Users\emile\OneDrive - Imperial College London\Documents\GitHub\final-project-alex-emil.X\color.c
 [v _color_click_init color_click_init `(v  1 e 1 0 ]
 {
-"21
+"22
 } 0
-"23
+"24
 [v _color_writetoaddr color_writetoaddr `(v  1 e 1 0 ]
 {
 [v color_writetoaddr@address address `uc  1 a 1 wreg ]
 [v color_writetoaddr@address address `uc  1 a 1 wreg ]
 [v color_writetoaddr@value value `uc  1 p 1 2 ]
 [v color_writetoaddr@address address `uc  1 a 1 3 ]
-"29
+"30
 } 0
 "45 C:\Users\emile\OneDrive - Imperial College London\Documents\GitHub\final-project-alex-emil.X\i2c.c
 [v _I2C_2_Master_Write I2C_2_Master_Write `(v  1 e 1 0 ]
@@ -244,4 +384,14 @@
 [v _I2C_2_Master_Init I2C_2_Master_Init `(v  1 e 1 0 ]
 {
 "20
+} 0
+"20 C:\Users\emile\OneDrive - Imperial College London\Documents\GitHub\final-project-alex-emil.X\interact.c
+[v _LEDturnON LEDturnON `(v  1 e 1 0 ]
+{
+"24
+} 0
+"26
+[v _LEDturnOFF LEDturnOFF `(v  1 e 1 0 ]
+{
+"30
 } 0

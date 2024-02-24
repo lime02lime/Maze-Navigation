@@ -24104,6 +24104,20 @@ void color_writetoaddr(char address, char value);
 
 
 unsigned int readRedColor(void);
+unsigned int readGreenColor(void);
+unsigned int readBlueColor(void);
+unsigned int readClearColor(void);
+
+
+
+
+
+typedef struct RGBC {
+    unsigned int red;
+    unsigned int green;
+    unsigned int blue;
+    unsigned int clear;
+} RGBC;
 # 2 "color.c" 2
 
 # 1 "./i2c.h" 1
@@ -24141,6 +24155,13 @@ void I2C_2_Master_Write(unsigned char data_byte);
 unsigned char I2C_2_Master_Read(unsigned char ack);
 # 3 "color.c" 2
 
+# 1 "./interact.h" 1
+# 14 "./interact.h"
+void init_buttons_LED(void);
+void LEDturnOFF(void);
+void LEDturnON(void);
+# 4 "color.c" 2
+
 
 void color_click_init(void)
 {
@@ -24174,6 +24195,48 @@ unsigned int readRedColor(void)
  I2C_2_Master_Start();
  I2C_2_Master_Write(0x52 | 0x00);
  I2C_2_Master_Write(0xA0 | 0x16);
+ I2C_2_Master_RepStart();
+ I2C_2_Master_Write(0x52 | 0x01);
+ tmp=I2C_2_Master_Read(1);
+ tmp=tmp | (I2C_2_Master_Read(0)<<8);
+ I2C_2_Master_Stop();
+ return tmp;
+}
+
+unsigned int readGreenColor(void)
+{
+ unsigned int tmp;
+ I2C_2_Master_Start();
+ I2C_2_Master_Write(0x52 | 0x00);
+ I2C_2_Master_Write(0xA0 | 0x18);
+ I2C_2_Master_RepStart();
+ I2C_2_Master_Write(0x52 | 0x01);
+ tmp=I2C_2_Master_Read(1);
+ tmp=tmp | (I2C_2_Master_Read(0)<<8);
+ I2C_2_Master_Stop();
+ return tmp;
+}
+
+unsigned int readBlueColor(void)
+{
+ unsigned int tmp;
+ I2C_2_Master_Start();
+ I2C_2_Master_Write(0x52 | 0x00);
+ I2C_2_Master_Write(0xA0 | 0x1A);
+ I2C_2_Master_RepStart();
+ I2C_2_Master_Write(0x52 | 0x01);
+ tmp=I2C_2_Master_Read(1);
+ tmp=tmp | (I2C_2_Master_Read(0)<<8);
+ I2C_2_Master_Stop();
+ return tmp;
+}
+
+unsigned int readClearColor(void)
+{
+ unsigned int tmp;
+ I2C_2_Master_Start();
+ I2C_2_Master_Write(0x52 | 0x00);
+ I2C_2_Master_Write(0xA0 | 0x14);
  I2C_2_Master_RepStart();
  I2C_2_Master_Write(0x52 | 0x01);
  tmp=I2C_2_Master_Read(1);

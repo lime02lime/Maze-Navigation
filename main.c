@@ -10,23 +10,25 @@
 //#include "dc_motor.h"
 #include "color.h"
 #include "i2c.h"
+#include "interact.h"
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz
 
 void main(void){
-    color_click_init();
+    color_click_init(); //initialize the color clicker
+    init_buttons_LED();
     
     while(1) {
         TRISDbits.TRISD7 = 0;
         LATDbits.LATD7 = 0;
 
-        //initialize the color clicker
-        
-
-        
+        LEDturnON();
+        __delay_ms(1000);
         unsigned int red = readRedColor();
         unsigned int green = readGreenColor();
         unsigned int blue = readBlueColor();
+        unsigned int clear = readClearColor();
+        LEDturnOFF();
         
         if (red > 100) {
             LATDbits.LATD7 = 1;
@@ -41,6 +43,12 @@ void main(void){
         }
         
         if (blue > 100) {
+            LATDbits.LATD7 = 1;
+            __delay_ms(1000);
+            LATDbits.LATD7 = 0;
+        }
+        
+        if (clear > 100) {
             LATDbits.LATD7 = 1;
             __delay_ms(1000);
             LATDbits.LATD7 = 0;

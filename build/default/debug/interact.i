@@ -1,4 +1,4 @@
-# 1 "main.c"
+# 1 "interact.c"
 # 1 "<built-in>" 1
 # 1 "<built-in>" 3
 # 288 "<built-in>" 3
@@ -6,16 +6,7 @@
 # 1 "<built-in>" 2
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\language_support.h" 1 3
 # 2 "<built-in>" 2
-# 1 "main.c" 2
-
-#pragma config FEXTOSC = HS
-#pragma config RSTOSC = EXTOSC_4PLL
-
-
-#pragma config WDTCPS = WDTCPS_31
-#pragma config WDTE = OFF
-
-
+# 1 "interact.c" 2
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\xc.h" 1 3
 # 18 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\xc.h" 3
 extern const char __xc8_OPTIM_SPEED;
@@ -24095,8 +24086,7 @@ __attribute__((__unsupported__("The READTIMER" "0" "() macro is not available wi
 unsigned char __t1rd16on(void);
 unsigned char __t3rd16on(void);
 # 33 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\xc.h" 2 3
-# 9 "main.c" 2
-
+# 1 "interact.c" 2
 
 # 1 "./color.h" 1
 # 12 "./color.h"
@@ -24128,7 +24118,7 @@ typedef struct RGBC {
     unsigned int blue;
     unsigned int clear;
 } RGBC;
-# 11 "main.c" 2
+# 2 "interact.c" 2
 
 # 1 "./i2c.h" 1
 # 13 "./i2c.h"
@@ -24163,59 +24153,30 @@ void I2C_2_Master_Write(unsigned char data_byte);
 
 
 unsigned char I2C_2_Master_Read(unsigned char ack);
-# 12 "main.c" 2
+# 3 "interact.c" 2
 
 # 1 "./interact.h" 1
-# 14 "./interact.h"
-void init_buttons_LED(void);
+# 15 "./interact.h"
 void LEDturnOFF(void);
 void LEDturnON(void);
-# 13 "main.c" 2
+# 4 "interact.c" 2
 
 
 
 
-void main(void){
-    color_click_init();
-    init_buttons_LED();
 
-    while(1) {
-        TRISDbits.TRISD7 = 0;
-        LATDbits.LATD7 = 0;
+void LEDturnON(void){
+    TRISGbits.TRISG0 = 0;
+    TRISEbits.TRISE7 = 0;
+    TRISAbits.TRISA3 = 0;
 
-        LEDturnON();
-        _delay((unsigned long)((1000)*(64000000/4000.0)));
-        unsigned int red = readRedColor();
-        unsigned int green = readGreenColor();
-        unsigned int blue = readBlueColor();
-        unsigned int clear = readClearColor();
-        LEDturnOFF();
+    LATGbits.LATG0 = 1;
+    LATEbits.LATE7 = 1;
+    LATAbits.LATA3 = 1;
+}
 
-        if (red > 100) {
-            LATDbits.LATD7 = 1;
-            _delay((unsigned long)((1000)*(64000000/4000.0)));
-            LATDbits.LATD7 = 0;
-        }
-
-        if (green > 100) {
-            LATDbits.LATD7 = 1;
-            _delay((unsigned long)((1000)*(64000000/4000.0)));
-            LATDbits.LATD7 = 0;
-        }
-
-        if (blue > 100) {
-            LATDbits.LATD7 = 1;
-            _delay((unsigned long)((1000)*(64000000/4000.0)));
-            LATDbits.LATD7 = 0;
-        }
-
-        if (clear > 100) {
-            LATDbits.LATD7 = 1;
-            _delay((unsigned long)((1000)*(64000000/4000.0)));
-            LATDbits.LATD7 = 0;
-        }
-
-        _delay((unsigned long)((1000)*(64000000/4000.0)));
-
-    }
+void LEDturnOFF(void){
+    LATGbits.LATG0 = 0;
+    LATEbits.LATE7 = 0;
+    LATAbits.LATA3 = 0;
 }

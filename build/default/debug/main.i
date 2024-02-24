@@ -24116,6 +24116,18 @@ void color_writetoaddr(char address, char value);
 unsigned int readRedColor(void);
 unsigned int readGreenColor(void);
 unsigned int readBlueColor(void);
+unsigned int readClearColor(void);
+
+
+
+
+
+typedef struct RGBC {
+    unsigned int red;
+    unsigned int green;
+    unsigned int blue;
+    unsigned int clear;
+} RGBC;
 # 11 "main.c" 2
 
 # 1 "./i2c.h" 1
@@ -24153,6 +24165,12 @@ void I2C_2_Master_Write(unsigned char data_byte);
 unsigned char I2C_2_Master_Read(unsigned char ack);
 # 12 "main.c" 2
 
+# 1 "./interact.h" 1
+# 15 "./interact.h"
+void LEDturnOFF(void);
+void LEDturnON(void);
+# 13 "main.c" 2
+
 
 
 
@@ -24163,12 +24181,13 @@ void main(void){
         TRISDbits.TRISD7 = 0;
         LATDbits.LATD7 = 0;
 
-
-
-
+        LEDturnON();
+        _delay((unsigned long)((1000)*(64000000/4000.0)));
         unsigned int red = readRedColor();
         unsigned int green = readGreenColor();
         unsigned int blue = readBlueColor();
+        unsigned int clear = readClearColor();
+        LEDturnOFF();
 
         if (red > 100) {
             LATDbits.LATD7 = 1;
@@ -24183,6 +24202,12 @@ void main(void){
         }
 
         if (blue > 100) {
+            LATDbits.LATD7 = 1;
+            _delay((unsigned long)((1000)*(64000000/4000.0)));
+            LATDbits.LATD7 = 0;
+        }
+
+        if (clear > 100) {
             LATDbits.LATD7 = 1;
             _delay((unsigned long)((1000)*(64000000/4000.0)));
             LATDbits.LATD7 = 0;

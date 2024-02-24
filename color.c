@@ -1,6 +1,7 @@
 #include <xc.h>
 #include "color.h"
 #include "i2c.h"
+#include "interact.h"
 
 void color_click_init(void)
 {   
@@ -62,6 +63,20 @@ unsigned int readBlueColor(void)
 	I2C_2_Master_Start();         //Start condition
 	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode (0x27 was the color clicker address, but we do <<1 to add a 0 at the end which configures "write", this yields 0x52)
 	I2C_2_Master_Write(0xA0 | 0x1A);    //command (auto-increment protocol transaction) + start at BLUE low register
+	I2C_2_Master_RepStart();			// start a repeated transmission
+	I2C_2_Master_Write(0x52 | 0x01);     //7 bit address + Read (1) mode
+	tmp=I2C_2_Master_Read(1);			//read the Red LSB
+	tmp=tmp | (I2C_2_Master_Read(0)<<8); //read the Red MSB (don't acknowledge as this is the last read)
+	I2C_2_Master_Stop();          //Stop condition
+	return tmp;
+}
+
+unsigned int readClearColor(void)
+{
+	unsigned int tmp;
+	I2C_2_Master_Start();         //Start condition
+	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode (0x27 was the color clicker address, but we do <<1 to add a 0 at the end which configures "write", this yields 0x52)
+	I2C_2_Master_Write(0xA0 | 0x14);    //command (auto-increment protocol transaction) + start at BLUE low register
 	I2C_2_Master_RepStart();			// start a repeated transmission
 	I2C_2_Master_Write(0x52 | 0x01);     //7 bit address + Read (1) mode
 	tmp=I2C_2_Master_Read(1);			//read the Red LSB

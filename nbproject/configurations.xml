@@ -17,6 +17,8 @@
       <itemPath>i2c.c</itemPath>
       <itemPath>i2c.h</itemPath>
       <itemPath>main.c</itemPath>
+      <itemPath>interact.c</itemPath>
+      <itemPath>interact.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

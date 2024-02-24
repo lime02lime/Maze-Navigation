@@ -25,5 +25,17 @@ void color_writetoaddr(char address, char value);
 unsigned int readRedColor(void);
 unsigned int readGreenColor(void);
 unsigned int readBlueColor(void);
+unsigned int readClearColor(void);
+
+
+/********************************************//**
+ *  Creating a structure of the color values that have been read.
+ ***********************************************/
+typedef struct RGBC { //definition of RGBC structure
+    unsigned int red; //value read for RED
+    unsigned int green; //value read for GREEN
+    unsigned int blue; //value read for BLUE
+    unsigned int clear; //value read for CLEAR
+} RGBC;
 
 #endif

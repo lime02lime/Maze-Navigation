@@ -29,6 +29,13 @@ Version 4.0 HI-TECH Software Intermediate Code
 "28508
 [; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 28508: extern volatile LATDbits_t LATDbits __attribute__((address(0xF7C)));
 [v _LATDbits `VS1348 ~T0 @X0 0 e@3964 ]
+"16 ./interact.h
+[; ;./interact.h: 16: void LEDturnON(void);
+[v _LEDturnON `(v ~T0 @X0 0 ef ]
+[v F205 `(v ~T0 @X0 1 tf1`ul ]
+"20 C:\Program Files\Microchip\xc8\v2.45\pic\include\builtins.h
+[v __delay `JF205 ~T0 @X0 0 e ]
+[p i __delay ]
 "25 ./color.h
 [; ;./color.h: 25: unsigned int readRedColor(void);
 [v _readRedColor `(ui ~T0 @X0 0 ef ]
@@ -38,10 +45,12 @@ Version 4.0 HI-TECH Software Intermediate Code
 "27
 [; ;./color.h: 27: unsigned int readBlueColor(void);
 [v _readBlueColor `(ui ~T0 @X0 0 ef ]
-[v F205 `(v ~T0 @X0 1 tf1`ul ]
-"20 C:\Program Files\Microchip\xc8\v2.45\pic\include\builtins.h
-[v __delay `JF205 ~T0 @X0 0 e ]
-[p i __delay ]
+"28
+[; ;./color.h: 28: unsigned int readClearColor(void);
+[v _readClearColor `(ui ~T0 @X0 0 ef ]
+"15 ./interact.h
+[; ;./interact.h: 15: void LEDturnOFF(void);
+[v _LEDturnOFF `(v ~T0 @X0 0 ef ]
 "2 main.c
 [p x FEXTOSC  =  HS      ]
 "3
@@ -2025,25 +2034,31 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 40592: __asm("TOSU equ 0FFFh");
 [; <" TOSU equ 0FFFh ;# ">
 [v $root$_main `(v ~T0 @X0 0 e ]
-"16 main.c
-[; ;main.c: 16: void main(void){
+"17 main.c
+[; ;main.c: 17: void main(void){
 [v _main `(v ~T0 @X0 1 ef ]
 {
 [e :U _main ]
 [f ]
-"17
-[; ;main.c: 17:     color_click_init();
+"18
+[; ;main.c: 18:     color_click_init();
 [e ( _color_click_init ..  ]
-"19
-[; ;main.c: 19:     while(1) {
-[e :U 2017 ]
-{
 "20
-[; ;main.c: 20:         TRISDbits.TRISD7 = 0;
-[e = . . _TRISDbits 0 7 -> -> 0 `i `uc ]
+[; ;main.c: 20:     while(1) {
+[e :U 2018 ]
+{
 "21
-[; ;main.c: 21:         LATDbits.LATD7 = 0;
+[; ;main.c: 21:         TRISDbits.TRISD7 = 0;
+[e = . . _TRISDbits 0 7 -> -> 0 `i `uc ]
+"22
+[; ;main.c: 22:         LATDbits.LATD7 = 0;
 [e = . . _LATDbits 0 7 -> -> 0 `i `uc ]
+"24
+[; ;main.c: 24:         LEDturnON();
+[e ( _LEDturnON ..  ]
+"25
+[; ;main.c: 25:         _delay((unsigned long)((1000)*(64000000/4000.0)));
+[e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 64000000 `l `d .4000.0 `ul ]
 "26
 [; ;main.c: 26:         unsigned int red = readRedColor();
 [v _red `ui ~T0 @X0 1 a ]
@@ -2056,67 +2071,91 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;main.c: 28:         unsigned int blue = readBlueColor();
 [v _blue `ui ~T0 @X0 1 a ]
 [e = _blue ( _readBlueColor ..  ]
+"29
+[; ;main.c: 29:         unsigned int clear = readClearColor();
+[v _clear `ui ~T0 @X0 1 a ]
+[e = _clear ( _readClearColor ..  ]
 "30
-[; ;main.c: 30:         if (red > 100) {
-[e $ ! > _red -> -> 100 `i `ui 2019  ]
-{
-"31
-[; ;main.c: 31:             LATDbits.LATD7 = 1;
-[e = . . _LATDbits 0 7 -> -> 1 `i `uc ]
+[; ;main.c: 30:         LEDturnOFF();
+[e ( _LEDturnOFF ..  ]
 "32
-[; ;main.c: 32:             _delay((unsigned long)((1000)*(64000000/4000.0)));
-[e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 64000000 `l `d .4000.0 `ul ]
-"33
-[; ;main.c: 33:             LATDbits.LATD7 = 0;
-[e = . . _LATDbits 0 7 -> -> 0 `i `uc ]
-"34
-[; ;main.c: 34:         }
-}
-[e :U 2019 ]
-"36
-[; ;main.c: 36:         if (green > 100) {
-[e $ ! > _green -> -> 100 `i `ui 2020  ]
+[; ;main.c: 32:         if (red > 100) {
+[e $ ! > _red -> -> 100 `i `ui 2020  ]
 {
-"37
-[; ;main.c: 37:             LATDbits.LATD7 = 1;
+"33
+[; ;main.c: 33:             LATDbits.LATD7 = 1;
 [e = . . _LATDbits 0 7 -> -> 1 `i `uc ]
-"38
-[; ;main.c: 38:             _delay((unsigned long)((1000)*(64000000/4000.0)));
+"34
+[; ;main.c: 34:             _delay((unsigned long)((1000)*(64000000/4000.0)));
 [e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 64000000 `l `d .4000.0 `ul ]
-"39
-[; ;main.c: 39:             LATDbits.LATD7 = 0;
+"35
+[; ;main.c: 35:             LATDbits.LATD7 = 0;
 [e = . . _LATDbits 0 7 -> -> 0 `i `uc ]
-"40
-[; ;main.c: 40:         }
+"36
+[; ;main.c: 36:         }
 }
 [e :U 2020 ]
-"42
-[; ;main.c: 42:         if (blue > 100) {
-[e $ ! > _blue -> -> 100 `i `ui 2021  ]
+"38
+[; ;main.c: 38:         if (green > 100) {
+[e $ ! > _green -> -> 100 `i `ui 2021  ]
 {
-"43
-[; ;main.c: 43:             LATDbits.LATD7 = 1;
+"39
+[; ;main.c: 39:             LATDbits.LATD7 = 1;
 [e = . . _LATDbits 0 7 -> -> 1 `i `uc ]
-"44
-[; ;main.c: 44:             _delay((unsigned long)((1000)*(64000000/4000.0)));
+"40
+[; ;main.c: 40:             _delay((unsigned long)((1000)*(64000000/4000.0)));
 [e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 64000000 `l `d .4000.0 `ul ]
-"45
-[; ;main.c: 45:             LATDbits.LATD7 = 0;
+"41
+[; ;main.c: 41:             LATDbits.LATD7 = 0;
 [e = . . _LATDbits 0 7 -> -> 0 `i `uc ]
-"46
-[; ;main.c: 46:         }
+"42
+[; ;main.c: 42:         }
 }
 [e :U 2021 ]
-"48
-[; ;main.c: 48:         _delay((unsigned long)((1000)*(64000000/4000.0)));
+"44
+[; ;main.c: 44:         if (blue > 100) {
+[e $ ! > _blue -> -> 100 `i `ui 2022  ]
+{
+"45
+[; ;main.c: 45:             LATDbits.LATD7 = 1;
+[e = . . _LATDbits 0 7 -> -> 1 `i `uc ]
+"46
+[; ;main.c: 46:             _delay((unsigned long)((1000)*(64000000/4000.0)));
 [e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 64000000 `l `d .4000.0 `ul ]
-"50
-[; ;main.c: 50:     }
+"47
+[; ;main.c: 47:             LATDbits.LATD7 = 0;
+[e = . . _LATDbits 0 7 -> -> 0 `i `uc ]
+"48
+[; ;main.c: 48:         }
 }
-[e :U 2016 ]
-[e $U 2017  ]
-[e :U 2018 ]
+[e :U 2022 ]
+"50
+[; ;main.c: 50:         if (clear > 100) {
+[e $ ! > _clear -> -> 100 `i `ui 2023  ]
+{
 "51
-[; ;main.c: 51: }
-[e :UE 2015 ]
+[; ;main.c: 51:             LATDbits.LATD7 = 1;
+[e = . . _LATDbits 0 7 -> -> 1 `i `uc ]
+"52
+[; ;main.c: 52:             _delay((unsigned long)((1000)*(64000000/4000.0)));
+[e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 64000000 `l `d .4000.0 `ul ]
+"53
+[; ;main.c: 53:             LATDbits.LATD7 = 0;
+[e = . . _LATDbits 0 7 -> -> 0 `i `uc ]
+"54
+[; ;main.c: 54:         }
+}
+[e :U 2023 ]
+"56
+[; ;main.c: 56:         _delay((unsigned long)((1000)*(64000000/4000.0)));
+[e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 64000000 `l `d .4000.0 `ul ]
+"58
+[; ;main.c: 58:     }
+}
+[e :U 2017 ]
+[e $U 2018  ]
+[e :U 2019 ]
+"59
+[; ;main.c: 59: }
+[e :UE 2016 ]
 }

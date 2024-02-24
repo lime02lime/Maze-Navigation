@@ -24156,7 +24156,7 @@ unsigned char I2C_2_Master_Read(unsigned char ack);
 # 3 "color.c" 2
 
 # 1 "./interact.h" 1
-# 14 "./interact.h"
+# 17 "./interact.h"
 void init_buttons_LED(void);
 void LEDturnOFF(void);
 void LEDturnON(void);
@@ -24175,11 +24175,18 @@ void color_click_init(void)
 
 
 
+
+
  color_writetoaddr(0x00, 0x03);
 
 
  color_writetoaddr(0x01, 0xD5);
-}
+
+
+
+
+    }
+
 
 void color_writetoaddr(char address, char value){
     I2C_2_Master_Start();

@@ -32,6 +32,28 @@ Version 4.0 HI-TECH Software Intermediate Code
 "29028
 [; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 29028: extern volatile TRISAbits_t TRISAbits __attribute__((address(0xF81)));
 [v _TRISAbits `VS1367 ~T0 @X0 0 e@3969 ]
+"29383
+[; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 29383:     struct {
+[s S1380 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S1380 . TRISD0 TRISD1 TRISD2 TRISD3 TRISD4 TRISD5 TRISD6 TRISD7 ]
+"29382
+[; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 29382: typedef union {
+[u S1379 `S1380 1 ]
+[n S1379 . . ]
+"29394
+[; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 29394: extern volatile TRISDbits_t TRISDbits __attribute__((address(0xF84)));
+[v _TRISDbits `VS1379 ~T0 @X0 0 e@3972 ]
+"29741
+[; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 29741:     struct {
+[s S1392 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S1392 . TRISH0 TRISH1 TRISH2 TRISH3 ]
+"29740
+[; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 29740: typedef union {
+[u S1391 `S1392 1 ]
+[n S1391 . . ]
+"29748
+[; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 29748: extern volatile TRISHbits_t TRISHbits __attribute__((address(0xF88)));
+[v _TRISHbits `VS1391 ~T0 @X0 0 e@3976 ]
 "28823
 [; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 28823:     struct {
 [s S1358 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
@@ -77,6 +99,21 @@ Version 4.0 HI-TECH Software Intermediate Code
 "28172
 [; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 28172: extern volatile LATAbits_t LATAbits __attribute__((address(0xF79)));
 [v _LATAbits `VS1339 ~T0 @X0 0 e@3961 ]
+"28487
+[; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 28487:     struct {
+[s S1349 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S1349 . LATD0 LATD1 LATD2 LATD3 LATD4 LATD5 LATD6 LATD7 ]
+"28497
+[; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 28497:     struct {
+[s S1350 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S1350 . LD0 LD1 LD2 LD3 LD4 LD5 LD6 LD7 ]
+"28486
+[; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 28486: typedef union {
+[u S1348 `S1349 1 `S1350 1 ]
+[n S1348 . . . ]
+"28508
+[; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 28508: extern volatile LATDbits_t LATDbits __attribute__((address(0xF7C)));
+[v _LATDbits `VS1348 ~T0 @X0 0 e@3964 ]
 "54 C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h
 [; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 54: __asm("PPSLOCK equ 0DEFh");
 [; <" PPSLOCK equ 0DEFh ;# ">
@@ -2066,54 +2103,69 @@ Version 4.0 HI-TECH Software Intermediate Code
 "11
 [; ;interact.c: 11:     TRISAbits.TRISA3 = 0;
 [e = . . _TRISAbits 0 3 -> -> 0 `i `uc ]
+"12
+[; ;interact.c: 12:     TRISDbits.TRISD3 = 0;
+[e = . . _TRISDbits 0 3 -> -> 0 `i `uc ]
+"13
+[; ;interact.c: 13:     TRISHbits.TRISH1 = 0;
+[e = . . _TRISHbits 0 1 -> -> 0 `i `uc ]
 "14
-[; ;interact.c: 14:     LATGbits.LATG0 = 0;
-[e = . . _LATGbits 0 0 -> -> 0 `i `uc ]
-"15
-[; ;interact.c: 15:     LATEbits.LATE7 = 0;
-[e = . . _LATEbits 0 7 -> -> 0 `i `uc ]
-"16
-[; ;interact.c: 16:     LATAbits.LATA3 = 0;
-[e = . . _LATAbits 0 3 -> -> 0 `i `uc ]
+[; ;interact.c: 14:     TRISDbits.TRISD4 = 0;
+[e = . . _TRISDbits 0 4 -> -> 0 `i `uc ]
 "17
-[; ;interact.c: 17: }
+[; ;interact.c: 17:     LATGbits.LATG0 = 0;
+[e = . . _LATGbits 0 0 -> -> 0 `i `uc ]
+"18
+[; ;interact.c: 18:     LATEbits.LATE7 = 0;
+[e = . . _LATEbits 0 7 -> -> 0 `i `uc ]
+"19
+[; ;interact.c: 19:     LATAbits.LATA3 = 0;
+[e = . . _LATAbits 0 3 -> -> 0 `i `uc ]
+"20
+[; ;interact.c: 20: }
 [e :UE 2016 ]
 }
-"20
-[; ;interact.c: 20: void LEDturnON(void){
+"23
+[; ;interact.c: 23: void LEDturnON(void){
 [v _LEDturnON `(v ~T0 @X0 1 ef ]
 {
 [e :U _LEDturnON ]
 [f ]
-"21
-[; ;interact.c: 21:     LATGbits.LATG0 = 1;
-[e = . . _LATGbits 0 0 -> -> 1 `i `uc ]
-"22
-[; ;interact.c: 22:     LATEbits.LATE7 = 1;
-[e = . . _LATEbits 0 7 -> -> 1 `i `uc ]
-"23
-[; ;interact.c: 23:     LATAbits.LATA3 = 1;
-[e = . . _LATAbits 0 3 -> -> 1 `i `uc ]
 "24
-[; ;interact.c: 24: }
+[; ;interact.c: 24:     LATDbits.LATD3 = 1;
+[e = . . _LATDbits 0 3 -> -> 1 `i `uc ]
+"27
+[; ;interact.c: 27:     LATGbits.LATG0 = 1;
+[e = . . _LATGbits 0 0 -> -> 1 `i `uc ]
+"28
+[; ;interact.c: 28:     LATEbits.LATE7 = 1;
+[e = . . _LATEbits 0 7 -> -> 1 `i `uc ]
+"29
+[; ;interact.c: 29:     LATAbits.LATA3 = 1;
+[e = . . _LATAbits 0 3 -> -> 1 `i `uc ]
+"30
+[; ;interact.c: 30: }
 [e :UE 2017 ]
 }
-"26
-[; ;interact.c: 26: void LEDturnOFF(void){
+"32
+[; ;interact.c: 32: void LEDturnOFF(void){
 [v _LEDturnOFF `(v ~T0 @X0 1 ef ]
 {
 [e :U _LEDturnOFF ]
 [f ]
-"27
-[; ;interact.c: 27:     LATGbits.LATG0 = 0;
+"33
+[; ;interact.c: 33:     LATDbits.LATD3 = 0;
+[e = . . _LATDbits 0 3 -> -> 0 `i `uc ]
+"36
+[; ;interact.c: 36:     LATGbits.LATG0 = 0;
 [e = . . _LATGbits 0 0 -> -> 0 `i `uc ]
-"28
-[; ;interact.c: 28:     LATEbits.LATE7 = 0;
+"37
+[; ;interact.c: 37:     LATEbits.LATE7 = 0;
 [e = . . _LATEbits 0 7 -> -> 0 `i `uc ]
-"29
-[; ;interact.c: 29:     LATAbits.LATA3 = 0;
+"38
+[; ;interact.c: 38:     LATAbits.LATA3 = 0;
 [e = . . _LATAbits 0 3 -> -> 0 `i `uc ]
-"30
-[; ;interact.c: 30: }
+"39
+[; ;interact.c: 39: }
 [e :UE 2018 ]
 }

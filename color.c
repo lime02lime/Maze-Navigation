@@ -15,11 +15,18 @@ void color_click_init(void)
     
     
     //turn on device ADC
+    //0x03 = 0b11. The final value is what we write (1 to enable, otherwise 0), and the rest is the address.
+    //in this case we want to write to AEN (RGBC enable), which is at address 0b10.
 	color_writetoaddr(0x00, 0x03);
 
     //set integration time
 	color_writetoaddr(0x01, 0xD5);
-}
+    
+    //Enable interrupts from the color clicker.
+    //we want to write 0b10001 (address 0b10000, value 0b00001). This equals 0x11.
+    //color_writetoaddr(0x00, 0x11);
+    }
+
 
 void color_writetoaddr(char address, char value){
     I2C_2_Master_Start();         //Start condition
@@ -76,7 +83,7 @@ unsigned int readClearColor(void)
 	unsigned int tmp;
 	I2C_2_Master_Start();         //Start condition
 	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode (0x27 was the color clicker address, but we do <<1 to add a 0 at the end which configures "write", this yields 0x52)
-	I2C_2_Master_Write(0xA0 | 0x14);    //command (auto-increment protocol transaction) + start at BLUE low register
+	I2C_2_Master_Write(0xA0 | 0x14);    //command (auto-increment protocol transaction) + start at CLEAR low register
 	I2C_2_Master_RepStart();			// start a repeated transmission
 	I2C_2_Master_Write(0x52 | 0x01);     //7 bit address + Read (1) mode
 	tmp=I2C_2_Master_Read(1);			//read the Red LSB
@@ -84,3 +91,4 @@ unsigned int readClearColor(void)
 	I2C_2_Master_Stop();          //Stop condition
 	return tmp;
 }
+

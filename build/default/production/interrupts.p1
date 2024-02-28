@@ -1,4 +1,7 @@
 Version 4.0 HI-TECH Software Intermediate Code
+"12 ./interrupts.h
+[; ;./interrupts.h: 12: void clearInterrupt(void);
+[v _clearInterrupt `(v ~T0 @X0 0 ef ]
 "40155 C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h
 [; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 40155:     struct {
 [s S1985 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
@@ -18,8 +21,59 @@ Version 4.0 HI-TECH Software Intermediate Code
 "40176
 [; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 40176: extern volatile INTCONbits_t INTCONbits __attribute__((address(0xFF2)));
 [v _INTCONbits `VS1984 ~T0 @X0 0 e@4082 ]
+"5004
+[; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 5004:     struct {
+[s S282 :1 `uc 1 :4 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S282 . CWG1IE . NVMIE CRCIE SCANIE ]
+"5003
+[; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 5003: typedef union {
+[u S281 `S282 1 ]
+[n S281 . . ]
+"5012
+[; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 5012: extern volatile PIE8bits_t PIE8bits __attribute__((address(0xE31)));
+[v _PIE8bits `VS281 ~T0 @X0 0 e@3633 ]
 [t ~ __interrupt . k ]
-[t T1 __interrupt high_priority ]
+[t T2 __interrupt high_priority ]
+"11 ./interrupts.h
+[; ;./interrupts.h: 11: unsigned int readInterrupt(void);
+[v _readInterrupt `(ui ~T0 @X0 0 ef ]
+"28487 C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h
+[; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 28487:     struct {
+[s S1349 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S1349 . LATD0 LATD1 LATD2 LATD3 LATD4 LATD5 LATD6 LATD7 ]
+"28497
+[; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 28497:     struct {
+[s S1350 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S1350 . LD0 LD1 LD2 LD3 LD4 LD5 LD6 LD7 ]
+"28486
+[; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 28486: typedef union {
+[u S1348 `S1349 1 `S1350 1 ]
+[n S1348 . . . ]
+"28508
+[; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 28508: extern volatile LATDbits_t LATDbits __attribute__((address(0xF7C)));
+[v _LATDbits `VS1348 ~T0 @X0 0 e@3964 ]
+[v F205 `(v ~T0 @X0 1 tf1`ul ]
+"20 C:\Program Files\Microchip\xc8\v2.45\pic\include\builtins.h
+[v __delay `JF205 ~T0 @X0 0 e ]
+[p i __delay ]
+"23 ./i2c.h
+[; ;./i2c.h: 23: void I2C_2_Master_Start(void);
+[v _I2C_2_Master_Start `(v ~T0 @X0 0 ef ]
+"38
+[; ;./i2c.h: 38: void I2C_2_Master_Write(unsigned char data_byte);
+[v _I2C_2_Master_Write `(v ~T0 @X0 0 ef1`uc ]
+"28
+[; ;./i2c.h: 28: void I2C_2_Master_RepStart(void);
+[v _I2C_2_Master_RepStart `(v ~T0 @X0 0 ef ]
+"43
+[; ;./i2c.h: 43: unsigned char I2C_2_Master_Read(unsigned char ack);
+[v _I2C_2_Master_Read `(uc ~T0 @X0 0 ef1`uc ]
+"33
+[; ;./i2c.h: 33: void I2C_2_Master_Stop(void);
+[v _I2C_2_Master_Stop `(v ~T0 @X0 0 ef ]
+"19 ./color.h
+[; ;./color.h: 19: void color_writetoaddr(char address, char value);
+[v _color_writetoaddr `(v ~T0 @X0 0 ef2`uc`uc ]
 "54 C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h
 [; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 54: __asm("PPSLOCK equ 0DEFh");
 [; <" PPSLOCK equ 0DEFh ;# ">
@@ -1994,32 +2048,117 @@ Version 4.0 HI-TECH Software Intermediate Code
 "40592
 [; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 40592: __asm("TOSU equ 0FFFh");
 [; <" TOSU equ 0FFFh ;# ">
-"5 interrupts.c
-[; ;interrupts.c: 5: void interrupts_init(void)
+"7 interrupts.c
+[; ;interrupts.c: 7: void interrupts_init(void)
 [v _interrupts_init `(v ~T0 @X0 1 ef ]
-"6
-[; ;interrupts.c: 6: {
+"8
+[; ;interrupts.c: 8: {
 {
 [e :U _interrupts_init ]
 [f ]
-"11
-[; ;interrupts.c: 11:     INTCONbits.IPEN=1;
+"9
+[; ;interrupts.c: 9:     clearInterrupt();
+[e ( _clearInterrupt ..  ]
+"14
+[; ;interrupts.c: 14:     INTCONbits.IPEN=1;
 [e = . . _INTCONbits 0 5 -> -> 1 `i `uc ]
-"31
-[; ;interrupts.c: 31:     INTCONbits.GIE=1;
+"15
+[; ;interrupts.c: 15:     INTCONbits.PEIE=1;
+[e = . . _INTCONbits 1 1 -> -> 1 `i `uc ]
+"16
+[; ;interrupts.c: 16:     PIE8bits.SCANIE=1;
+[e = . . _PIE8bits 0 4 -> -> 1 `i `uc ]
+"36
+[; ;interrupts.c: 36:     INTCONbits.GIE=1;
 [e = . . _INTCONbits 1 2 -> -> 1 `i `uc ]
-"32
-[; ;interrupts.c: 32: }
-[e :UE 2015 ]
+"37
+[; ;interrupts.c: 37: }
+[e :UE 2016 ]
 }
 [v $root$_wall_detected `(v ~T0 @X0 0 e ]
-"36
-[; ;interrupts.c: 36: void __attribute__((picinterrupt(("high_priority")))) wall_detected() {
-[v _wall_detected `(v ~T1 @X0 1 ef ]
+"41
+[; ;interrupts.c: 41: void __attribute__((picinterrupt(("high_priority")))) wall_detected() {
+[v _wall_detected `(v ~T2 @X0 1 ef ]
 {
 [e :U _wall_detected ]
 [f ]
-"39
-[; ;interrupts.c: 39: }
-[e :UE 2016 ]
+"42
+[; ;interrupts.c: 42:     if ((readInterrupt() & 0b0010000) != 0) {
+[e $ ! != & ( _readInterrupt ..  -> -> 16 `i `ui -> -> 0 `i `ui 2018  ]
+{
+"43
+[; ;interrupts.c: 43:         LATDbits.LATD7 = 1;
+[e = . . _LATDbits 0 7 -> -> 1 `i `uc ]
+"44
+[; ;interrupts.c: 44:         _delay((unsigned long)((1000)*(64000000/4000.0)));
+[e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 64000000 `l `d .4000.0 `ul ]
+"45
+[; ;interrupts.c: 45:         LATDbits.LATD7 = 0;
+[e = . . _LATDbits 0 7 -> -> 0 `i `uc ]
+"46
+[; ;interrupts.c: 46:         _delay((unsigned long)((1000)*(64000000/4000.0)));
+[e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 64000000 `l `d .4000.0 `ul ]
+"50
+[; ;interrupts.c: 50:         clearInterrupt();
+[e ( _clearInterrupt ..  ]
+"51
+[; ;interrupts.c: 51:     }
+}
+[e :U 2018 ]
+"53
+[; ;interrupts.c: 53: }
+[e :UE 2017 ]
+}
+"57
+[; ;interrupts.c: 57: unsigned int readInterrupt(void)
+[v _readInterrupt `(ui ~T0 @X0 1 ef ]
+"58
+[; ;interrupts.c: 58: {
+{
+[e :U _readInterrupt ]
+[f ]
+"59
+[; ;interrupts.c: 59:  unsigned int tmp;
+[v _tmp `ui ~T0 @X0 1 a ]
+"60
+[; ;interrupts.c: 60:  I2C_2_Master_Start();
+[e ( _I2C_2_Master_Start ..  ]
+"61
+[; ;interrupts.c: 61:  I2C_2_Master_Write(0x52 | 0x00);
+[e ( _I2C_2_Master_Write (1 -> | -> 82 `i -> 0 `i `uc ]
+"62
+[; ;interrupts.c: 62:  I2C_2_Master_Write(0x80 | 0x13);
+[e ( _I2C_2_Master_Write (1 -> | -> 128 `i -> 19 `i `uc ]
+"63
+[; ;interrupts.c: 63:  I2C_2_Master_RepStart();
+[e ( _I2C_2_Master_RepStart ..  ]
+"64
+[; ;interrupts.c: 64:  I2C_2_Master_Write(0x52 | 0x01);
+[e ( _I2C_2_Master_Write (1 -> | -> 82 `i -> 1 `i `uc ]
+"65
+[; ;interrupts.c: 65:  tmp=I2C_2_Master_Read(1);
+[e = _tmp -> ( _I2C_2_Master_Read (1 -> -> 1 `i `uc `ui ]
+"67
+[; ;interrupts.c: 67:  I2C_2_Master_Stop();
+[e ( _I2C_2_Master_Stop ..  ]
+"68
+[; ;interrupts.c: 68:  return tmp;
+[e ) _tmp ]
+[e $UE 2019  ]
+"69
+[; ;interrupts.c: 69: }
+[e :UE 2019 ]
+}
+"72
+[; ;interrupts.c: 72: void clearInterrupt(void){
+[v _clearInterrupt `(v ~T0 @X0 1 ef ]
+{
+[e :U _clearInterrupt ]
+[f ]
+"73
+[; ;interrupts.c: 73:     color_writetoaddr(0x13, 0x00);
+[e ( _color_writetoaddr (2 , -> -> 19 `i `uc -> -> 0 `i `uc ]
+"74
+[; ;interrupts.c: 74: }
+[e :UE 2020 ]
 }

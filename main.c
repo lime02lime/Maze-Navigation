@@ -18,10 +18,12 @@
 void main(void){
     color_click_init(); //initialize the color clicker
     init_buttons_LED();
+    //interrupts_init();
+    TRISDbits.TRISD7 = 0;
     
     while(1) {
-        TRISDbits.TRISD7 = 0;
-        LATDbits.LATD7 = 0;
+        
+        LATDbits.LATD7 = 1;
 
         LEDturnON();
         __delay_ms(1000);
@@ -31,30 +33,32 @@ void main(void){
         unsigned int clear = readClearColor();
         LEDturnOFF();
         
-        if (red > 100) {
-            LATDbits.LATD7 = 1;
-            __delay_ms(1000);
-            LATDbits.LATD7 = 0;
-        }
         
-        if (green > 100) {
-            LATDbits.LATD7 = 1;
-            __delay_ms(1000);
-            LATDbits.LATD7 = 0;
-        }
+//        if (red > 100) {
+//            LATDbits.LATD7 = 1;
+//            __delay_ms(1000);
+//            LATDbits.LATD7 = 0;
+//        }
+//        
+//        if (green > 100) {
+//            LATDbits.LATD7 = 1;
+//            __delay_ms(1000);
+//            LATDbits.LATD7 = 0;
+//        }
+//        
+//        if (blue > 100) {
+//            LATDbits.LATD7 = 1;
+//            __delay_ms(1000);
+//            LATDbits.LATD7 = 0;
+//        }
+//        
+//        if (clear > 100) {
+//            LATDbits.LATD7 = 1;
+//            __delay_ms(1000);
+//            LATDbits.LATD7 = 0;
+//        }
         
-        if (blue > 100) {
-            LATDbits.LATD7 = 1;
-            __delay_ms(1000);
-            LATDbits.LATD7 = 0;
-        }
-        
-        if (clear > 100) {
-            LATDbits.LATD7 = 1;
-            __delay_ms(1000);
-            LATDbits.LATD7 = 0;
-        }
-        
+        __delay_ms(1000);
         __delay_ms(1000);
     
     }

@@ -24156,7 +24156,7 @@ unsigned char I2C_2_Master_Read(unsigned char ack);
 # 3 "interact.c" 2
 
 # 1 "./interact.h" 1
-# 14 "./interact.h"
+# 17 "./interact.h"
 void init_buttons_LED(void);
 void LEDturnOFF(void);
 void LEDturnON(void);
@@ -24169,6 +24169,9 @@ void init_buttons_LED(void){
     TRISGbits.TRISG0 = 0;
     TRISEbits.TRISE7 = 0;
     TRISAbits.TRISA3 = 0;
+    TRISDbits.TRISD3 = 0;
+    TRISHbits.TRISH1 = 0;
+    TRISDbits.TRISD4 = 0;
 
 
     LATGbits.LATG0 = 0;
@@ -24178,12 +24181,18 @@ void init_buttons_LED(void){
 
 
 void LEDturnON(void){
+    LATDbits.LATD3 = 1;
+
+
     LATGbits.LATG0 = 1;
     LATEbits.LATE7 = 1;
     LATAbits.LATA3 = 1;
 }
 
 void LEDturnOFF(void){
+    LATDbits.LATD3 = 0;
+
+
     LATGbits.LATG0 = 0;
     LATEbits.LATE7 = 0;
     LATAbits.LATA3 = 0;

@@ -24089,24 +24089,136 @@ unsigned char __t3rd16on(void);
 # 1 "interrupts.c" 2
 
 # 1 "./interrupts.h" 1
+
+
+
+
+
+
+
+
+void interrupts_init(void);
+void __attribute__((picinterrupt(("high_priority")))) wall_detected();
+unsigned int readInterrupt(void);
+void clearInterrupt(void);
 # 2 "interrupts.c" 2
+
+# 1 "./i2c.h" 1
+# 13 "./i2c.h"
+void I2C_2_Master_Init(void);
+
+
+
+
+void I2C_2_Master_Idle(void);
+
+
+
+
+void I2C_2_Master_Start(void);
+
+
+
+
+void I2C_2_Master_RepStart(void);
+
+
+
+
+void I2C_2_Master_Stop(void);
+
+
+
+
+void I2C_2_Master_Write(unsigned char data_byte);
+
+
+
+
+unsigned char I2C_2_Master_Read(unsigned char ack);
+# 3 "interrupts.c" 2
+
+# 1 "./color.h" 1
+# 12 "./color.h"
+void color_click_init(void);
+
+
+
+
+
+
+void color_writetoaddr(char address, char value);
+
+
+
+
+
+unsigned int readRedColor(void);
+unsigned int readGreenColor(void);
+unsigned int readBlueColor(void);
+unsigned int readClearColor(void);
+
+
+
+
+
+typedef struct RGBC {
+    unsigned int red;
+    unsigned int green;
+    unsigned int blue;
+    unsigned int clear;
+} RGBC;
+# 4 "interrupts.c" 2
 
 
 
 void interrupts_init(void)
 {
+    clearInterrupt();
 
 
 
 
     INTCONbits.IPEN=1;
-# 31 "interrupts.c"
+    INTCONbits.PEIE=1;
+    PIE8bits.SCANIE=1;
+# 36 "interrupts.c"
     INTCONbits.GIE=1;
 }
 
 
 
 void __attribute__((picinterrupt(("high_priority")))) wall_detected() {
+    if ((readInterrupt() & 0b0010000) != 0) {
+        LATDbits.LATD7 = 1;
+        _delay((unsigned long)((1000)*(64000000/4000.0)));
+        LATDbits.LATD7 = 0;
+        _delay((unsigned long)((1000)*(64000000/4000.0)));
 
 
+
+        clearInterrupt();
+    }
+
+}
+
+
+
+unsigned int readInterrupt(void)
+{
+ unsigned int tmp;
+ I2C_2_Master_Start();
+ I2C_2_Master_Write(0x52 | 0x00);
+ I2C_2_Master_Write(0x80 | 0x13);
+ I2C_2_Master_RepStart();
+ I2C_2_Master_Write(0x52 | 0x01);
+ tmp=I2C_2_Master_Read(1);
+
+ I2C_2_Master_Stop();
+ return tmp;
+}
+
+
+void clearInterrupt(void){
+    color_writetoaddr(0x13, 0x00);
 }

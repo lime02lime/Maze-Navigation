@@ -24185,6 +24185,18 @@ void color_click_init(void)
 
 
 
+
+
+    color_writetoaddr(0x00, 0x11);
+
+
+    color_writetoaddr(0x04, 0b00000000);
+    color_writetoaddr(0x05, 0b00000001);
+    color_writetoaddr(0x06, 0b11010110);
+    color_writetoaddr(0x07, 0b00000110);
+
+
+    color_writetoaddr(0x0C, 0b0001);
     }
 
 

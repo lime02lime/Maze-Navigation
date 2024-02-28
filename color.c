@@ -22,9 +22,21 @@ void color_click_init(void)
     //set integration time
 	color_writetoaddr(0x01, 0xD5);
     
+    
+    //DONT KNOW IF WORKS (interrupts & thresholds & persistence):
+    
     //Enable interrupts from the color clicker.
     //we want to write 0b10001 (address 0b10000, value 0b00001). This equals 0x11.
-    //color_writetoaddr(0x00, 0x11);
+    color_writetoaddr(0x00, 0x11);
+    
+    //set the interrupt thresholds:
+    color_writetoaddr(0x04, 0b00000000); //low thresh, lower byte
+    color_writetoaddr(0x05, 0b00000001); //low thresh, upper byte
+    color_writetoaddr(0x06, 0b11010110); //upper thresh, lower byte
+    color_writetoaddr(0x07, 0b00000110); //upper  thresh, upper byte
+
+    //set persistence register
+    color_writetoaddr(0x0C, 0b0001); //1 clear channel value outside of threshold range will trigger interrupt.
     }
 
 
@@ -91,4 +103,3 @@ unsigned int readClearColor(void)
 	I2C_2_Master_Stop();          //Stop condition
 	return tmp;
 }
-

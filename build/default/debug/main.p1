@@ -3,8 +3,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 "12 ./color.h
 [; ;./color.h: 12: void color_click_init(void);
 [v _color_click_init `(v ~T0 @X0 0 ef ]
-"14 ./interact.h
-[; ;./interact.h: 14: void init_buttons_LED(void);
+"17 ./interact.h
+[; ;./interact.h: 17: void init_buttons_LED(void);
 [v _init_buttons_LED `(v ~T0 @X0 0 ef ]
 "29383 C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h
 [; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 29383:     struct {
@@ -32,8 +32,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 "28508
 [; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 28508: extern volatile LATDbits_t LATDbits __attribute__((address(0xF7C)));
 [v _LATDbits `VS1348 ~T0 @X0 0 e@3964 ]
-"16 ./interact.h
-[; ;./interact.h: 16: void LEDturnON(void);
+"19 ./interact.h
+[; ;./interact.h: 19: void LEDturnON(void);
 [v _LEDturnON `(v ~T0 @X0 0 ef ]
 [v F205 `(v ~T0 @X0 1 tf1`ul ]
 "20 C:\Program Files\Microchip\xc8\v2.45\pic\include\builtins.h
@@ -51,9 +51,12 @@ Version 4.0 HI-TECH Software Intermediate Code
 "28
 [; ;./color.h: 28: unsigned int readClearColor(void);
 [v _readClearColor `(ui ~T0 @X0 0 ef ]
-"15 ./interact.h
-[; ;./interact.h: 15: void LEDturnOFF(void);
+"18 ./interact.h
+[; ;./interact.h: 18: void LEDturnOFF(void);
 [v _LEDturnOFF `(v ~T0 @X0 0 ef ]
+"11 ./interrupts.h
+[; ;./interrupts.h: 11: unsigned int readInterrupt(void);
+[v _readInterrupt `(ui ~T0 @X0 0 ef ]
 "2 main.c
 [p x FEXTOSC  =  HS      ]
 "3
@@ -2049,119 +2052,81 @@ Version 4.0 HI-TECH Software Intermediate Code
 "20
 [; ;main.c: 20:     init_buttons_LED();
 [e ( _init_buttons_LED ..  ]
-"22
-[; ;main.c: 22:     while(1) {
+"23
+[; ;main.c: 23:     while(1) {
 [e :U 2018 ]
 {
-"23
-[; ;main.c: 23:         TRISDbits.TRISD7 = 0;
-[e = . . _TRISDbits 0 7 -> -> 0 `i `uc ]
 "24
-[; ;main.c: 24:         LATDbits.LATD7 = 0;
-[e = . . _LATDbits 0 7 -> -> 0 `i `uc ]
-"26
-[; ;main.c: 26:         LEDturnON();
-[e ( _LEDturnON ..  ]
+[; ;main.c: 24:         TRISDbits.TRISD7 = 0;
+[e = . . _TRISDbits 0 7 -> -> 0 `i `uc ]
+"25
+[; ;main.c: 25:         LATDbits.LATD7 = 1;
+[e = . . _LATDbits 0 7 -> -> 1 `i `uc ]
 "27
-[; ;main.c: 27:         _delay((unsigned long)((1000)*(64000000/4000.0)));
-[e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 64000000 `l `d .4000.0 `ul ]
+[; ;main.c: 27:         LEDturnON();
+[e ( _LEDturnON ..  ]
 "28
-[; ;main.c: 28:         unsigned int red = readRedColor();
+[; ;main.c: 28:         _delay((unsigned long)((1000)*(64000000/4000.0)));
+[e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 64000000 `l `d .4000.0 `ul ]
+"29
+[; ;main.c: 29:         unsigned int red = readRedColor();
 [v _red `ui ~T0 @X0 1 a ]
 [e = _red ( _readRedColor ..  ]
-"29
-[; ;main.c: 29:         unsigned int green = readGreenColor();
+"30
+[; ;main.c: 30:         LATDbits.LATD7 = !LATDbits.LATD7;
+[e = . . _LATDbits 0 7 -> -> ! != -> . . _LATDbits 0 7 `i -> 0 `i `i `uc ]
+"31
+[; ;main.c: 31:         unsigned int green = readGreenColor();
 [v _green `ui ~T0 @X0 1 a ]
 [e = _green ( _readGreenColor ..  ]
-"30
-[; ;main.c: 30:         unsigned int blue = readBlueColor();
+"32
+[; ;main.c: 32:         unsigned int blue = readBlueColor();
 [v _blue `ui ~T0 @X0 1 a ]
 [e = _blue ( _readBlueColor ..  ]
-"31
-[; ;main.c: 31:         unsigned int clear = readClearColor();
+"34
+[; ;main.c: 34:         unsigned int clear = readClearColor();
 [v _clear `ui ~T0 @X0 1 a ]
 [e = _clear ( _readClearColor ..  ]
-"32
-[; ;main.c: 32:         LEDturnOFF();
+"35
+[; ;main.c: 35:         LEDturnOFF();
 [e ( _LEDturnOFF ..  ]
-"34
-[; ;main.c: 34:         if (red > 100) {
+"37
+[; ;main.c: 37:         LATDbits.LATD7 = !LATDbits.LATD7;
+[e = . . _LATDbits 0 7 -> -> ! != -> . . _LATDbits 0 7 `i -> 0 `i `i `uc ]
+"39
+[; ;main.c: 39:         unsigned int val = readInterrupt();
+[v _val `ui ~T0 @X0 1 a ]
+[e = _val ( _readInterrupt ..  ]
+"43
+[; ;main.c: 43:         if (red > 100) {
 [e $ ! > _red -> -> 100 `i `ui 2020  ]
 {
-"35
-[; ;main.c: 35:             LATDbits.LATD7 = 1;
+"44
+[; ;main.c: 44:             LATDbits.LATD7 = 1;
 [e = . . _LATDbits 0 7 -> -> 1 `i `uc ]
-"36
-[; ;main.c: 36:             _delay((unsigned long)((1000)*(64000000/4000.0)));
+"45
+[; ;main.c: 45:             _delay((unsigned long)((1000)*(64000000/4000.0)));
 [e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 64000000 `l `d .4000.0 `ul ]
-"37
-[; ;main.c: 37:             LATDbits.LATD7 = 0;
+"46
+[; ;main.c: 46:             LATDbits.LATD7 = 0;
 [e = . . _LATDbits 0 7 -> -> 0 `i `uc ]
-"38
-[; ;main.c: 38:         }
+"47
+[; ;main.c: 47:         }
 }
 [e :U 2020 ]
-"40
-[; ;main.c: 40:         if (green > 100) {
-[e $ ! > _green -> -> 100 `i `ui 2021  ]
-{
-"41
-[; ;main.c: 41:             LATDbits.LATD7 = 1;
-[e = . . _LATDbits 0 7 -> -> 1 `i `uc ]
-"42
-[; ;main.c: 42:             _delay((unsigned long)((1000)*(64000000/4000.0)));
+"67
+[; ;main.c: 67:         _delay((unsigned long)((1000)*(64000000/4000.0)));
 [e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 64000000 `l `d .4000.0 `ul ]
-"43
-[; ;main.c: 43:             LATDbits.LATD7 = 0;
-[e = . . _LATDbits 0 7 -> -> 0 `i `uc ]
-"44
-[; ;main.c: 44:         }
-}
-[e :U 2021 ]
-"46
-[; ;main.c: 46:         if (blue > 100) {
-[e $ ! > _blue -> -> 100 `i `ui 2022  ]
-{
-"47
-[; ;main.c: 47:             LATDbits.LATD7 = 1;
-[e = . . _LATDbits 0 7 -> -> 1 `i `uc ]
-"48
-[; ;main.c: 48:             _delay((unsigned long)((1000)*(64000000/4000.0)));
+"68
+[; ;main.c: 68:         _delay((unsigned long)((1000)*(64000000/4000.0)));
 [e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 64000000 `l `d .4000.0 `ul ]
-"49
-[; ;main.c: 49:             LATDbits.LATD7 = 0;
-[e = . . _LATDbits 0 7 -> -> 0 `i `uc ]
-"50
-[; ;main.c: 50:         }
-}
-[e :U 2022 ]
-"52
-[; ;main.c: 52:         if (clear > 100) {
-[e $ ! > _clear -> -> 100 `i `ui 2023  ]
-{
-"53
-[; ;main.c: 53:             LATDbits.LATD7 = 1;
-[e = . . _LATDbits 0 7 -> -> 1 `i `uc ]
-"54
-[; ;main.c: 54:             _delay((unsigned long)((1000)*(64000000/4000.0)));
-[e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 64000000 `l `d .4000.0 `ul ]
-"55
-[; ;main.c: 55:             LATDbits.LATD7 = 0;
-[e = . . _LATDbits 0 7 -> -> 0 `i `uc ]
-"56
-[; ;main.c: 56:         }
-}
-[e :U 2023 ]
-"58
-[; ;main.c: 58:         _delay((unsigned long)((1000)*(64000000/4000.0)));
-[e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 64000000 `l `d .4000.0 `ul ]
-"60
-[; ;main.c: 60:     }
+"70
+[; ;main.c: 70:     }
 }
 [e :U 2017 ]
 [e $U 2018  ]
 [e :U 2019 ]
-"61
-[; ;main.c: 61: }
+"71
+[; ;main.c: 71: }
 [e :UE 2016 ]
 }

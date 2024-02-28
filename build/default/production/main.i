@@ -24173,6 +24173,18 @@ void LEDturnON(void);
 # 13 "main.c" 2
 
 # 1 "./interrupts.h" 1
+
+
+
+
+
+
+
+
+void interrupts_init(void);
+void __attribute__((picinterrupt(("high_priority")))) wall_detected();
+unsigned int readInterrupt(void);
+void clearInterrupt(void);
 # 14 "main.c" 2
 
 
@@ -24182,9 +24194,11 @@ void main(void){
     color_click_init();
     init_buttons_LED();
 
+    TRISDbits.TRISD7 = 0;
+
     while(1) {
-        TRISDbits.TRISD7 = 0;
-        LATDbits.LATD7 = 0;
+
+        LATDbits.LATD7 = 1;
 
         LEDturnON();
         _delay((unsigned long)((1000)*(64000000/4000.0)));
@@ -24193,31 +24207,8 @@ void main(void){
         unsigned int blue = readBlueColor();
         unsigned int clear = readClearColor();
         LEDturnOFF();
-
-        if (red > 100) {
-            LATDbits.LATD7 = 1;
-            _delay((unsigned long)((1000)*(64000000/4000.0)));
-            LATDbits.LATD7 = 0;
-        }
-
-        if (green > 100) {
-            LATDbits.LATD7 = 1;
-            _delay((unsigned long)((1000)*(64000000/4000.0)));
-            LATDbits.LATD7 = 0;
-        }
-
-        if (blue > 100) {
-            LATDbits.LATD7 = 1;
-            _delay((unsigned long)((1000)*(64000000/4000.0)));
-            LATDbits.LATD7 = 0;
-        }
-
-        if (clear > 100) {
-            LATDbits.LATD7 = 1;
-            _delay((unsigned long)((1000)*(64000000/4000.0)));
-            LATDbits.LATD7 = 0;
-        }
-
+# 61 "main.c"
+        _delay((unsigned long)((1000)*(64000000/4000.0)));
         _delay((unsigned long)((1000)*(64000000/4000.0)));
 
     }

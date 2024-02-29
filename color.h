@@ -18,6 +18,7 @@ void color_click_init(void);
  ***********************************************/
 void color_writetoaddr(char address, char value);
 unsigned int color_readfromaddress(char address);
+unsigned int color_readdoublefromaddress(char address);
 /********************************************//**
  *  Function to read the COLOR channels
  *	Returns a 16 bit ADC value representing colour intensity

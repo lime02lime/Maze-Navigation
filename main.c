@@ -20,16 +20,19 @@ unsigned int green;
 unsigned int blue;
 unsigned int clear;
 int increment = 0; // this is the 'base' time counter, increments every 16 seconds
+unsigned int w;
 unsigned int x;
+unsigned int y;
+unsigned int z;
 
 void main(void){
     color_click_init(); //initialize the color clicker
     init_buttons_LED();
-//    interrupts_init();
-//    Timer0_init();
-//    x = color_readfromaddress(0x04);
-    
     TRISDbits.TRISD7 = 0;
+    LATDbits.LATD7 = 1;
+    interrupts_init();
+    Timer0_init();
+    
     
 //    struct RGB_val { 
 //        unsigned int R;
@@ -42,7 +45,10 @@ void main(void){
     while(1) {
         
 //        LATDbits.LATD7 = 1;
-
+        w = PORTB;
+        x = color_readfromaddress(0x13);
+        y = color_readdoublefromaddress(0x06);
+        z = color_readfromaddress(0x0C);
         LEDturnON();
         __delay_ms(1000);
         red = readRedColor();

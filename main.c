@@ -15,22 +15,40 @@
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz
 
+unsigned int red;
+unsigned int green;
+unsigned int blue;
+unsigned int clear;
+int increment = 0; // this is the 'base' time counter, increments every 16 seconds
+unsigned int x;
+
 void main(void){
     color_click_init(); //initialize the color clicker
     init_buttons_LED();
-    //interrupts_init();
+//    interrupts_init();
+//    Timer0_init();
+//    x = color_readfromaddress(0x04);
+    
     TRISDbits.TRISD7 = 0;
+    
+//    struct RGB_val { 
+//        unsigned int R;
+//        unsigned int G;
+//        unsigned int B;
+//    };
+    
+    
     
     while(1) {
         
-        LATDbits.LATD7 = 1;
+//        LATDbits.LATD7 = 1;
 
         LEDturnON();
         __delay_ms(1000);
-        unsigned int red = readRedColor();
-        unsigned int green = readGreenColor();
-        unsigned int blue = readBlueColor();
-        unsigned int clear = readClearColor();
+        red = readRedColor();
+        green = readGreenColor();
+        blue = readBlueColor();
+        clear = readClearColor();
         LEDturnOFF();
         
         

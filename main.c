@@ -39,23 +39,24 @@ void main(void){
 //        unsigned int G;
 //        unsigned int B;
 //    };
-    
+    LEDturnON();
     
     
     while(1) {
         
 //        LATDbits.LATD7 = 1;
         w = PORTB;
-        x = color_readfromaddress(0x13);
+        x = color_readfromaddress(0x14);
         y = color_readdoublefromaddress(0x06);
-        z = color_readfromaddress(0x0C);
-        LEDturnON();
+        z = color_readfromaddress(0x01);
+        x = color_readfromaddress(0x13);
+//        LEDturnON();
         __delay_ms(1000);
         red = readRedColor();
         green = readGreenColor();
         blue = readBlueColor();
         clear = readClearColor();
-        LEDturnOFF();
+//        LEDturnOFF();
         
         
 //        if (red > 100) {

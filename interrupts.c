@@ -23,7 +23,7 @@ void interrupts_init(void)
     color_writetoaddr(0x04, 0x00); //low thresh, lower byte
     color_writetoaddr(0x05, 0x01); //low thresh, upper byte (used to be 0b00000001)
     color_writetoaddr(0x06, 0x00); //upper thresh, lower byte (used to be 0b11010110 - was no need to be so precise)
-    color_writetoaddr(0x07, 0b00001000); //upper  thresh, upper byte
+    color_writetoaddr(0x07, 0b00000011); //upper  thresh, upper byte
     //set persistence register
     color_writetoaddr(0x0C, 0b0111); //1 clear channel value outside of threshold range will trigger interrupt.
     
@@ -84,7 +84,7 @@ void __interrupt(high_priority) High_ISR() {
 //        LATDbits.LATD7 = 0;
 //        __delay_ms(1000);
 //        
-        toggleLED();
+        LATDbits.LATD7 = 0;
         // Clear interrupt
         int w = PORTB;
         int x = color_readfromaddress(0x13);

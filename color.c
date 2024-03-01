@@ -20,7 +20,7 @@ void color_click_init(void)
 	color_writetoaddr(0x00, 0x03);
 
     //set integration time
-	color_writetoaddr(0x01, 0xD5);
+	color_writetoaddr(0x01, 0xF6);
     
     
     //DONT KNOW IF WORKS (interrupts & thresholds & persistence):

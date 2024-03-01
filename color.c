@@ -9,7 +9,7 @@ void color_click_init(void)
     I2C_2_Master_Init();      //Initialise i2c Master
 
     
-     //set device PON
+     //set device PON=1 
 	color_writetoaddr(0x00, 0x01);
     __delay_ms(3); //need to wait 3ms for everthing to start up
     
@@ -20,24 +20,42 @@ void color_click_init(void)
 	color_writetoaddr(0x00, 0x03);
 
     //set integration time
-	color_writetoaddr(0x01, 0xD5);
+	color_writetoaddr(0x01, 0xF6);
     
     
     //DONT KNOW IF WORKS (interrupts & thresholds & persistence):
     
     //Enable interrupts from the color clicker.
     //we want to write 0b10001 (address 0b10000, value 0b00001). This equals 0x11.
-    color_writetoaddr(0x00, 0x11);
+    color_writetoaddr(0x00, 0x13); // Used to be 0x11 instead of 0x13 - note this makes ADC and PON setting above redundant
     
-    //set the interrupt thresholds:
-    color_writetoaddr(0x04, 0b00000000); //low thresh, lower byte
-    color_writetoaddr(0x05, 0b00000001); //low thresh, upper byte
-    color_writetoaddr(0x06, 0b11010110); //upper thresh, lower byte
-    color_writetoaddr(0x07, 0b00000110); //upper  thresh, upper byte
-
-    //set persistence register
-    color_writetoaddr(0x0C, 0b0001); //1 clear channel value outside of threshold range will trigger interrupt.
     }
+
+unsigned int color_readdoublefromaddress(char address) {
+    unsigned int tmp;
+	I2C_2_Master_Start();         //Start condition
+	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode (0x27 was the color clicker address, but we do <<1 to add a 0 at the end which configures "write", this yields 0x52)
+	I2C_2_Master_Write(0x80 | address);    //command (auto-increment protocol transaction) - read value at particular address
+	I2C_2_Master_RepStart();			// start a repeated transmission
+    I2C_2_Master_Write(0x52 | 0x01);     //7 bit address + Read (1) mode
+	tmp=I2C_2_Master_Read(1);			//read the Red LSB
+	tmp=tmp | (I2C_2_Master_Read(0)<<8); //read the Red MSB (don't acknowledge as this is the last read)			//read the Red LSB
+	I2C_2_Master_Stop();          //Stop condition
+	return tmp;
+}
+
+
+unsigned int color_readfromaddress(char address) {
+    unsigned int tmp;
+	I2C_2_Master_Start();         //Start condition
+	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode (0x27 was the color clicker address, but we do <<1 to add a 0 at the end which configures "write", this yields 0x52)
+	I2C_2_Master_Write(0x80 | address);    //command (auto-increment protocol transaction) - read value at particular address
+	I2C_2_Master_RepStart();			// start a repeated transmission
+    I2C_2_Master_Write(0x52 | 0x01);     //7 bit address + Read (1) mode
+	tmp=I2C_2_Master_Read(0);			//read the Red LSB
+	SSP2CON2bits.PEN = 1;           //Initiate stop condition
+	return tmp;
+}
 
 
 void color_writetoaddr(char address, char value){

@@ -57,39 +57,23 @@ void Timer0_init(void)
 {
     T0CON1bits.T0CS=0b010; // Fosc/4
     T0CON1bits.T0ASYNC=1; // see datasheet errata - needed to ensure correct operation when Fosc/4 used as clock source
-    T0CON1bits.T0CKPS=0b0000; // 1:256 is 0b1000 - needed for one increment per second, for testing set to 0b0000, for real operation set to 0b1100
+    T0CON1bits.T0CKPS=0b0101; // 1:32 prescaler, means 8 overflows a second so timing precise to 125 ms, increment overflows after 2 hours
     T0CON0bits.T016BIT=1;	//8bit mode	
 	
-    // Working from lab 3
-    // Note that 2^16 values can be taken in 16 bit counter (0 up to 2^16 - 1)
-    // 2^16 = 65536
     // f_interrupt = 64000000/(4*Prescaler*2^16)
-    // Prescaler at 256 brings us closest f_interrupt = 0.95
-    // 64000000/(4*256) = 62500
-    // Need to start count at: 65536-62500=3036
-    // Considering this gives an interrupt per second, can slow down to 1 
-    // interrupt every 16 seconds through 256 * 16 = 4096 -> 0b1100 for TOCKPS
-    
+
     // Initialising timer registers
     TMR0H=0;            //write High reg first, update happens when low reg is written to
-    TMR0L=3036;
+    TMR0L=0;
     T0CON0bits.T0EN=1;	//start the timer
 }
     
 void __interrupt(high_priority) High_ISR() {
     if (PIR0bits.INT0IF) {
-//    if ((readInterrupt() & 0b0010000) != 0) { //here we check if the interrupt bit is raised.
-//        LATDbits.LATD7 = 1;
-//        __delay_ms(1000);
-//        LATDbits.LATD7 = 0;
-//        __delay_ms(1000);
-//        
+
         LATDbits.LATD7 = 0;
         // Clear interrupt
-        int w = PORTB;
-        int x = color_readfromaddress(0x13);
         clearInterrupt();
-        x = color_readfromaddress(0x13);
         // May also need to do this:
         PIR0bits.INT0IF = 0;
     }

@@ -24089,7 +24089,7 @@ unsigned char __t3rd16on(void);
 # 1 "interact.c" 2
 
 # 1 "./color.h" 1
-# 12 "./color.h"
+# 11 "./color.h"
 void color_click_init(void);
 
 
@@ -24098,7 +24098,8 @@ void color_click_init(void);
 
 
 void color_writetoaddr(char address, char value);
-
+unsigned int color_readfromaddress(char address);
+unsigned int color_readdoublefromaddress(char address);
 
 
 
@@ -24107,17 +24108,23 @@ unsigned int readRedColor(void);
 unsigned int readGreenColor(void);
 unsigned int readBlueColor(void);
 unsigned int readClearColor(void);
-
-
-
-
-
-typedef struct RGBC {
+# 37 "./color.h"
+typedef struct colors {
     unsigned int red;
     unsigned int green;
     unsigned int blue;
     unsigned int clear;
-} RGBC;
+} colors;
+
+
+
+typedef struct normColors {
+    unsigned int normRed;
+    unsigned int normGreen;
+    unsigned int normBlue;
+} normColors;
+
+void normalizeColors(colors *RGBC, normColors *normRGB);
 # 2 "interact.c" 2
 
 # 1 "./i2c.h" 1

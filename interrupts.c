@@ -5,6 +5,8 @@
 #include "interact.h"
 
 extern int increment;
+extern char wall_detected;
+
 
 //DONT KNOW IF WORKS:
 void interrupts_init(void)
@@ -78,18 +80,14 @@ void Timer0_init(void)
     
 void __interrupt(high_priority) High_ISR() {
     if (PIR0bits.INT0IF) {
-//    if ((readInterrupt() & 0b0010000) != 0) { //here we check if the interrupt bit is raised.
-//        LATDbits.LATD7 = 1;
-//        __delay_ms(1000);
-//        LATDbits.LATD7 = 0;
-//        __delay_ms(1000);
-//        
-        LATDbits.LATD7 = 0;
+      
+        //LATDbits.LATD7 = 0;
+        
+        LEDturnOFF();
+        wall_detected = 1;
+        
         // Clear interrupt
-        int w = PORTB;
-        int x = color_readfromaddress(0x13);
         clearInterrupt();
-        x = color_readfromaddress(0x13);
         // May also need to do this:
         PIR0bits.INT0IF = 0;
     }

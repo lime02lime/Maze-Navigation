@@ -121,3 +121,10 @@ unsigned int readClearColor(void)
 	I2C_2_Master_Stop();          //Stop condition
 	return tmp;
 }
+
+void normalizeColors(colors *RGBC, normColors *normRGB) {
+    normRGB->normRed = (RGBC->red) / ((RGBC->clear)/100);
+    normRGB->normGreen = (RGBC->green) / ((RGBC->clear)/100);
+    normRGB->normBlue = (RGBC->blue) / ((RGBC->clear)/100);
+}
+

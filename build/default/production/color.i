@@ -24089,7 +24089,7 @@ unsigned char __t3rd16on(void);
 # 1 "color.c" 2
 
 # 1 "./color.h" 1
-# 12 "./color.h"
+# 11 "./color.h"
 void color_click_init(void);
 
 
@@ -24098,7 +24098,8 @@ void color_click_init(void);
 
 
 void color_writetoaddr(char address, char value);
-
+unsigned int color_readfromaddress(char address);
+unsigned int color_readdoublefromaddress(char address);
 
 
 
@@ -24107,17 +24108,23 @@ unsigned int readRedColor(void);
 unsigned int readGreenColor(void);
 unsigned int readBlueColor(void);
 unsigned int readClearColor(void);
-
-
-
-
-
-typedef struct RGBC {
+# 37 "./color.h"
+typedef struct colors {
     unsigned int red;
     unsigned int green;
     unsigned int blue;
     unsigned int clear;
-} RGBC;
+} colors;
+
+
+
+typedef struct normColors {
+    unsigned int normRed;
+    unsigned int normGreen;
+    unsigned int normBlue;
+} normColors;
+
+void normalizeColors(colors *RGBC, normColors *normRGB);
 # 2 "color.c" 2
 
 # 1 "./i2c.h" 1
@@ -24180,24 +24187,42 @@ void color_click_init(void)
  color_writetoaddr(0x00, 0x03);
 
 
- color_writetoaddr(0x01, 0xD5);
+ color_writetoaddr(0x01, 0xF6);
 
 
 
 
 
 
-    color_writetoaddr(0x00, 0x11);
+    color_writetoaddr(0x00, 0x13);
 
-
-    color_writetoaddr(0x04, 0b00000000);
-    color_writetoaddr(0x05, 0b00000001);
-    color_writetoaddr(0x06, 0b11010110);
-    color_writetoaddr(0x07, 0b00000110);
-
-
-    color_writetoaddr(0x0C, 0b0001);
     }
+
+unsigned int color_readdoublefromaddress(char address) {
+    unsigned int tmp;
+ I2C_2_Master_Start();
+ I2C_2_Master_Write(0x52 | 0x00);
+ I2C_2_Master_Write(0x80 | address);
+ I2C_2_Master_RepStart();
+    I2C_2_Master_Write(0x52 | 0x01);
+ tmp=I2C_2_Master_Read(1);
+ tmp=tmp | (I2C_2_Master_Read(0)<<8);
+ I2C_2_Master_Stop();
+ return tmp;
+}
+
+
+unsigned int color_readfromaddress(char address) {
+    unsigned int tmp;
+ I2C_2_Master_Start();
+ I2C_2_Master_Write(0x52 | 0x00);
+ I2C_2_Master_Write(0x80 | address);
+ I2C_2_Master_RepStart();
+    I2C_2_Master_Write(0x52 | 0x01);
+ tmp=I2C_2_Master_Read(0);
+ SSP2CON2bits.PEN = 1;
+ return tmp;
+}
 
 
 void color_writetoaddr(char address, char value){
@@ -24262,4 +24287,10 @@ unsigned int readClearColor(void)
  tmp=tmp | (I2C_2_Master_Read(0)<<8);
  I2C_2_Master_Stop();
  return tmp;
+}
+
+void normalizeColors(colors *RGBC, normColors *normRGB) {
+    normRGB->normRed = (RGBC->red) / ((RGBC->clear)/100);
+    normRGB->normGreen = (RGBC->green) / ((RGBC->clear)/100);
+    normRGB->normBlue = (RGBC->blue) / ((RGBC->clear)/100);
 }

@@ -20,6 +20,7 @@ unsigned int green;
 unsigned int blue;
 unsigned int clear;
 int increment = 0; // this is the 'base' time counter, increments every 16 seconds
+char wall_detected = 0;
 unsigned int w;
 unsigned int x;
 unsigned int y;
@@ -29,62 +30,46 @@ void main(void){
     color_click_init(); //initialize the color clicker
     init_buttons_LED();
     TRISDbits.TRISD7 = 0;
-    LATDbits.LATD7 = 1;
     interrupts_init();
     Timer0_init();
     
     
-//    struct RGB_val { 
-//        unsigned int R;
-//        unsigned int G;
-//        unsigned int B;
-//    };
+
     LEDturnON();
+    
+    struct colors RGBC;
+    struct normColors normRGB;
+    
     
     
     while(1) {
         
-//        LATDbits.LATD7 = 1;
-        w = PORTB;
-        x = color_readfromaddress(0x14);
-        y = color_readdoublefromaddress(0x06);
-        z = color_readfromaddress(0x01);
-        x = color_readfromaddress(0x13);
-//        LEDturnON();
-        __delay_ms(1000);
-        red = readRedColor();
-        green = readGreenColor();
-        blue = readBlueColor();
-        clear = readClearColor();
-//        LEDturnOFF();
+        LATDbits.LATD7 = 1;
+//        w = PORTB;
+//        x = color_readfromaddress(0x13);
+//        y = color_readdoublefromaddress(0x06);
+//        z = color_readfromaddress(0x01);
         
-        
-//        if (red > 100) {
-//            LATDbits.LATD7 = 1;
-//            __delay_ms(1000);
-//            LATDbits.LATD7 = 0;
-//        }
-//        
-//        if (green > 100) {
-//            LATDbits.LATD7 = 1;
-//            __delay_ms(1000);
-//            LATDbits.LATD7 = 0;
-//        }
-//        
-//        if (blue > 100) {
-//            LATDbits.LATD7 = 1;
-//            __delay_ms(1000);
-//            LATDbits.LATD7 = 0;
-//        }
-//        
-//        if (clear > 100) {
-//            LATDbits.LATD7 = 1;
-//            __delay_ms(1000);
-//            LATDbits.LATD7 = 0;
-//        }
-        
-        __delay_ms(1000);
-        __delay_ms(1000);
+        if (wall_detected) {
+            
+            RGBC.red = readRedColor();
+            RGBC.green = readGreenColor();
+            RGBC.blue = readBlueColor();
+            RGBC.clear = readClearColor();
+            
+            normalizeColors(&RGBC, &normRGB);
+            unsigned int r = RGBC.red;
+            unsigned int nR = normRGB.normRed;
+            LATDbits.LATD7 = 0;
+            __delay_ms(1000);
+            LATDbits.LATD7 = 1;
+            
+            
+            LEDturnON();
+            //reset flag:            
+            wall_detected = 0;
+        }
+
     
     }
 }

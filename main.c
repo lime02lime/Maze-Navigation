@@ -19,7 +19,7 @@ unsigned int red;
 unsigned int green;
 unsigned int blue;
 unsigned int clear;
-int increment = 0; // this is the 'base' time counter, increments every 16 seconds
+int increment = 0; // this is the time counter, increments every 0.125 seconds
 unsigned int w;
 unsigned int x;
 unsigned int y;
@@ -44,19 +44,15 @@ void main(void){
     
     while(1) {
         
-//        LATDbits.LATD7 = 1;
-        w = PORTB;
-        x = color_readfromaddress(0x14);
-        y = color_readdoublefromaddress(0x06);
-        z = color_readfromaddress(0x01);
-        x = color_readfromaddress(0x13);
-//        LEDturnON();
+//        w = PORTB;
+//        x = color_readfromaddress(0x14);
+//        y = color_readdoublefromaddress(0x06);
+//        z = color_readfromaddress(0x01);
         __delay_ms(1000);
         red = readRedColor();
         green = readGreenColor();
         blue = readBlueColor();
         clear = readClearColor();
-//        LEDturnOFF();
         
         
 //        if (red > 100) {

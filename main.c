@@ -7,71 +7,84 @@
 #pragma config WDTE = OFF        // WDT operating mode (WDT enabled regardless of sleep)
 
 #include <xc.h>
-#include "dc_motor.h"
+//#include "dc_motor.h"
 #include "color.h"
 #include "i2c.h"
+#include "interact.h"
+#include "interrupts.h"
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz
 
+unsigned int red;
+unsigned int green;
+unsigned int blue;
+unsigned int clear;
+int increment = 0; // this is the 'base' time counter, increments every 16 seconds
+unsigned int w;
+unsigned int x;
+unsigned int y;
+unsigned int z;
+
 void main(void){
-
-    // EXERCISE 3 ONWARDS - DC MOTORS
-    unsigned int PWMperiod = 99;
-    initDCmotorsPWM(PWMperiod);
-	//don't forget TRIS for your output!
-    TRISFbits.TRISF2 = 1;
-    ANSELFbits.ANSELF2=0; //turn off analogue input on pin
-
-    struct DC_motor motorL;
-    motorL.power = 0;
-    motorL.direction = 1;
-    motorL.brakemode = 1;
-    motorL.PWMperiod = PWMperiod;
-    motorL.posDutyHighByte = &CCPR1H;
-    motorL.negDutyHighByte = &CCPR2H;
-    setMotorPWM(&motorL);
-    struct DC_motor motorR;
-    motorR.power = 0;
-    motorR.direction = 1;
-    motorR.brakemode = 1;
-    motorR.PWMperiod = PWMperiod;
-    motorR.posDutyHighByte = &CCPR3H;
-    motorR.negDutyHighByte = &CCPR4H;
-    setMotorPWM(&motorR);
-
-    while(1){
-		// Exercise 4
-        // Wait for button press to start
-        while(PORTFbits.RF2 == 1);
-        
-        // Complete first square
-        for (int i = 0; i < 4; i++) {    
-            fullSpeedAhead(&motorL, &motorR);
-            __delay_ms(100);
-            stop(&motorL, &motorR);
-            turnLeft(&motorL, &motorR);
-        }
-        
-        // Turn an extra 90 degrees to complete 180 degree turn
-        turnLeft(&motorL, &motorR);
-        
-        // Retrace steps
-        for (int i = 0; i < 3; i++) {    
-            fullSpeedAhead(&motorL, &motorR);
-//            __delay_ms(50);
-            stop(&motorL, &motorR);
-            turnRight(&motorL, &motorR);
-        }
-        // Final straight
-        fullSpeedAhead(&motorL, &motorR);
-        __delay_ms(100);
-        stop(&motorL, &motorR);
-
+    color_click_init(); //initialize the color clicker
+    init_buttons_LED();
+    TRISDbits.TRISD7 = 0;
+    LATDbits.LATD7 = 1;
+    interrupts_init();
+    Timer0_init();
     
     
-//    // Testing
-//    turnLeft(&motorL, &motorR);
-//    __delay_ms(1000);
-
+//    struct RGB_val { 
+//        unsigned int R;
+//        unsigned int G;
+//        unsigned int B;
+//    };
+    LEDturnON();
+    
+    
+    while(1) {
+        
+//        LATDbits.LATD7 = 1;
+        w = PORTB;
+        x = color_readfromaddress(0x14);
+        y = color_readdoublefromaddress(0x06);
+        z = color_readfromaddress(0x01);
+        x = color_readfromaddress(0x13);
+//        LEDturnON();
+        __delay_ms(1000);
+        red = readRedColor();
+        green = readGreenColor();
+        blue = readBlueColor();
+        clear = readClearColor();
+//        LEDturnOFF();
+        
+        
+//        if (red > 100) {
+//            LATDbits.LATD7 = 1;
+//            __delay_ms(1000);
+//            LATDbits.LATD7 = 0;
+//        }
+//        
+//        if (green > 100) {
+//            LATDbits.LATD7 = 1;
+//            __delay_ms(1000);
+//            LATDbits.LATD7 = 0;
+//        }
+//        
+//        if (blue > 100) {
+//            LATDbits.LATD7 = 1;
+//            __delay_ms(1000);
+//            LATDbits.LATD7 = 0;
+//        }
+//        
+//        if (clear > 100) {
+//            LATDbits.LATD7 = 1;
+//            __delay_ms(1000);
+//            LATDbits.LATD7 = 0;
+//        }
+        
+        __delay_ms(1000);
+        __delay_ms(1000);
+    
     }
 }

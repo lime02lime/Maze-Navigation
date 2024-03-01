@@ -17,11 +17,26 @@ void color_click_init(void);
  *	value is the value that will be written to that address
  ***********************************************/
 void color_writetoaddr(char address, char value);
-
+unsigned int color_readfromaddress(char address);
+unsigned int color_readdoublefromaddress(char address);
 /********************************************//**
- *  Function to read the red channel
+ *  Function to read the COLOR channels
  *	Returns a 16 bit ADC value representing colour intensity
  ***********************************************/
-unsigned int color_read_Red(void);
+unsigned int readRedColor(void);
+unsigned int readGreenColor(void);
+unsigned int readBlueColor(void);
+unsigned int readClearColor(void);
+
+
+/********************************************//**
+ *  Creating a structure of the color values that have been read.
+ ***********************************************/
+typedef struct RGBC { //definition of RGBC structure
+    unsigned int red; //value read for RED
+    unsigned int green; //value read for GREEN
+    unsigned int blue; //value read for BLUE
+    unsigned int clear; //value read for CLEAR
+} RGBC;
 
 #endif

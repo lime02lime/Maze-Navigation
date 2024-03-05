@@ -21,6 +21,9 @@ unsigned int blue;
 unsigned int clear;
 int increment = 0; // this is the 'base' time counter, increments every 16 seconds
 char wall_detected = 0;
+struct colors RGBC;
+struct normColors normRGB;
+unsigned int colourCode = 0;
 unsigned int w;
 unsigned int x;
 unsigned int y;
@@ -30,44 +33,93 @@ void main(void){
     color_click_init(); //initialize the color clicker
     init_buttons_LED();
     TRISDbits.TRISD7 = 0;
+    LATDbits.LATD7 = 0;
     interrupts_init();
     Timer0_init();
     
-    
-
     LEDturnON();
+    __delay_ms(1000);
     
-    struct colors RGBC;
-    struct normColors normRGB;
-    
-    
-    
+    LATDbits.LATD7 = 1;
     while(1) {
         
-        LATDbits.LATD7 = 1;
+        
 //        w = PORTB;
 //        x = color_readfromaddress(0x13);
 //        y = color_readdoublefromaddress(0x06);
 //        z = color_readfromaddress(0x01);
         
         if (wall_detected) {
-            
-            RGBC.red = readRedColor();
-            RGBC.green = readGreenColor();
-            RGBC.blue = readBlueColor();
-            RGBC.clear = readClearColor();
-            
-            normalizeColors(&RGBC, &normRGB);
-            unsigned int r = RGBC.red;
-            unsigned int nR = normRGB.normRed;
             LATDbits.LATD7 = 0;
-            __delay_ms(1000);
-            LATDbits.LATD7 = 1;
+            normalizeColors(&RGBC, &normRGB);
             
+            //deciding what colour it is
+            unsigned int colourCode = decideColor(&normRGB);
+            //finding and running the corresponding instructions:
+            if (colourCode == 1) {
+                TRISHbits.TRISH3 = 0;
+                for (char i=0; i<1; i++) {
+                    LATHbits.LATH3 = 1;
+                    __delay_ms(150);
+                    LATHbits.LATH3 = 0;
+                    __delay_ms(100);
+                }
+            }
             
-            LEDturnON();
+            if (colourCode == 2) {
+                TRISHbits.TRISH3 = 0;
+                for (char i=0; i<2; i++) {
+                    LATHbits.LATH3 = 1;
+                    __delay_ms(150);
+                    LATHbits.LATH3 = 0;
+                    __delay_ms(100);
+                }
+            }
+            
+            if (colourCode == 3) {
+                TRISHbits.TRISH3 = 0;
+                for (char i=0; i<3; i++) {
+                    LATHbits.LATH3 = 1;
+                    __delay_ms(150);
+                    LATHbits.LATH3 = 0;
+                    __delay_ms(100);
+                }
+            }
+            
+            if (colourCode == 4) {
+                TRISHbits.TRISH3 = 0;
+                for (char i=0; i<2; i++) {
+                    LATHbits.LATH3 = 1;
+                    __delay_ms(150);
+                    LATHbits.LATH3 = 0;
+                    __delay_ms(150);
+                }
+                LATDbits.LATD7 = 1;
+                __delay_ms(150);
+                LATDbits.LATD7 = 0;
+                __delay_ms(150);
+            }
+            
+            if (colourCode == 6) {
+                TRISHbits.TRISH3 = 0;
+                for (char i=0; i<3; i++) {
+                    LATHbits.LATH3 = 1;
+                    __delay_ms(150);
+                    LATHbits.LATH3 = 0;
+                    __delay_ms(150);
+                }
+                LATDbits.LATD7 = 1;
+                __delay_ms(150);
+                LATDbits.LATD7 = 0;
+                __delay_ms(150);
+            }
+            
+
             //reset flag:            
             wall_detected = 0;
+            
+            LEDturnON();
+            LATHbits.LATH3 = 0;
         }
 
     

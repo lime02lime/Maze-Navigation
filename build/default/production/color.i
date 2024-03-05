@@ -24108,7 +24108,11 @@ unsigned int readRedColor(void);
 unsigned int readGreenColor(void);
 unsigned int readBlueColor(void);
 unsigned int readClearColor(void);
-# 37 "./color.h"
+
+
+
+
+
 typedef struct colors {
     unsigned int red;
     unsigned int green;
@@ -24124,7 +24128,9 @@ typedef struct normColors {
     unsigned int normBlue;
 } normColors;
 
+void readColors(colors *RGBC);
 void normalizeColors(colors *RGBC, normColors *normRGB);
+unsigned int decideColor(normColors *normRGB);
 # 2 "color.c" 2
 
 # 1 "./i2c.h" 1
@@ -24290,7 +24296,61 @@ unsigned int readClearColor(void)
 }
 
 void normalizeColors(colors *RGBC, normColors *normRGB) {
-    normRGB->normRed = (RGBC->red) / ((RGBC->clear)/100);
-    normRGB->normGreen = (RGBC->green) / ((RGBC->clear)/100);
-    normRGB->normBlue = (RGBC->blue) / ((RGBC->clear)/100);
+    unsigned int sum = (RGBC->red) + (RGBC->green) + (RGBC->blue);
+
+    normRGB->normRed = (RGBC->red) / ((sum)/100);
+    normRGB->normGreen = (RGBC->green) / ((sum)/100);
+    normRGB->normBlue = (RGBC->blue) / ((sum)/100);
+
+
+
+
+}
+
+void readColors(colors *RGBC) {
+    LEDturnON();
+    RGBC->clear = readClearColor();
+    _delay((unsigned long)((100)*(64000000/4000.0)));
+    LEDturnOFF();
+    LATGbits.LATG0 = 1;
+    _delay((unsigned long)((100)*(64000000/4000.0)));
+    RGBC->red = readRedColor();
+    _delay((unsigned long)((100)*(64000000/4000.0)));
+    LATGbits.LATG0 = 0;
+    LATEbits.LATE7 = 1;
+    _delay((unsigned long)((100)*(64000000/4000.0)));
+    RGBC->green = readGreenColor();
+    _delay((unsigned long)((100)*(64000000/4000.0)));
+    LATEbits.LATE7 = 0;
+    LATAbits.LATA3 = 1;
+    _delay((unsigned long)((100)*(64000000/4000.0)));
+    RGBC->blue = readBlueColor();
+    _delay((unsigned long)((100)*(64000000/4000.0)));
+    LATAbits.LATA3 = 0;
+
+}
+
+unsigned int decideColor(normColors *normRGB) {
+
+    if (normRGB->normBlue > 18) {
+        return 2;
+    }
+    if (normRGB->normGreen > 40) {
+        return 1;
+    } else {
+    if (normRGB->normRed > 55) {
+
+        if (normRGB->normGreen > 30) {
+            if (normRGB->normBlue > 12) {
+                return 4;
+            }
+
+            return 3;
+        }
+        return 0;
+    }}
+
+
+    return 0;
+
 }

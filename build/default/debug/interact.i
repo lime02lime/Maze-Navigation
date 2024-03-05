@@ -24108,12 +24108,19 @@ unsigned int readRedColor(void);
 unsigned int readGreenColor(void);
 unsigned int readBlueColor(void);
 unsigned int readClearColor(void);
-# 37 "./color.h"
+
+
+
+
+
 typedef struct colors {
     unsigned int red;
     unsigned int green;
     unsigned int blue;
     unsigned int clear;
+
+
+
 } colors;
 
 
@@ -24124,7 +24131,9 @@ typedef struct normColors {
     unsigned int normBlue;
 } normColors;
 
+void readColors(colors *RGBC);
 void normalizeColors(colors *RGBC, normColors *normRGB);
+unsigned int decideColor(normColors *normRGB);
 # 2 "interact.c" 2
 
 # 1 "./i2c.h" 1

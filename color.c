@@ -123,8 +123,65 @@ unsigned int readClearColor(void)
 }
 
 void normalizeColors(colors *RGBC, normColors *normRGB) {
-    normRGB->normRed = (RGBC->red) / ((RGBC->clear)/100);
-    normRGB->normGreen = (RGBC->green) / ((RGBC->clear)/100);
-    normRGB->normBlue = (RGBC->blue) / ((RGBC->clear)/100);
+    unsigned int sum = (RGBC->red) + (RGBC->green) + (RGBC->blue);
+    
+    normRGB->normRed = (RGBC->red) / ((sum)/100);
+    normRGB->normGreen = (RGBC->green) / ((sum)/100);
+    normRGB->normBlue = (RGBC->blue) / ((sum)/100);
+    
+//    normRGB->normRed = (RGBC->red) / ((RGBC->clear)/100);
+//    normRGB->normGreen = (RGBC->green) / ((RGBC->clear)/100);
+//    normRGB->normBlue = (RGBC->blue) / ((RGBC->clear)/100);
 }
 
+void readColors(colors *RGBC) {
+    LEDturnON();
+    RGBC->clear = readClearColor();
+    __delay_ms(100);
+    LEDturnOFF();
+    redLED = 1;
+    __delay_ms(100);
+    RGBC->red = readRedColor();
+    __delay_ms(100);
+    redLED = 0;
+    greenLED = 1;
+    __delay_ms(100);
+    RGBC->green = readGreenColor();
+    __delay_ms(100);
+    greenLED = 0;
+    blueLED = 1;
+    __delay_ms(100);
+    RGBC->blue = readBlueColor();
+    __delay_ms(100);
+    blueLED = 0;
+    
+}
+
+unsigned int decideColor(normColors *normRGB) {
+    
+    if (normRGB->normBlue > 18) {
+        return 2; //BLUE
+    }
+    if (normRGB->normGreen > 40) {
+        if (normRGB->normBlue > 12) {
+            return 6; //LIGHT BLUE
+        }
+        
+        return 1; //GREEN
+    } else {
+    if (normRGB->normRed > 55) {
+        //further decision splits
+        if (normRGB->normGreen > 30) {
+            if (normRGB->normBlue > 12) {
+                return 4; //PINK
+            }
+            
+            return 3; //YELLOW
+        }
+        return 0; //RED
+    }}
+    
+    //if nothing:
+    return 0;
+    
+}

@@ -24160,11 +24160,7 @@ unsigned int readRedColor(void);
 unsigned int readGreenColor(void);
 unsigned int readBlueColor(void);
 unsigned int readClearColor(void);
-
-
-
-
-
+# 37 "./color.h"
 typedef struct colors {
     unsigned int red;
     unsigned int green;
@@ -24180,9 +24176,7 @@ typedef struct normColors {
     unsigned int normBlue;
 } normColors;
 
-void readColors(colors *RGBC);
 void normalizeColors(colors *RGBC, normColors *normRGB);
-unsigned int decideColor(normColors *normRGB);
 # 4 "interrupts.c" 2
 
 # 1 "./interact.h" 1
@@ -24195,8 +24189,6 @@ void LEDturnON(void);
 
 extern int increment;
 extern char wall_detected;
-extern struct colors RGBC;
-extern struct normColors normRGB;
 
 
 
@@ -24215,15 +24207,15 @@ void interrupts_init(void)
 
     color_writetoaddr(0x04, 0x00);
     color_writetoaddr(0x05, 0x01);
-    color_writetoaddr(0x06, 0x1C0);
-    color_writetoaddr(0x07, 0b0000001);
+    color_writetoaddr(0x06, 0xFA);
+    color_writetoaddr(0x07, 0b0000000);
 
     color_writetoaddr(0x0C, 0b0111);
 
 
     PIE0bits.TMR0IE = 1;
     INTCONbits.PEIE=1;
-# 53 "interrupts.c"
+# 51 "interrupts.c"
     clearInterrupt();
 
 
@@ -24237,7 +24229,7 @@ void Timer0_init(void)
     T0CON1bits.T0ASYNC=1;
     T0CON1bits.T0CKPS=0b0000;
     T0CON0bits.T016BIT=1;
-# 78 "interrupts.c"
+# 76 "interrupts.c"
     TMR0H=0;
     TMR0L=3036;
     T0CON0bits.T0EN=1;
@@ -24248,32 +24240,8 @@ void __attribute__((picinterrupt(("high_priority")))) High_ISR() {
 
 
 
-
-
-
-
-        if (wall_detected==0) {
-            RGBC.clear = readClearColor();
-            LEDturnOFF();
-            LATGbits.LATG0 = 1;
-            _delay((unsigned long)((100)*(64000000/4000.0)));
-            RGBC.red = readRedColor();
-            _delay((unsigned long)((100)*(64000000/4000.0)));
-            LATGbits.LATG0 = 0;
-            LATEbits.LATE7 = 1;
-            _delay((unsigned long)((100)*(64000000/4000.0)));
-            RGBC.green = readGreenColor();
-            _delay((unsigned long)((100)*(64000000/4000.0)));
-            LATEbits.LATE7 = 0;
-            LATAbits.LATA3 = 1;
-            _delay((unsigned long)((100)*(64000000/4000.0)));
-            RGBC.blue = readBlueColor();
-            _delay((unsigned long)((100)*(64000000/4000.0)));
-            LATAbits.LATA3 = 0;
-
-            _delay((unsigned long)((1000)*(64000000/4000.0)));
-            wall_detected = 1;
-        }
+        LEDturnOFF();
+        wall_detected = 1;
 
 
         clearInterrupt();
@@ -24288,7 +24256,7 @@ void __attribute__((picinterrupt(("high_priority")))) High_ISR() {
     }
 
 }
-# 146 "interrupts.c"
+# 120 "interrupts.c"
 void clearInterrupt(void){
     I2C_2_Master_Start();
     I2C_2_Master_Write(0x52 | 0x00);

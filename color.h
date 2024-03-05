@@ -27,9 +27,6 @@ unsigned int readGreenColor(void);
 unsigned int readBlueColor(void);
 unsigned int readClearColor(void);
 
-//normalize colors to clear value:
-
-
 
 /********************************************//**
  *  Creating a structure of the color values that have been read.
@@ -39,6 +36,9 @@ typedef struct colors { //definition of RGBC structure
     unsigned int green; //value read for GREEN
     unsigned int blue; //value read for BLUE
     unsigned int clear; //value read for CLEAR
+//    unsigned int gb;
+//    unsigned int rg;
+//    unsigned int rb;
 } colors;
 
 #endif
@@ -49,4 +49,6 @@ typedef struct normColors {
     unsigned int normBlue;
 } normColors;
 
+void readColors(colors *RGBC);
 void normalizeColors(colors *RGBC, normColors *normRGB);
+unsigned int decideColor(normColors *normRGB);

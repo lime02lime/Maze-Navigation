@@ -24099,7 +24099,7 @@ unsigned char __t3rd16on(void);
 
 
 # 1 "./color.h" 1
-# 12 "./color.h"
+# 11 "./color.h"
 void color_click_init(void);
 
 
@@ -24108,7 +24108,8 @@ void color_click_init(void);
 
 
 void color_writetoaddr(char address, char value);
-
+unsigned int color_readfromaddress(char address);
+unsigned int color_readdoublefromaddress(char address);
 
 
 
@@ -24122,12 +24123,27 @@ unsigned int readClearColor(void);
 
 
 
-typedef struct RGBC {
+typedef struct colors {
     unsigned int red;
     unsigned int green;
     unsigned int blue;
     unsigned int clear;
-} RGBC;
+
+
+
+} colors;
+
+
+
+typedef struct normColors {
+    unsigned int normRed;
+    unsigned int normGreen;
+    unsigned int normBlue;
+} normColors;
+
+void readColors(colors *RGBC);
+void normalizeColors(colors *RGBC, normColors *normRGB);
+unsigned int decideColor(normColors *normRGB);
 # 11 "main.c" 2
 
 # 1 "./i2c.h" 1
@@ -24182,47 +24198,123 @@ void LEDturnON(void);
 
 
 void interrupts_init(void);
-void __attribute__((picinterrupt(("high_priority")))) wall_detected();
+void __attribute__((picinterrupt(("high_priority")))) High_ISR();
 unsigned int readInterrupt(void);
 void clearInterrupt(void);
+void toggleLED(void);
+void Timer0_init(void);
 # 14 "main.c" 2
 
 
 
 
+unsigned int red;
+unsigned int green;
+unsigned int blue;
+unsigned int clear;
+int increment = 0;
+char wall_detected = 0;
+struct colors RGBC;
+struct normColors normRGB;
+unsigned int colourCode = 0;
+unsigned int w;
+unsigned int x;
+unsigned int y;
+unsigned int z;
+
 void main(void){
     color_click_init();
     init_buttons_LED();
+    TRISDbits.TRISD7 = 0;
+    LATDbits.LATD7 = 0;
+    interrupts_init();
+    Timer0_init();
 
+    LEDturnON();
+    _delay((unsigned long)((1000)*(64000000/4000.0)));
 
+    LATDbits.LATD7 = 1;
     while(1) {
-        TRISDbits.TRISD7 = 0;
-        LATDbits.LATD7 = 1;
-
-        LEDturnON();
-        _delay((unsigned long)((1000)*(64000000/4000.0)));
-        unsigned int red = readRedColor();
-        LATDbits.LATD7 = !LATDbits.LATD7;
-        unsigned int green = readGreenColor();
-        unsigned int blue = readBlueColor();
-
-        unsigned int clear = readClearColor();
-        LEDturnOFF();
-
-        LATDbits.LATD7 = !LATDbits.LATD7;
-
-        unsigned int val = readInterrupt();
 
 
 
-        if (red > 100) {
-            LATDbits.LATD7 = 1;
-            _delay((unsigned long)((1000)*(64000000/4000.0)));
+
+
+
+
+        if (wall_detected) {
             LATDbits.LATD7 = 0;
+            normalizeColors(&RGBC, &normRGB);
+
+
+            unsigned int colourCode = decideColor(&normRGB);
+
+            if (colourCode == 1) {
+                TRISHbits.TRISH3 = 0;
+                for (char i=0; i<1; i++) {
+                    LATHbits.LATH3 = 1;
+                    _delay((unsigned long)((150)*(64000000/4000.0)));
+                    LATHbits.LATH3 = 0;
+                    _delay((unsigned long)((100)*(64000000/4000.0)));
+                }
+            }
+
+            if (colourCode == 2) {
+                TRISHbits.TRISH3 = 0;
+                for (char i=0; i<2; i++) {
+                    LATHbits.LATH3 = 1;
+                    _delay((unsigned long)((150)*(64000000/4000.0)));
+                    LATHbits.LATH3 = 0;
+                    _delay((unsigned long)((100)*(64000000/4000.0)));
+                }
+            }
+
+            if (colourCode == 3) {
+                TRISHbits.TRISH3 = 0;
+                for (char i=0; i<3; i++) {
+                    LATHbits.LATH3 = 1;
+                    _delay((unsigned long)((150)*(64000000/4000.0)));
+                    LATHbits.LATH3 = 0;
+                    _delay((unsigned long)((100)*(64000000/4000.0)));
+                }
+            }
+
+            if (colourCode == 4) {
+                TRISHbits.TRISH3 = 0;
+                for (char i=0; i<2; i++) {
+                    LATHbits.LATH3 = 1;
+                    _delay((unsigned long)((150)*(64000000/4000.0)));
+                    LATHbits.LATH3 = 0;
+                    _delay((unsigned long)((150)*(64000000/4000.0)));
+                }
+                LATDbits.LATD7 = 1;
+                _delay((unsigned long)((150)*(64000000/4000.0)));
+                LATDbits.LATD7 = 0;
+                _delay((unsigned long)((150)*(64000000/4000.0)));
+            }
+
+            if (colourCode == 6) {
+                TRISHbits.TRISH3 = 0;
+                for (char i=0; i<3; i++) {
+                    LATHbits.LATH3 = 1;
+                    _delay((unsigned long)((150)*(64000000/4000.0)));
+                    LATHbits.LATH3 = 0;
+                    _delay((unsigned long)((150)*(64000000/4000.0)));
+                }
+                LATDbits.LATD7 = 1;
+                _delay((unsigned long)((150)*(64000000/4000.0)));
+                LATDbits.LATD7 = 0;
+                _delay((unsigned long)((150)*(64000000/4000.0)));
+            }
+
+
+
+            wall_detected = 0;
+
+            LEDturnON();
+            LATHbits.LATH3 = 0;
         }
-# 67 "main.c"
-        _delay((unsigned long)((1000)*(64000000/4000.0)));
-        _delay((unsigned long)((1000)*(64000000/4000.0)));
+
 
     }
 }

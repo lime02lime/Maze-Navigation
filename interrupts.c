@@ -26,8 +26,8 @@ void interrupts_init(void)
     //set the interrupt thresholds on the TCS3471:
     color_writetoaddr(0x04, 0x00); //low thresh, lower byte
     color_writetoaddr(0x05, 0x01); //low thresh, upper byte (used to be 0b00000001)
-    color_writetoaddr(0x06, 0x00000000); //upper thresh, lower byte (used to be 0b11010110)
-    color_writetoaddr(0x07, 0b00000010); //upper  thresh, upper byte
+    color_writetoaddr(0x06, 0b10111111); //upper thresh, lower byte (used to be 0b11010110)
+    color_writetoaddr(0x07, 0b00000001); //upper  thresh, upper byte
     // EMIL SETTINGS
     // color_writetoaddr(0x06, 0x1C0); //upper thresh, lower byte 
     // color_writetoaddr(0x07, 0b0000001); //upper  thresh, upper byte
@@ -35,7 +35,7 @@ void interrupts_init(void)
     //set persistence register
     color_writetoaddr(0x0C, 0b0111); //1 clear channel value outside of threshold range will trigger interrupt.
     
-//    INTCONbits.IPEN=1; //enable priority levels on interrupts
+//    INTCONbits.IPEN=1; //enable priority levels on interrupts - don't uncomment this for now, will land us in trouble
     PIE0bits.TMR0IE = 1;
     INTCONbits.PEIE=1; //peripheral interrupts enable
     
@@ -79,41 +79,21 @@ void Timer0_init(void)
 void __interrupt(high_priority) High_ISR() {
     if (PIR0bits.INT0IF) {
 
-        LATDbits.LATD7 = 0;
+        
+        LATDbits.LATD7 = 1;
       
-        // FIRSTLY STOP THE CAR
-        //implement code to stop car
-        
-        
-        //SECONDLY WE READ THE COLORS:
-        
-        if (wall_detected==0) {
-            RGBC.clear = readClearColor();
-            LEDturnOFF();
-            redLED = 1;
-            __delay_ms(100);
-            RGBC.red = readRedColor();
-            __delay_ms(100);
-            redLED = 0;
-            greenLED = 1;
-            __delay_ms(100);
-            RGBC.green = readGreenColor();
-            __delay_ms(100);
-            greenLED = 0;
-            blueLED = 1;
-            __delay_ms(100);
-            RGBC.blue = readBlueColor();
-            __delay_ms(100);
-            blueLED = 0;
+        wall_detected = 1;
 
-            __delay_ms(1000);
-            wall_detected = 1;
-        }
         
         // Clear interrupt
         clearInterrupt();
         // May also need to do this:
         PIR0bits.INT0IF = 0;
+        
+        // Stop further light readings from re-triggering interrupt by disabling global interrupts
+        INTCONbits.GIE=0;
+        
+        
     }
     
     if (PIR0bits.TMR0IF) {
@@ -124,21 +104,7 @@ void __interrupt(high_priority) High_ISR() {
     
 }
     
-//DONT KNOW IF WORKS:
-//this SHOULD return a byte containing a 1 in the 5th bit if the interrupt is raised (0b00010000.
-//unsigned int readInterrupt(void)
-//{
-//	unsigned int tmp;
-//	I2C_2_Master_Start();         //Start condition
-//	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + write mode (0x27 was the color clicker address, but we do <<1 to add a 0 at the end which configures "write", this yields 0x52)
-//	I2C_2_Master_Write(0x80 | 0x13);    //command (repeated byte protocol transaction) addressed to the status register (0x13)
-//	I2C_2_Master_RepStart();			// start a repeated transmission
-//	I2C_2_Master_Write(0x52 | 0x01);     //7 bit address + Read (1) mode
-//	tmp=I2C_2_Master_Read(1);			//read the status register byte
-//
-//	I2C_2_Master_Stop();          //Stop condition
-//	return tmp;
-//}
+
 
 
 void clearInterrupt(void){
@@ -149,13 +115,3 @@ void clearInterrupt(void){
 //    color_writetoaddr(0x13, 0x00); //write 00 to the status register.
 }
 
-void toggleLED(void) {
-    int current = LATDbits.LATD7;
-    if (current == 0) {
-        LATDbits.LATD7 = 1;
-    }
-    else {
-        LATDbits.LATD7 = 0;
-
-    }
-}

@@ -2,46 +2,46 @@
 #include "dc_motor.h"
 #include "instructions.h"
 
-void executeInstruction(DC_motor *mL, DC_motor *mR, int colourCode) {
+void executeInstruction(DC_motor *mL, DC_motor *mR, char colourCode) {
     switch (colourCode) {
         case 0:
-            Red(DC_motor *mL, DC_motor *mR);
+            Red(mL, mR);
             break;
         case 1:
-            Green(DC_motor *mL, DC_motor *mR);
+            Green(mL, mR);
             break;
         case 2:
-            Blue(DC_motor *mL, DC_motor *mR);
+            Blue(mL, mR);
             break;
         case 3:
-            Yellow(DC_motor *mL, DC_motor *mR);
+            Yellow(mL, mR);
             break;
         case 4:
-            Pink(DC_motor *mL, DC_motor *mR);
+            Pink(mL, mR);
             break;
         case 5:
-            Orange(DC_motor *mL, DC_motor *mR);
+            Orange(mL, mR);
             break;
         case 6:
-            LightBlue(DC_motor *mL, DC_motor *mR);
+            LightBlue(mL, mR);
             break;
         case 7:
-            White(DC_motor *mL, DC_motor *mR);
+            White(mL, mR);
             break;
         case 8:
-            Black(DC_motor *mL, DC_motor *mR);
+            Black(mL, mR);
             break;
         case 9:
-            reverseYellow(DC_motor *mL, DC_motor *mR);
+            reverseYellow(mL, mR);
             break;
         case 10:
-            reversePink(DC_motor *mL, DC_motor * mR);
+            reversePink(mL, mR);
             break;
         case 11: 
-            reverseOrange(DC_motor *mL, DC_motor * mR);
+            reverseOrange(mL, mR);
             break;
         case 12:
-            reverseLightBlue(DC_motor *mL, DC_motor * mR);
+            reverseLightBlue(mL, mR);
             break;
     }
 }
@@ -78,7 +78,7 @@ void LightBlue(DC_motor *mL, DC_motor *mR) {
 }
 
 void White(DC_motor *mL, DC_motor *mR) {
-    reverseRoute(mL, mR);
+    reverseRouteFlag=1;
 }
 
 void Black(DC_motor *mL, DC_motor *mR) {
@@ -115,8 +115,8 @@ void reverseRoute(DC_motor *mL, DC_motor *mR) {
     timed_trundle(mL, mR, last_increments);
     
     // [0, 1, 2, 3, 4, 5, 6, 7, 8]
-    char reverseMapping[9] = [1, 0, 2, 9, 10, 11, 12, -1, -1]
-    for (i = instruction_array_index; i >= 0; i--) {
+    char reverseMapping[9] = {1, 0, 2, 9, 10, 11, 12, -1, -1};
+    for (int i = instruction_array_index; i >= 0; i--) {
         executeInstruction(mL, mR, reverseMapping[instruction_array[i][0]]);
         timed_trundle(mL, mR, instruction_array[i][1]);
     }

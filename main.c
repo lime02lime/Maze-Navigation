@@ -12,30 +12,31 @@
 #include "i2c.h"
 #include "interact.h"
 #include "interrupts.h"
+#include "instructions.h"
+#include "feedback.h"
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz
 
-unsigned int red;
-unsigned int green;
-unsigned int blue;
-unsigned int clear;
+//unsigned int revsc
 int increment = 0; // this is the 'base' time counter, increments every 16 seconds
 char wall_detected = 0;
-struct colors RGBC;
-struct normColors normRGB;
-unsigned int colourCode = 0;
-unsigned int w;
-unsigned int x;
-unsigned int y;
-unsigned int z;
+
+char square = 8 * 2;// increments per second * seconds
+char instruction_array[20][2];
+char instruction_array_index = 0;
+char reverseRouteFlag = 0;
 
 void main(void){
     color_click_init(); //initialize the color clicker
     init_buttons_LED();
-    TRISDbits.TRISD7 = 0;
-    LATDbits.LATD7 = 0;
+    initBoardLEDs();
+    initButtons();
+    
     interrupts_init();
     Timer0_init();
+    
+    struct colors RGBC;
+    struct normColors normRGB;
     
     LEDturnON();
     __delay_ms(1000);
@@ -61,99 +62,59 @@ void main(void){
     motorR.negDutyHighByte = &CCPR4H;
     setMotorPWM(&motorR);
     
+    // Checking battery
+    checkBattery();
     
-    LATDbits.LATD7 = 1;
+    while (PORTFbits.RF2);
+    
     while(1) {
         
-        
-//        w = PORTB;
-//        x = color_readfromaddress(0x13);
-//        y = color_readdoublefromaddress(0x06);
-//        z = color_readfromaddress(0x01);
-        
         if (wall_detected) {
-            stop(&motorL, &motorR);
-            LATDbits.LATD7 = 0;
-            normalizeColors(&RGBC, &normRGB);
-            
-            //deciding what colour it is
-            unsigned int colourCode = decideColor(&normRGB);
-            //finding and running the corresponding instructions:
-            if (colourCode == 1) {
-                TRISHbits.TRISH3 = 0;
-                for (char i=0; i<1; i++) {
-                    LATHbits.LATH3 = 1;
-                    __delay_ms(150);
-                    LATHbits.LATH3 = 0;
-                    __delay_ms(100);
-                }
-            }
-            
-            if (colourCode == 2) {
-                TRISHbits.TRISH3 = 0;
-                for (char i=0; i<2; i++) {
-                    LATHbits.LATH3 = 1;
-                    __delay_ms(150);
-                    LATHbits.LATH3 = 0;
-                    __delay_ms(100);
-                }
-            }
-            
-            if (colourCode == 3) {
-                TRISHbits.TRISH3 = 0;
-                for (char i=0; i<3; i++) {
-                    LATHbits.LATH3 = 1;
-                    __delay_ms(150);
-                    LATHbits.LATH3 = 0;
-                    __delay_ms(100);
-                }
-            }
-            
-            if (colourCode == 4) {
-                TRISHbits.TRISH3 = 0;
-                for (char i=0; i<2; i++) {
-                    LATHbits.LATH3 = 1;
-                    __delay_ms(150);
-                    LATHbits.LATH3 = 0;
-                    __delay_ms(150);
-                }
-                LATDbits.LATD7 = 1;
-                __delay_ms(150);
-                LATDbits.LATD7 = 0;
-                __delay_ms(150);
-            }
-            
-            if (colourCode == 6) {
-                TRISHbits.TRISH3 = 0;
-                for (char i=0; i<3; i++) {
-                    LATHbits.LATH3 = 1;
-                    __delay_ms(150);
-                    LATHbits.LATH3 = 0;
-                    __delay_ms(150);
-                }
-                LATDbits.LATD7 = 1;
-                __delay_ms(150);
-                LATDbits.LATD7 = 0;
-                __delay_ms(150);
-            }
-            
+            // stop the buggy
+            fastStop(&motorL, &motorR);
 
-            //reset flag:            
-            wall_detected = 0;
+            readColors(&RGBC);
             
-            LEDturnON();
-            LATHbits.LATH3 = 0;
-        
+            normalizeColors(&RGBC, &normRGB);
+             
+            //deciding what colour it is
+            char colourCode = decideColor(&normRGB);
+            //finding and running the corresponding instructions:
+            
+            // Indicating the instruction code
+            indicateInstruction(colourCode);
+
+//            LEDturnON();
+//            LATHbits.LATH3 = 0;
+
             // Adds instruction to history
-            instruction_array[instruction_array_index] = {colourCode, increment};
+            instruction_array[instruction_array_index][0] = colourCode;
+            instruction_array[instruction_array_index][1] = increment;
             instruction_array_index += 1;
             //
             executeInstruction(&motorL, &motorR, colourCode);
             LEDturnON();
             increment = 0;
+            
+            // Allow interrupts again now that instruction execution has finished
+            //reset flag:            
+            wall_detected = 0;
+            clearInterrupt(); 
+            INTCONbits.GIE=1;
+            
+            LATDbits.LATD7 = 0;
+            while (PORTFbits.RF2);
         }
+        
+        if (reverseRouteFlag) {
+            reverseRoute(&motorL, &motorR);
+        }
+        
+        // For testing
+        if (!PORTFbits.RF3) {
+            reverseRouteFlag=1;
+        }
+        
         trundle(&motorL, &motorR);
-
-    
     }
 }

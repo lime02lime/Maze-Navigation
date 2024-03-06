@@ -1,6 +1,12 @@
 
+#define _XTAL_FREQ 64000000 
+
 extern char instruction_array[20][2];
 extern char instruction_array_index;
+extern char square;
+extern char reverseRouteFlag;
+
+void executeInstruction(DC_motor *mL, DC_motor *mR, char colourCode);
 
 void Red(DC_motor *mL, DC_motor *mR);
 void Green(DC_motor *mL, DC_motor *mR);

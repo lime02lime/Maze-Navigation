@@ -8,26 +8,15 @@ void color_click_init(void)
     //setup colour sensor via i2c interface
     I2C_2_Master_Init();      //Initialise i2c Master
 
-    
-     //set device PON=1 
-	color_writetoaddr(0x00, 0x01);
-    __delay_ms(3); //need to wait 3ms for everthing to start up
-    
-    
-    //turn on device ADC
-    //0x03 = 0b11. The final value is what we write (1 to enable, otherwise 0), and the rest is the address.
-    //in this case we want to write to AEN (RGBC enable), which is at address 0b10.
-	color_writetoaddr(0x00, 0x03);
-
     //set integration time
 	color_writetoaddr(0x01, 0xF6);
     
     
     //DONT KNOW IF WORKS (interrupts & thresholds & persistence):
     
-    //Enable interrupts from the color clicker.
-    //we want to write 0b10001 (address 0b10000, value 0b00001). This equals 0x11.
-    color_writetoaddr(0x00, 0x13); // Used to be 0x11 instead of 0x13 - note this makes ADC and PON setting above redundant
+    //Enable interrupts from the color clicker while turning colour sensing on and enabling RGBC
+    color_writetoaddr(0x00, 0x13); 
+    __delay_ms(3); //need to wait 3ms for everthing to start up
     
     }
 
@@ -156,6 +145,7 @@ void readColors(colors *RGBC) {
     blueLED = 0;
     
 }
+
 
 unsigned int decideColor(normColors *normRGB) {
     

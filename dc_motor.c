@@ -93,6 +93,20 @@ void stop(DC_motor *mL, DC_motor *mR)
     }
 }
 
+void fastStop(DC_motor *mL, DC_motor *mR)
+{
+    // Look to see what current power is and floor it to nearest 10
+    unsigned int current_power = mL->power;
+    // Decreases speed in increments of 10 every 100 ms
+    for (int i=current_power; i>= 0; i--) {
+        mL->power = i;
+        mR->power = i;
+        setMotorPWM(mL);
+        setMotorPWM(mR);
+        __delay_ms(1);
+    }
+}
+
 //function to make the robot turn left 
 void turnLeft(DC_motor *mL, DC_motor *mR)
 {
@@ -314,22 +328,35 @@ void fullSpeedAhead(DC_motor *mL, DC_motor *mR)
 
 void trundle(DC_motor *mL, DC_motor *mR)
 {
-    if (mL->power != 0 || mR->power != 0) {
-        stop(mL, mR);
-    }
+//    if (mL->power != 0 || mR->power != 0) {
+//        stop(mL, mR);
+//    }
     // Ensure motor directions are forward
     mL->direction = 1;
     mR->direction = 1;
     // Get current power
-    unsigned int current_power = mL->power;
+    char current_power = mL->power;
+    char trundle_power = 20;
     // Increase speed in increments of 1 every 5 ms
-    for (int i=current_power; i<= 20; i++) {
-        mL->power = i;
-        mR->power = i;
-        setMotorPWM(mL);
-        setMotorPWM(mR);
-        __delay_ms(5);
+    if (trundle_power > current_power) {
+        for (int i=current_power; i<= trundle_power; i++) {
+            mL->power = i;
+            mR->power = i;
+            setMotorPWM(mL);
+            setMotorPWM(mR);
+            __delay_ms(5);
+        }
     }
+    else {
+        for (int i=current_power; i>= trundle_power; i--) {
+            mL->power = i;
+            mR->power = i;
+            setMotorPWM(mL);
+            setMotorPWM(mR);
+            __delay_ms(5);
+        }
+    }
+    
 }
 
 void timed_trundle(DC_motor *mL, DC_motor *mR, int increments) {

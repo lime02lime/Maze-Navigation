@@ -24098,9 +24098,11 @@ unsigned char __t3rd16on(void);
 
 
 void interrupts_init(void);
-void __attribute__((picinterrupt(("high_priority")))) wall_detected();
+void __attribute__((picinterrupt(("high_priority")))) High_ISR();
 unsigned int readInterrupt(void);
 void clearInterrupt(void);
+void toggleLED(void);
+void Timer0_init(void);
 # 2 "interrupts.c" 2
 
 # 1 "./i2c.h" 1
@@ -24139,7 +24141,7 @@ unsigned char I2C_2_Master_Read(unsigned char ack);
 # 3 "interrupts.c" 2
 
 # 1 "./color.h" 1
-# 12 "./color.h"
+# 11 "./color.h"
 void color_click_init(void);
 
 
@@ -24148,7 +24150,8 @@ void color_click_init(void);
 
 
 void color_writetoaddr(char address, char value);
-
+unsigned int color_readfromaddress(char address);
+unsigned int color_readdoublefromaddress(char address);
 
 
 
@@ -24162,62 +24165,148 @@ unsigned int readClearColor(void);
 
 
 
-typedef struct RGBC {
+typedef struct colors {
     unsigned int red;
     unsigned int green;
     unsigned int blue;
     unsigned int clear;
-} RGBC;
+
+
+
+} colors;
+
+
+
+typedef struct normColors {
+    unsigned int normRed;
+    unsigned int normGreen;
+    unsigned int normBlue;
+} normColors;
+
+void readColors(colors *RGBC);
+void normalizeColors(colors *RGBC, normColors *normRGB);
+unsigned int decideColor(normColors *normRGB);
 # 4 "interrupts.c" 2
+
+# 1 "./interact.h" 1
+# 17 "./interact.h"
+void init_buttons_LED(void);
+void LEDturnOFF(void);
+void LEDturnON(void);
+# 5 "interrupts.c" 2
+
+
+extern int increment;
+extern char wall_detected;
+extern struct colors RGBC;
+extern struct normColors normRGB;
 
 
 
 void interrupts_init(void)
 {
+
+
+
+
+
+    INT0PPS = 0x08;
+    PIE0bits.INT0IE = 1;
+    INTCONbits.INT0EDG = 0;
+    IPR0bits.INT0IP = 0;
+    ANSELBbits.ANSELB0 = 0;
+
+    color_writetoaddr(0x04, 0x00);
+    color_writetoaddr(0x05, 0x01);
+    color_writetoaddr(0x06, 0x1C0);
+    color_writetoaddr(0x07, 0b0000001);
+
+    color_writetoaddr(0x0C, 0b0111);
+
+
+    PIE0bits.TMR0IE = 1;
+    INTCONbits.PEIE=1;
+# 53 "interrupts.c"
     clearInterrupt();
 
 
-
-
-    INTCONbits.IPEN=1;
-    INTCONbits.PEIE=1;
-    PIE8bits.SCANIE=1;
-# 36 "interrupts.c"
     INTCONbits.GIE=1;
+
 }
 
+void Timer0_init(void)
+{
+    T0CON1bits.T0CS=0b010;
+    T0CON1bits.T0ASYNC=1;
+    T0CON1bits.T0CKPS=0b0000;
+    T0CON0bits.T016BIT=1;
+# 78 "interrupts.c"
+    TMR0H=0;
+    TMR0L=3036;
+    T0CON0bits.T0EN=1;
+}
+
+void __attribute__((picinterrupt(("high_priority")))) High_ISR() {
+    if (PIR0bits.INT0IF) {
 
 
-void __attribute__((picinterrupt(("high_priority")))) wall_detected() {
-    if ((readInterrupt() & 0b0010000) != 0) {
-        LATDbits.LATD7 = 1;
-        _delay((unsigned long)((1000)*(64000000/4000.0)));
-        LATDbits.LATD7 = 0;
-        _delay((unsigned long)((1000)*(64000000/4000.0)));
 
+
+
+
+
+        if (wall_detected==0) {
+            RGBC.clear = readClearColor();
+            LEDturnOFF();
+            LATGbits.LATG0 = 1;
+            _delay((unsigned long)((100)*(64000000/4000.0)));
+            RGBC.red = readRedColor();
+            _delay((unsigned long)((100)*(64000000/4000.0)));
+            LATGbits.LATG0 = 0;
+            LATEbits.LATE7 = 1;
+            _delay((unsigned long)((100)*(64000000/4000.0)));
+            RGBC.green = readGreenColor();
+            _delay((unsigned long)((100)*(64000000/4000.0)));
+            LATEbits.LATE7 = 0;
+            LATAbits.LATA3 = 1;
+            _delay((unsigned long)((100)*(64000000/4000.0)));
+            RGBC.blue = readBlueColor();
+            _delay((unsigned long)((100)*(64000000/4000.0)));
+            LATAbits.LATA3 = 0;
+
+            _delay((unsigned long)((1000)*(64000000/4000.0)));
+            wall_detected = 1;
+        }
 
 
         clearInterrupt();
+
+        PIR0bits.INT0IF = 0;
+    }
+
+    if (PIR0bits.TMR0IF) {
+        PIR0bits.TMR0IF = 0;
+        increment++;
+
     }
 
 }
+# 146 "interrupts.c"
+void clearInterrupt(void){
+    I2C_2_Master_Start();
+    I2C_2_Master_Write(0x52 | 0x00);
+    I2C_2_Master_Write(0xe0 | 0x06 );
+    I2C_2_Master_Stop();
 
-
-
-unsigned int readInterrupt(void)
-{
- unsigned int tmp;
- I2C_2_Master_Start();
- I2C_2_Master_Write(0x52 | 0x00);
- I2C_2_Master_Write(0x80 | 0x13);
- I2C_2_Master_RepStart();
- I2C_2_Master_Write(0x52 | 0x01);
- tmp=I2C_2_Master_Read(1);
-
- I2C_2_Master_Stop();
- return tmp;
 }
 
-void clearInterrupt(void){
-    color_writetoaddr(0x13, 0x00);
+void toggleLED(void) {
+    int current = LATDbits.LATD7;
+    if (current == 0) {
+        LATDbits.LATD7 = 1;
+    }
+    else {
+        LATDbits.LATD7 = 0;
+
+    }
 }

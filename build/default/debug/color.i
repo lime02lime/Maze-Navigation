@@ -24089,7 +24089,7 @@ unsigned char __t3rd16on(void);
 # 1 "color.c" 2
 
 # 1 "./color.h" 1
-# 12 "./color.h"
+# 11 "./color.h"
 void color_click_init(void);
 
 
@@ -24098,7 +24098,8 @@ void color_click_init(void);
 
 
 void color_writetoaddr(char address, char value);
-
+unsigned int color_readfromaddress(char address);
+unsigned int color_readdoublefromaddress(char address);
 
 
 
@@ -24112,12 +24113,27 @@ unsigned int readClearColor(void);
 
 
 
-typedef struct RGBC {
+typedef struct colors {
     unsigned int red;
     unsigned int green;
     unsigned int blue;
     unsigned int clear;
-} RGBC;
+
+
+
+} colors;
+
+
+
+typedef struct normColors {
+    unsigned int normRed;
+    unsigned int normGreen;
+    unsigned int normBlue;
+} normColors;
+
+void readColors(colors *RGBC);
+void normalizeColors(colors *RGBC, normColors *normRGB);
+unsigned int decideColor(normColors *normRGB);
 # 2 "color.c" 2
 
 # 1 "./i2c.h" 1
@@ -24180,21 +24196,42 @@ void color_click_init(void)
  color_writetoaddr(0x00, 0x03);
 
 
- color_writetoaddr(0x01, 0xD5);
+ color_writetoaddr(0x01, 0xF6);
 
 
 
-    color_writetoaddr(0x00, 0x11);
 
 
-    color_writetoaddr(0x04, 0b00000000);
-    color_writetoaddr(0x05, 0b00000001);
-    color_writetoaddr(0x06, 0b11010110);
-    color_writetoaddr(0x07, 0b00000110);
 
+    color_writetoaddr(0x00, 0x13);
 
-    color_writetoaddr(0x0C, 0b0001);
     }
+
+unsigned int color_readdoublefromaddress(char address) {
+    unsigned int tmp;
+ I2C_2_Master_Start();
+ I2C_2_Master_Write(0x52 | 0x00);
+ I2C_2_Master_Write(0x80 | address);
+ I2C_2_Master_RepStart();
+    I2C_2_Master_Write(0x52 | 0x01);
+ tmp=I2C_2_Master_Read(1);
+ tmp=tmp | (I2C_2_Master_Read(0)<<8);
+ I2C_2_Master_Stop();
+ return tmp;
+}
+
+
+unsigned int color_readfromaddress(char address) {
+    unsigned int tmp;
+ I2C_2_Master_Start();
+ I2C_2_Master_Write(0x52 | 0x00);
+ I2C_2_Master_Write(0x80 | address);
+ I2C_2_Master_RepStart();
+    I2C_2_Master_Write(0x52 | 0x01);
+ tmp=I2C_2_Master_Read(0);
+ SSP2CON2bits.PEN = 1;
+ return tmp;
+}
 
 
 void color_writetoaddr(char address, char value){
@@ -24259,4 +24296,68 @@ unsigned int readClearColor(void)
  tmp=tmp | (I2C_2_Master_Read(0)<<8);
  I2C_2_Master_Stop();
  return tmp;
+}
+
+void normalizeColors(colors *RGBC, normColors *normRGB) {
+    unsigned int sum = (RGBC->red) + (RGBC->green) + (RGBC->blue);
+
+    normRGB->normRed = (RGBC->red) / ((sum)/100);
+    normRGB->normGreen = (RGBC->green) / ((sum)/100);
+    normRGB->normBlue = (RGBC->blue) / ((sum)/100);
+
+
+
+
+}
+
+void readColors(colors *RGBC) {
+    LEDturnON();
+    RGBC->clear = readClearColor();
+    _delay((unsigned long)((100)*(64000000/4000.0)));
+    LEDturnOFF();
+    LATGbits.LATG0 = 1;
+    _delay((unsigned long)((100)*(64000000/4000.0)));
+    RGBC->red = readRedColor();
+    _delay((unsigned long)((100)*(64000000/4000.0)));
+    LATGbits.LATG0 = 0;
+    LATEbits.LATE7 = 1;
+    _delay((unsigned long)((100)*(64000000/4000.0)));
+    RGBC->green = readGreenColor();
+    _delay((unsigned long)((100)*(64000000/4000.0)));
+    LATEbits.LATE7 = 0;
+    LATAbits.LATA3 = 1;
+    _delay((unsigned long)((100)*(64000000/4000.0)));
+    RGBC->blue = readBlueColor();
+    _delay((unsigned long)((100)*(64000000/4000.0)));
+    LATAbits.LATA3 = 0;
+
+}
+
+unsigned int decideColor(normColors *normRGB) {
+
+    if (normRGB->normBlue > 18) {
+        return 2;
+    }
+    if (normRGB->normGreen > 40) {
+        if (normRGB->normBlue > 12) {
+            return 6;
+        }
+
+        return 1;
+    } else {
+    if (normRGB->normRed > 55) {
+
+        if (normRGB->normGreen > 30) {
+            if (normRGB->normBlue > 12) {
+                return 4;
+            }
+
+            return 3;
+        }
+        return 0;
+    }}
+
+
+    return 0;
+
 }

@@ -15,32 +15,30 @@
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz
 
-int increment = 0; // this is the time counter, increments every 0.125 seconds
+unsigned int red;
+unsigned int green;
+unsigned int blue;
+unsigned int clear;
+int increment = 0; // this is the 'base' time counter, increments every 16 seconds
 char wall_detected = 0;
-//unsigned int w;
-//unsigned int x;
-//unsigned int y;
-//unsigned int z;
-char square = 8 * 2;// increments per second * seconds
-char instruction_array[20][2];
-char instruction_array_index = 0;
+struct colors RGBC;
+struct normColors normRGB;
+unsigned int colourCode = 0;
+unsigned int w;
+unsigned int x;
+unsigned int y;
+unsigned int z;
 
 void main(void){
     color_click_init(); //initialize the color clicker
     init_buttons_LED();
     TRISDbits.TRISD7 = 0;
-    LATDbits.LATD7 = 1;
+    LATDbits.LATD7 = 0;
     interrupts_init();
     Timer0_init();
     
-    
-//    struct RGB_val { 
-//        unsigned int R;
-//        unsigned int G;
-//        unsigned int B;
-//    };
-    int colourCode;
     LEDturnON();
+    __delay_ms(1000);
     
     // Setting up motors
     unsigned int PWMperiod = 99;
@@ -64,23 +62,89 @@ void main(void){
     setMotorPWM(&motorR);
     
     
+    LATDbits.LATD7 = 1;
     while(1) {
         
+        
 //        w = PORTB;
-//        x = color_readfromaddress(0x14);
+//        x = color_readfromaddress(0x13);
 //        y = color_readdoublefromaddress(0x06);
 //        z = color_readfromaddress(0x01);
+        
         if (wall_detected) {
             stop(&motorL, &motorR);
-            unsigned int red = readRedColor();
-            unsigned int green = readGreenColor();
-            unsigned int blue = readBlueColor();
-            unsigned int clear = readClearColor();
+            LATDbits.LATD7 = 0;
+            normalizeColors(&RGBC, &normRGB);
             
+            //deciding what colour it is
+            unsigned int colourCode = decideColor(&normRGB);
+            //finding and running the corresponding instructions:
+            if (colourCode == 1) {
+                TRISHbits.TRISH3 = 0;
+                for (char i=0; i<1; i++) {
+                    LATHbits.LATH3 = 1;
+                    __delay_ms(150);
+                    LATHbits.LATH3 = 0;
+                    __delay_ms(100);
+                }
+            }
             
-            char colourCode = getColourCode(RGB);
+            if (colourCode == 2) {
+                TRISHbits.TRISH3 = 0;
+                for (char i=0; i<2; i++) {
+                    LATHbits.LATH3 = 1;
+                    __delay_ms(150);
+                    LATHbits.LATH3 = 0;
+                    __delay_ms(100);
+                }
+            }
             
-           // Adds instruction to history
+            if (colourCode == 3) {
+                TRISHbits.TRISH3 = 0;
+                for (char i=0; i<3; i++) {
+                    LATHbits.LATH3 = 1;
+                    __delay_ms(150);
+                    LATHbits.LATH3 = 0;
+                    __delay_ms(100);
+                }
+            }
+            
+            if (colourCode == 4) {
+                TRISHbits.TRISH3 = 0;
+                for (char i=0; i<2; i++) {
+                    LATHbits.LATH3 = 1;
+                    __delay_ms(150);
+                    LATHbits.LATH3 = 0;
+                    __delay_ms(150);
+                }
+                LATDbits.LATD7 = 1;
+                __delay_ms(150);
+                LATDbits.LATD7 = 0;
+                __delay_ms(150);
+            }
+            
+            if (colourCode == 6) {
+                TRISHbits.TRISH3 = 0;
+                for (char i=0; i<3; i++) {
+                    LATHbits.LATH3 = 1;
+                    __delay_ms(150);
+                    LATHbits.LATH3 = 0;
+                    __delay_ms(150);
+                }
+                LATDbits.LATD7 = 1;
+                __delay_ms(150);
+                LATDbits.LATD7 = 0;
+                __delay_ms(150);
+            }
+            
+
+            //reset flag:            
+            wall_detected = 0;
+            
+            LEDturnON();
+            LATHbits.LATH3 = 0;
+        
+            // Adds instruction to history
             instruction_array[instruction_array_index] = {colourCode, increment};
             instruction_array_index += 1;
             //
@@ -89,35 +153,7 @@ void main(void){
             increment = 0;
         }
         trundle(&motorL, &motorR);
-        
-        
-        
-//        if (red > 100) {
-//            LATDbits.LATD7 = 1;
-//            __delay_ms(1000);
-//            LATDbits.LATD7 = 0;
-//        }
-//        
-//        if (green > 100) {
-//            LATDbits.LATD7 = 1;
-//            __delay_ms(1000);
-//            LATDbits.LATD7 = 0;
-//        }
-//        
-//        if (blue > 100) {
-//            LATDbits.LATD7 = 1;
-//            __delay_ms(1000);
-//            LATDbits.LATD7 = 0;
-//        }
-//        
-//        if (clear > 100) {
-//            LATDbits.LATD7 = 1;
-//            __delay_ms(1000);
-//            LATDbits.LATD7 = 0;
-//        }
-        
-//        __delay_ms(1000);
-//        __delay_ms(1000);
+
     
     }
 }

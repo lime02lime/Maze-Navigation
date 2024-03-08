@@ -3,8 +3,9 @@
 #include "i2c.h"
 #include "interact.h"
 
+
+//initialize the LEDs on the buggy, including the three colours, headlights, break lights, and low lights.
 void init_buttons_LED(void){
-    
     //Set LEDs as outputs:
     TRISGbits.TRISG0 = 0; // G0 on clicker = AN1 on buggy = RED LED on color clicker
     TRISEbits.TRISE7 = 0; // E7 on clicker = CS1 on buggy = GREEN LED on color clicker
@@ -14,21 +15,21 @@ void init_buttons_LED(void){
     TRISDbits.TRISD4 = 0; // set break lights to output
     
     //Set initial state of LEDs:
+    // (these are defined in interact.h)
     redLED = 0;
     greenLED = 0;
     blueLED = 0;
 }
 
-//function to turn on all three colors of the LED
+//function to turn on all three colours of the LED as well as the headlights.
 void LEDturnON(void){
     headLights = 1;
-    //breakLights = 1;
     
     redLED = 1;
     greenLED = 1;
     blueLED = 1;
 }
-//function to turn off all three colors of the LED
+//function to turn off all three colours of the LED as well as the headlights.
 void LEDturnOFF(void){
     headLights = 0;
     //breakLights = 0;

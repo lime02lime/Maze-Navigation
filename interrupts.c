@@ -10,7 +10,7 @@ extern struct colors RGBC;
 extern struct normColors normRGB;
 
 
-//DONT KNOW IF WORKS:
+
 void interrupts_init(void)
 {
 //****************************************
@@ -23,6 +23,7 @@ void interrupts_init(void)
     INTCONbits.INT0EDG = 0;
     IPR0bits.INT0IP = 0;
     ANSELBbits.ANSELB0 = 0;
+    
     //set the interrupt thresholds on the TCS3471:
     color_writetoaddr(0x04, 0x00); //low thresh, lower byte
     color_writetoaddr(0x05, 0x01); //low thresh, upper byte (used to be 0b00000001)
@@ -39,7 +40,6 @@ void interrupts_init(void)
     PIE0bits.TMR0IE = 1;
     INTCONbits.PEIE=1; //peripheral interrupts enable
     
-    // Clear brightness interrupt    
 //****************************************    
     // CONFIGURE TIMER INTERRUPTS BELOW
 //****************************************
@@ -48,11 +48,7 @@ void interrupts_init(void)
 //    PIR0bits.TMR0IF = 0; // set initial interrupt flag
 //    IPR0bits.TMR0IP = 0; // Setting the priority of this interrupt to low
 //    INTCONbits.PEIE = 1;  //Turning on the peripheral interrupts
-    
-//****************************************
-    // CONFIGURE COLOR INTERRUPTS BELOW
-//****************************************
-    
+       
     
     clearInterrupt();
 
@@ -75,38 +71,32 @@ void Timer0_init(void)
     TMR0L=0;
     T0CON0bits.T0EN=1;	//start the timer
 }
-    
+
+// INTERRUPT SERVICE ROUTINE BELOW
 void __interrupt(high_priority) High_ISR() {
-    if (PIR0bits.INT0IF) {
+    if (PIR0bits.INT0IF) { //if colour clicker Clear reading interrupt is raised
 
+        LATDbits.LATD7 = 1; //turn on picKit LED D7
+        wall_detected = 1; //raise flag - this is checked for in the main.c while loop.
         
-        LATDbits.LATD7 = 1;
-      
-        wall_detected = 1;
-
-        
-        // Clear interrupt
-        clearInterrupt();
-        // May also need to do this:
-        PIR0bits.INT0IF = 0;
+        // Clear interrupt:
+        clearInterrupt(); //clears the interrupt on the colour clicker
+        PIR0bits.INT0IF = 0; //clears the interrupt on the picKit.
         
         // Stop further light readings from re-triggering interrupt by disabling global interrupts
-        INTCONbits.GIE=0;
-        
-        
+        //this is later re-enabled in the main loop after handling the interrupt.
+        INTCONbits.GIE=0; 
     }
     
-    if (PIR0bits.TMR0IF) {
-        PIR0bits.TMR0IF = 0;
-        increment++;
-        
+    if (PIR0bits.TMR0IF) { //if timer overflow interrupt is raised
+        PIR0bits.TMR0IF = 0; //reset interrupt flag
+        increment++; //add to the overflow counter, helps us keep track of time
     }
     
 }
-    
 
 
-
+//Clearing the interrupt on the colour clicker.
 void clearInterrupt(void){
     I2C_2_Master_Start();         //Start condition
     I2C_2_Master_Write(0x52 | 0x00);     //7 bit device address + Write mode

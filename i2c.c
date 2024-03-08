@@ -1,6 +1,10 @@
 #include <xc.h>
 #include "i2c.h"
 
+// CODE IN THIS FILE IS ESSENTIALLY UNCHANGED FROM WHAT WE WERE PROVIDED AS PART OF THE BRIEF.
+// These functions allow for the basic communication with the colour clicker through I2C, following the protocol shown in the README.
+
+//initialise the buggy/colour clicker as master/slave.
 void I2C_2_Master_Init(void)
 {
   //i2c config  

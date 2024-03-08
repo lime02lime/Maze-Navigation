@@ -2,6 +2,9 @@
 #include "dc_motor.h"
 #include "instructions.h"
 
+
+//Here we use a Switch to execute the instructions associated with each colour.
+//Each colour has a value from 0-8.
 void executeInstruction(DC_motor *mL, DC_motor *mR, char colourCode) {
     switch (colourCode) {
         case 0:
@@ -46,6 +49,7 @@ void executeInstruction(DC_motor *mL, DC_motor *mR, char colourCode) {
     }
 }
 
+//THE FUNCTIONS BELOW GIVE THE SPECIFIC INSTRUCTIONS ASSOCIATED WITH EACH COLOUR
 void Red(DC_motor *mL, DC_motor *mR){
     turnRight(mL, mR);
 }
@@ -108,6 +112,8 @@ void reverseLightBlue(DC_motor *mL, DC_motor *mR) {
     turnLeft135(mL, mR);
 }
 
+
+//This function allows the buggy to retrace its steps to return home.
 void reverseRoute(DC_motor *mL, DC_motor *mR) {
     // face the way you came (in theory won't need this when we get white colour detection working)
     int last_increments = increment;

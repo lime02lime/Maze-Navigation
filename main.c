@@ -16,6 +16,8 @@
 #include "feedback.h"
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz
+#define PAUSE_BETWEEN_INSTRUCTIONS 1
+#define NO_TRUNDLING 1
 
 //unsigned int revsc
 int increment = 0; // this is the 'base' time counter, increments every 16 seconds
@@ -66,6 +68,7 @@ void main(void){
     checkBattery();
     
     while (PORTFbits.RF2);
+    increment = 0;
     
     while(1) {
         
@@ -103,7 +106,10 @@ void main(void){
             INTCONbits.GIE=1;
             
             LATDbits.LATD7 = 0;
-            while (PORTFbits.RF2);
+            if (PAUSE_BETWEEN_INSTRUCTIONS) {
+                while (PORTFbits.RF2);
+            }
+            
         }
         
         if (reverseRouteFlag) {
@@ -114,7 +120,8 @@ void main(void){
         if (!PORTFbits.RF3) {
             reverseRouteFlag=1;
         }
-        
-        trundle(&motorL, &motorR);
+        if (!NO_TRUNDLING) {
+            trundle(&motorL, &motorR);
+        }
     }
 }

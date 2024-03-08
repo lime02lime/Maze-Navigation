@@ -109,7 +109,7 @@ void reverseLightBlue(DC_motor *mL, DC_motor *mR) {
 }
 
 void reverseRoute(DC_motor *mL, DC_motor *mR) {
-    // face the way you came
+    // face the way you came (in theory won't need this when we get white colour detection working)
     int last_increments = increment;
     turn180(mL, mR);
     timed_trundle(mL, mR, last_increments);
@@ -120,5 +120,7 @@ void reverseRoute(DC_motor *mL, DC_motor *mR) {
         executeInstruction(mL, mR, reverseMapping[instruction_array[i][0]]);
         timed_trundle(mL, mR, instruction_array[i][1]);
     }
-    Sleep();
+    stop(mL, mR);
+    instruction_array_index = 0;
+    while (PORTFbits.RF2);
 }

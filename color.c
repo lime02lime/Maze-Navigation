@@ -13,6 +13,7 @@ void color_click_init(void)
     
     
     //DONT KNOW IF WORKS (interrupts & thresholds & persistence):
+    color_writetoaddr(0x0C, 0b01);
     
     //Enable interrupts from the color clicker while turning colour sensing on and enabling RGBC
     color_writetoaddr(0x00, 0x13); 

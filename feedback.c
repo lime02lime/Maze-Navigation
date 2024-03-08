@@ -43,25 +43,27 @@ void indicateInstruction(char period) {
 void checkBattery(void) {
 
     TRISFbits.TRISF6=1; // Select pin RA3 as input
-    ANSELFbits.ANSELF3=1; //Ensure analogue circuitry is active (it is by default - watch out for this later in the course!)
+    ANSELFbits.ANSELF6=1; //Ensure analogue circuitry is active (it is by default - watch out for this later in the course!)
 
     // Set up the ADC module - check section 33 of the datasheet for more details
     ADREFbits.ADNREF = 0; // Use Vss (0V) as negative reference
     ADREFbits.ADPREF = 0b00; // Use Vdd (3.3V) as positive reference
-    ADPCH=0b101110; // Select channel RF6/ANF6 for ADC
+    ADPCH=0b101110; // Select channel RF6/ANF6 for ADC  
     ADCON0bits.ADFM = 0; // Left-justified result (i.e. no leading 0s)
     ADCON0bits.ADCS = 1; // Use internal Fast RC (FRC) oscillator as clock source for conversion
     ADCON0bits.ADON = 1; // Enable ADC
     
     ADCON0bits.GO = 1; // Start ADC conversion
     while (ADCON0bits.GO); // Wait until conversion done (bit is cleared automatically when done)
-    int tmpval = ADRESH; // Read 8 most significant bits
-    while (tmpval > 0) {
+    int tmpval = ADRESH; // Read 8 most significant bits 
+    char max_typical = 0b01101101;
+    char percent = tmpval * 100 / max_typical;
+    while (tmpval >= 0) {
         LATHbits.LATH3 = 1;
         __delay_ms(150);
         LATHbits.LATH3 = 0;
         __delay_ms(150);
-        tmpval >>= 1;
+        tmpval -= 10;
     }
     
 }

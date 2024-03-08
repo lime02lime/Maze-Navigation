@@ -26,8 +26,8 @@ void interrupts_init(void)
     //set the interrupt thresholds on the TCS3471:
     color_writetoaddr(0x04, 0x00); //low thresh, lower byte
     color_writetoaddr(0x05, 0x01); //low thresh, upper byte (used to be 0b00000001)
-    color_writetoaddr(0x06, 0b10111111); //upper thresh, lower byte (used to be 0b11010110)
-    color_writetoaddr(0x07, 0b00000001); //upper  thresh, upper byte
+    color_writetoaddr(0x06, 0b00000000); //upper thresh, lower byte (AH house - 0b10111111)
+    color_writetoaddr(0x07, 0b00000100); //upper  thresh, upper byte (AH house 0b00000001)
     // EMIL SETTINGS
     // color_writetoaddr(0x06, 0x1C0); //upper thresh, lower byte 
     // color_writetoaddr(0x07, 0b0000001); //upper  thresh, upper byte

@@ -6,6 +6,7 @@
 #pragma config WDTCPS = WDTCPS_31// WDT Period Select bits (Divider ratio 1:65536; software control of WDTPS)
 #pragma config WDTE = OFF        // WDT operating mode (WDT enabled regardless of sleep)
 
+// include relevant files:
 #include <xc.h>
 #include "dc_motor.h"
 #include "color.h"
@@ -16,8 +17,8 @@
 #include "feedback.h"
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz
-#define PAUSE_BETWEEN_INSTRUCTIONS 1
-#define NO_TRUNDLING 0
+#define PAUSE_BETWEEN_INSTRUCTIONS 1 // For testing, ill introduce pause after execution of instruction broken with button RF2 press
+#define NO_TRUNDLING 0 // For testing, no forward movement between instructions
 
 //unsigned int revsc
 int increment = 0; // this is the 'base' time counter, increments every 16 seconds
@@ -29,18 +30,19 @@ char instruction_array_index = 0;
 char reverseRouteFlag = 0;
 
 void main(void){
-    color_click_init(); //initialize the color clicker
-    init_buttons_LED();
-    initBoardLEDs();
-    initButtons();
+    color_click_init(); //initialise the colour clicker.
+    init_buttons_LED(); //initialise LEDs on buggy and colour clicker.
+    initBoardLEDs(); //initialise LEDs on picKit.
+    initButtons(); //initialise buttons on picKit.
     
-    interrupts_init();
-    Timer0_init();
+    interrupts_init(); //initialise colour sensor interrupts.
+    Timer0_init(); //initialise timer overflow interrupts.
     
+    //Structures to store the RGBC values read from the colour sensor, and then their normalised values.
     struct colors RGBC;
     struct normColors normRGB;
     
-    LEDturnON();
+    LEDturnON(); //turn on all 3 colours of the tri-colour LED + headlights.
     __delay_ms(1000);
     
     // Setting up motors
@@ -67,21 +69,20 @@ void main(void){
     // Checking battery
     checkBattery();
     
-    while (PORTFbits.RF2);
-    increment = 0;
+    while (PORTFbits.RF2); //wait until button press to start.
+    increment = 0; //resetting the timer counter once we start.
     
-    while(1) {
+    while(1) { //loop infinitely until a wall is detected
         
-        if (wall_detected) {
-//            // stop the buggy
-            fastStop(&motorL, &motorR);
-
-            readColors(&RGBC);
+        if (wall_detected) { //this would be raised in the ISR once a wall is detected.
             
-            normalizeColors(&RGBC, &normRGB);
-             
-            //deciding what colour it is
-            char colourCode = decideColor(&normRGB, &RGBC, &motorL, &motorR);
+            fastStop(&motorL, &motorR); // stop the buggy
+
+            readColors(&RGBC); //determine the colour of the card in front of the buggy
+            
+            normalizeColors(&RGBC, &normRGB); //normalise the colour reading
+
+            char colourCode = decideColor(&normRGB); //deciding what colour it is
             //finding and running the corresponding instructions:
             
             // Indicating the instruction code
@@ -94,7 +95,7 @@ void main(void){
             instruction_array[instruction_array_index][0] = colourCode;
             instruction_array[instruction_array_index][1] = increment;
             instruction_array_index += 1;
-            //
+            // 
             executeInstruction(&motorL, &motorR, colourCode);
             LEDturnON();
             increment = 0;
@@ -105,13 +106,15 @@ void main(void){
             clearInterrupt(); 
             INTCONbits.GIE=1;
             
-            LATDbits.LATD7 = 0;
+            LATDbits.LATD7 = 0; //turn off the picKit LED that was turned on by the interrupt
+            
+            //if we want to press a button to resume its course after completing a set of instructions:
             if (PAUSE_BETWEEN_INSTRUCTIONS) {
                 while (PORTFbits.RF2);
             }
-            
         }
         
+        //check if it is time to return home
         if (reverseRouteFlag) {
             reverseRoute(&motorL, &motorR);
         }

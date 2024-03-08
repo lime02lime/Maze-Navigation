@@ -3,12 +3,13 @@
 #include "i2c.h"
 #include "interact.h"
 
+
 void color_click_init(void)
 {   
     //setup colour sensor via i2c interface
     I2C_2_Master_Init();      //Initialise i2c Master
 
-    //set integration time
+    //set integration time to 24 ms
 	color_writetoaddr(0x01, 0xF6);
     
     //Enable interrupts from the color clicker while turning colour sensing on and enabling RGBC
@@ -20,7 +21,7 @@ void color_click_init(void)
 unsigned int color_readdoublefromaddress(char address) {
     unsigned int tmp;
 	I2C_2_Master_Start();         //Start condition
-	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode (0x27 was the color clicker address, but we do <<1 to add a 0 at the end which configures "write", this yields 0x52)
+	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode (0x27 was the colour clicker address, but we do <<1 to add a 0 at the end which configures "write", this yields 0x52)
 	I2C_2_Master_Write(0x80 | address);    //command (auto-increment protocol transaction) - read value at particular address
 	I2C_2_Master_RepStart();			// start a repeated transmission
     I2C_2_Master_Write(0x52 | 0x01);     //7 bit address + Read (1) mode
@@ -30,11 +31,11 @@ unsigned int color_readdoublefromaddress(char address) {
 	return tmp;
 }
 
-
+//following master-slave communication structure to READ from colour clicker.
 unsigned int color_readfromaddress(char address) {
     unsigned int tmp;
 	I2C_2_Master_Start();         //Start condition
-	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode (0x27 was the color clicker address, but we do <<1 to add a 0 at the end which configures "write", this yields 0x52)
+	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode (0x27 was the colour clicker address, but we do <<1 to add a 0 at the end which configures "write", this yields 0x52)
 	I2C_2_Master_Write(0x80 | address);    //command (auto-increment protocol transaction) - read value at particular address
 	I2C_2_Master_RepStart();			// start a repeated transmission
     I2C_2_Master_Write(0x52 | 0x01);     //7 bit address + Read (1) mode
@@ -43,7 +44,7 @@ unsigned int color_readfromaddress(char address) {
 	return tmp;
 }
 
-
+//following master-slave communication structure to WRITE to colour clicker.
 void color_writetoaddr(char address, char value){
     I2C_2_Master_Start();         //Start condition
     I2C_2_Master_Write(0x52 | 0x00);     //7 bit device address + Write mode
@@ -52,11 +53,12 @@ void color_writetoaddr(char address, char value){
     I2C_2_Master_Stop();          //Stop condition
 }
 
+//following master-slave communication structure to READ the RED colour reading.
 unsigned int readRedColor(void)
 {
 	unsigned int tmp;
 	I2C_2_Master_Start();         //Start condition
-	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode (0x27 was the color clicker address, but we do <<1 to add a 0 at the end which configures "write", this yields 0x52)
+	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode (0x27 was the colour clicker address, but we do <<1 to add a 0 at the end which configures "write", this yields 0x52)
 	I2C_2_Master_Write(0xA0 | 0x16);    //command (auto-increment protocol transaction) + start at RED low register
 	I2C_2_Master_RepStart();			// start a repeated transmission
 	I2C_2_Master_Write(0x52 | 0x01);     //7 bit address + Read (1) mode
@@ -66,11 +68,12 @@ unsigned int readRedColor(void)
 	return tmp;
 }
 
+//following master-slave communication structure to READ the GREEN colour reading.
 unsigned int readGreenColor(void)
 {
 	unsigned int tmp;
 	I2C_2_Master_Start();         //Start condition
-	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode (0x27 was the color clicker address, but we do <<1 to add a 0 at the end which configures "write", this yields 0x52)
+	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode (0x27 was the colour clicker address, but we do <<1 to add a 0 at the end which configures "write", this yields 0x52)
 	I2C_2_Master_Write(0xA0 | 0x18);    //command (auto-increment protocol transaction) + start at GREEN low register
 	I2C_2_Master_RepStart();			// start a repeated transmission
 	I2C_2_Master_Write(0x52 | 0x01);     //7 bit address + Read (1) mode
@@ -80,11 +83,12 @@ unsigned int readGreenColor(void)
 	return tmp;
 }
 
+//following master-slave communication structure to READ the BLUE colour reading.
 unsigned int readBlueColor(void)
 {
 	unsigned int tmp;
 	I2C_2_Master_Start();         //Start condition
-	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode (0x27 was the color clicker address, but we do <<1 to add a 0 at the end which configures "write", this yields 0x52)
+	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode (0x27 was the colour clicker address, but we do <<1 to add a 0 at the end which configures "write", this yields 0x52)
 	I2C_2_Master_Write(0xA0 | 0x1A);    //command (auto-increment protocol transaction) + start at BLUE low register
 	I2C_2_Master_RepStart();			// start a repeated transmission
 	I2C_2_Master_Write(0x52 | 0x01);     //7 bit address + Read (1) mode
@@ -94,11 +98,12 @@ unsigned int readBlueColor(void)
 	return tmp;
 }
 
+//following master-slave communication structure to READ the CLEAR colour reading.
 unsigned int readClearColor(void)
 {
 	unsigned int tmp;
 	I2C_2_Master_Start();         //Start condition
-	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode (0x27 was the color clicker address, but we do <<1 to add a 0 at the end which configures "write", this yields 0x52)
+	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode (0x27 was the colour clicker address, but we do <<1 to add a 0 at the end which configures "write", this yields 0x52)
 	I2C_2_Master_Write(0xA0 | 0x14);    //command (auto-increment protocol transaction) + start at CLEAR low register
 	I2C_2_Master_RepStart();			// start a repeated transmission
 	I2C_2_Master_Write(0x52 | 0x01);     //7 bit address + Read (1) mode
@@ -108,42 +113,51 @@ unsigned int readClearColor(void)
 	return tmp;
 }
 
+
+//normalising the readings to the sum of their components.
 void normalizeColors(colors *RGBC, normColors *normRGB) {
-    unsigned int sum = (RGBC->red) + (RGBC->green) + (RGBC->blue);
+    unsigned int sum = (RGBC->red) + (RGBC->green) + (RGBC->blue); //access the colour Struct.
     
+    //we divide the sum by 100 here because we want values out of 100 - should be precise enough.
+    //could have multiplied numerator by 100 instead but this would create overflow so therefore we avoided this.
     normRGB->normRed = (RGBC->red) / ((sum)/100);
     normRGB->normGreen = (RGBC->green) / ((sum)/100);
     normRGB->normBlue = (RGBC->blue) / ((sum)/100);
     normRGB->clear = RGBC->clear;
-    
-//    normRGB->normRed = (RGBC->red) / ((RGBC->clear)/100);
-//    normRGB->normGreen = (RGBC->green) / ((RGBC->clear)/100);
-//    normRGB->normBlue = (RGBC->blue) / ((RGBC->clear)/100);
 }
 
+//code to read ALL the colours, which calls each of the individual colour read functions above.
 void readColors(colors *RGBC) {
+    //first we read the CLEAR value with all 3 colours of the tri-colour LED being lit.
+    //all the delays included below are to make sure that the LEDs have time to reach their max brightness before being read.
     LEDturnON();
     RGBC->clear = readClearColor();
     __delay_ms(100);
     LEDturnOFF();
+    
+    //read RED with the RED LED turned on
     redLED = 1;
     __delay_ms(100);
     RGBC->red = readRedColor();
     __delay_ms(100);
     redLED = 0;
+    
+    //read GREEN with the GREEN LED turned on
     greenLED = 1;
     __delay_ms(100);
     RGBC->green = readGreenColor();
     __delay_ms(100);
     greenLED = 0;
+    
+    //read BLUE with the BLUE LED turned on
     blueLED = 1;
     __delay_ms(100);
     RGBC->blue = readBlueColor();
     __delay_ms(100);
     blueLED = 0;
-    
 }
 
+// Routine to detect colour of piece of paper 
 char decideColor(normColors *normRGB, colors * RGBC, DC_motor *mL, DC_motor *mR) {
     if (normRGB->normBlue > 17) {
         creep(mL, mR, 16, 0);

@@ -37,13 +37,11 @@ typedef struct colors { //definition of RGBC structure
     unsigned int green; //value read for GREEN
     unsigned int blue; //value read for BLUE
     unsigned int clear; //value read for CLEAR
-//    unsigned int gb;
-//    unsigned int rg;
-//    unsigned int rb;
 } colors;
 
 #endif
 
+//Structure for the normalised colour values:
 typedef struct normColors { 
     unsigned int normRed;
     unsigned int normGreen;

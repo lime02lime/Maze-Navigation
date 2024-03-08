@@ -1,6 +1,57 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/c8ng1gdc)
 # Course project - Mine navigation search and rescue
 
+## Project Readme - Alex & Emil
+This is the project code README, while the project brief can be found at the bottom of this page. The following few sections will go through the functionality of each file included.
+
+### Main.c
+Our **main.c** has a simple set of functions to aid legibility and limit its memory occupation. It performs the following tasks:
+- Initialize modules (LEDs, motors, etc) and interrupts.
+- Move the buggy forward until interrupted.
+- Once interrupted, it reads the color, normalizes the readings, decides what the color is, and executes the corresponding action code.
+- Finally it clears interrupts and resumes its forward motion.
+
+### Interrupts.c
+The **interrupts.c** file contains functions to initialize and define interrupt functionality. These are its features:
+- interrupts_init instructs the Light Sensor about the thresholds for brightness interrupt. This is calibrated based on the brightness on the day. The premise is that the brightness read will increase as a surface gets closer and reflects more of the light from the LEDs.
+- timer0 is initialized, which is used to keep track of the moves that have been made in order to retrace steps to escape.
+- the Interrupt Service Routine handles the color sensor interrupt and timer overflow.
+- for the color sensor interrupt, the ISR quickly stops the buggy and raises a flag which is checked for in the Main file to decide what happens next.
+- the timer overflow simply increments a counter.
+
+### Color.c
+This file contains most of the functions that perform interaction with the color clicker (TCS3471) or other color-related code. This includes:
+- Initializing the color clicker.
+- Functions to communicate with the color clicker - enabled by I2C functionality included in the i2c.c file (outlined below).
+- Reading the the colors and brightness (RGBC) from the sensor. These are stored in a RGBC Struct.
+- Normalizing the colors to the brightness (Clear reading), and these values are stored in a dedicated Struct. However, the brightness turns out to not equal the sum of the RGB readings so therefore we find the sum of these and use that to normalize - allows more consistency in outputs.
+- decideColor looks at the normalized RGB values to decide what color it is looking at, which later informs the instructions that are executed. This is calibrated using a trained decision tree (further info on this below).
+
+### Instructions.c
+This file contains the following:
+- A switch to execute different instructions depending on what the decided color is.
+- Functions with motor instructions corresponding to each color (E.g. RED = turn right 90 degrees, etc.).
+- Functionality to return home once instructed to do so.
+
+### Interact.c
+This file enables interaction with the buggy lights, including functions to initialize and control the buggy headlights, rear lights, and tri-color LED.
+
+### Dc_motor.c
+This file contains all the code to control the motion of the buggy.
+- Initialization of the motors
+- Functions to dictate movement, including forward and backward motion, stopping, as well as instructions to turn (90, 135, or 180 deg).
+- One of the key features included here is the function to move for a specified period of time - which allows the buggy to retrace its steps home.
+- Another one controls the buggy to move one "square" forward/backwards, which is included in the color instructions.
+
+### I2c.c
+This file contains the code that was provided as part of the project brief. It provides functions for the very basic communication with the color clicker, which ultimately allows us to control the tri-color LED and to read from the color sensor (TCS3471).
+
+### Further Information
+Deciding what color is in front of the buggy is an arduous task to complete manually. Therefore, we collected data from our own testing and used Machine Learning methods to facilitate this task. Using libraries in Python, we trained decision trees to find the optimal decision boundaries for our data. The results were used to code our own decision tree (decideColor) in the colors.c file.
+ 
+
+
+
 ## Challenge brief
 
 Your task is to develop an autonomous robot that can navigate a "mine" using a series of instructions coded in coloured cards and return to its starting position.  Your robot must be able to perform the following: 

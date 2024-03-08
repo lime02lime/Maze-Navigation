@@ -27,13 +27,13 @@ void interrupts_init(void)
     color_writetoaddr(0x04, 0x00); //low thresh, lower byte
     color_writetoaddr(0x05, 0x01); //low thresh, upper byte (used to be 0b00000001)
     color_writetoaddr(0x06, 0b00000000); //upper thresh, lower byte (AH house - 0b10111111)
-    color_writetoaddr(0x07, 0b00000100); //upper  thresh, upper byte (AH house 0b00000001)
+    color_writetoaddr(0x07, 0b00000010); //upper  thresh, upper byte (AH house 0b00000001)
     // EMIL SETTINGS
     // color_writetoaddr(0x06, 0x1C0); //upper thresh, lower byte 
     // color_writetoaddr(0x07, 0b0000001); //upper  thresh, upper byte
 
     //set persistence register
-    color_writetoaddr(0x0C, 0b0111); //1 clear channel value outside of threshold range will trigger interrupt.
+    color_writetoaddr(0x0C, 0b0011); //1 clear channel value outside of threshold range will trigger interrupt.
     
 //    INTCONbits.IPEN=1; //enable priority levels on interrupts - don't uncomment this for now, will land us in trouble
     PIE0bits.TMR0IE = 1;
@@ -81,6 +81,8 @@ void __interrupt(high_priority) High_ISR() {
 
         
         LATDbits.LATD7 = 1;
+        // stop the buggy
+//        fastStop(&motorL, &motorR);
       
         wall_detected = 1;
 

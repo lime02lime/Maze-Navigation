@@ -336,7 +336,7 @@ void trundle(DC_motor *mL, DC_motor *mR)
     mR->direction = 1;
     // Get current power
     char current_power = mL->power;
-    char trundle_power = 20;
+    char trundle_power = 12;
     // Increase speed in increments of 1 every 5 ms
     if (trundle_power > current_power) {
         for (int i=current_power; i<= trundle_power; i++) {
@@ -359,6 +359,41 @@ void trundle(DC_motor *mL, DC_motor *mR)
     
 }
 
+void creep(DC_motor *mL, DC_motor *mR, int increments, char direction) {
+    if (mL->power != 0 || mR->power != 0) {
+        stop(mL, mR);
+    }
+    increment = 0;
+    // Ensure motor directions are forward
+    mL->direction = direction;
+    mR->direction = direction;
+    // Get current power
+    char current_power = mL->power;
+    char creep_power = 10;
+    // Increase speed in increments of 1 every 5 ms
+    if (creep_power > current_power) {
+        for (int i=current_power; i<= creep_power; i++) {
+            mL->power = i;
+            mR->power = i;
+            setMotorPWM(mL);
+            setMotorPWM(mR);
+            __delay_ms(5);
+        }
+    }
+    else {
+        for (int i=current_power; i>= creep_power; i--) {
+            mL->power = i;
+            mR->power = i;
+            setMotorPWM(mL);
+            setMotorPWM(mR);
+            __delay_ms(5);
+        }
+    }
+    while (increment < increments);
+    stop(mL, mR);
+    
+}
+
 void timed_trundle(DC_motor *mL, DC_motor *mR, int increments) {
     if (mL->power != 0 || mR->power != 0) {
         stop(mL, mR);
@@ -368,14 +403,26 @@ void timed_trundle(DC_motor *mL, DC_motor *mR, int increments) {
     mL->direction = 1;
     mR->direction = 1;
     // Get current power
-    unsigned int current_power = mL->power;
+    char current_power = mL->power;
+    char trundle_power = 10;
     // Increase speed in increments of 1 every 5 ms
-    for (int i=current_power; i<= 20; i++) {
-        mL->power = i;
-        mR->power = i;
-        setMotorPWM(mL);
-        setMotorPWM(mR);
-        __delay_ms(5);
+    if (trundle_power > current_power) {
+        for (int i=current_power; i<= trundle_power; i++) {
+            mL->power = i;
+            mR->power = i;
+            setMotorPWM(mL);
+            setMotorPWM(mR);
+            __delay_ms(5);
+        }
+    }
+    else {
+        for (int i=current_power; i>= trundle_power; i--) {
+            mL->power = i;
+            mR->power = i;
+            setMotorPWM(mL);
+            setMotorPWM(mR);
+            __delay_ms(5);
+        }
     }
     
     while (increment < increments);

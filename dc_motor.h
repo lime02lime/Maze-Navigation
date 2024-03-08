@@ -29,5 +29,6 @@ void timed_trundle(DC_motor *mL, DC_motor *mR, int increments);
 void turn180(DC_motor *mL, DC_motor *mR);
 void turnLeft135(DC_motor *mL, DC_motor *mR);
 void turnRight135(DC_motor *mL, DC_motor *mR);
+void creep(DC_motor *mL, DC_motor *mR, int increments, char direction);
 
 #endif

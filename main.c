@@ -17,7 +17,7 @@
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz
 #define PAUSE_BETWEEN_INSTRUCTIONS 1
-#define NO_TRUNDLING 1
+#define NO_TRUNDLING 0
 
 //unsigned int revsc
 int increment = 0; // this is the 'base' time counter, increments every 16 seconds
@@ -73,7 +73,7 @@ void main(void){
     while(1) {
         
         if (wall_detected) {
-            // stop the buggy
+//            // stop the buggy
             fastStop(&motorL, &motorR);
 
             readColors(&RGBC);
@@ -81,7 +81,7 @@ void main(void){
             normalizeColors(&RGBC, &normRGB);
              
             //deciding what colour it is
-            char colourCode = decideColor(&normRGB);
+            char colourCode = decideColor(&normRGB, &RGBC, &motorL, &motorR);
             //finding and running the corresponding instructions:
             
             // Indicating the instruction code

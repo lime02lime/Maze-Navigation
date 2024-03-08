@@ -11,10 +11,6 @@ void color_click_init(void)
     //set integration time
 	color_writetoaddr(0x01, 0xF6);
     
-    
-    //DONT KNOW IF WORKS (interrupts & thresholds & persistence):
-    color_writetoaddr(0x0C, 0b01);
-    
     //Enable interrupts from the color clicker while turning colour sensing on and enabling RGBC
     color_writetoaddr(0x00, 0x13); 
     __delay_ms(3); //need to wait 3ms for everthing to start up
@@ -118,6 +114,7 @@ void normalizeColors(colors *RGBC, normColors *normRGB) {
     normRGB->normRed = (RGBC->red) / ((sum)/100);
     normRGB->normGreen = (RGBC->green) / ((sum)/100);
     normRGB->normBlue = (RGBC->blue) / ((sum)/100);
+    normRGB->clear = RGBC->clear;
     
 //    normRGB->normRed = (RGBC->red) / ((RGBC->clear)/100);
 //    normRGB->normGreen = (RGBC->green) / ((RGBC->clear)/100);
@@ -147,32 +144,77 @@ void readColors(colors *RGBC) {
     
 }
 
-
-unsigned int decideColor(normColors *normRGB) {
-    
-    if (normRGB->normBlue > 18) {
+char decideColor(normColors *normRGB, colors * RGBC, DC_motor *mL, DC_motor *mR) {
+    if (normRGB->normBlue > 17) {
+        creep(mL, mR, 16, 0);
         return 2; //BLUE
     }
-    if (normRGB->normGreen > 40) {
-        if (normRGB->normBlue > 12) {
-            return 6; //LIGHT BLUE
-        }
+    if (normRGB->normBlue > 12 && normRGB->normRed < 50) {
+        return 6; // LIGHT BLUE
+    }
+    if (normRGB->normRed > 70,normRGB->normGreen < 22) {
+        return 0; // RED
+    }
+    else { 
+        // Everything below here will have the buggy move right against the wall for better / more consistent detection
+        LEDturnON();
+        __delay_ms(1000);
+        creep(mL, mR, 8, 1);
+        readColors(RGBC); 
+        normalizeColors(RGBC, normRGB);
+        creep(mL, mR, 16, 0);
+    }
         
-        return 1; //GREEN
-    } else {
-    if (normRGB->normRed > 55) {
-        //further decision splits
-        if (normRGB->normGreen > 30) {
-            if (normRGB->normBlue > 12) {
-                return 4; //PINK
-            }
-            
-            return 3; //YELLOW
+        if (normRGB->clear < 0x300) {
+            return 8; // BLACK
         }
-        return 0; //RED
-    }}
+        if (normRGB->normGreen > 48) {
+            return 1; // GREEN
+        }
+        if (normRGB->normRed > 60 && normRGB->normGreen < 30) {
+            return 5; // ORANGE
+        }
+        if (normRGB->normBlue < 7) {
+            return 3; //    YELLOW
+        }
+        else {
+            if (normRGB->normGreen > 34) {
+                return 7; // WHITE
+            }
+            else {
+                return 4; // PINK
+            }
+        }
+    }
     
-    //if nothing:
-    return 0;
     
-}
+
+
+//unsigned int decideColor(normColors *normRGB) {
+//    
+//    if (normRGB->normBlue > 18) {
+//        return 2; //BLUE
+//    }
+//    if (normRGB->normGreen > 40) {
+//        if (normRGB->normBlue > 12) {
+//            return 6; //LIGHT BLUE
+//        }
+//        
+//        return 1; //GREEN
+//    } else {
+//    if (normRGB->normRed > 55) {
+//        //further decision splits
+//        if (normRGB->normGreen > 30) {
+//            if (normRGB->normBlue > 12) {
+//                return 4; //PINK
+//            }
+//            
+//            return 3; //YELLOW
+//        }
+//        return 0; //RED
+//    }}
+//    
+//    //if nothing:
+//    return 0;
+//    
+//}

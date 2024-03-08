@@ -2,6 +2,7 @@
 #define _color_H
 
 #include <xc.h>
+#include "dc_motor.h"
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
@@ -47,8 +48,10 @@ typedef struct normColors {
     unsigned int normRed;
     unsigned int normGreen;
     unsigned int normBlue;
+    unsigned int clear;
 } normColors;
 
 void readColors(colors *RGBC);
 void normalizeColors(colors *RGBC, normColors *normRGB);
-unsigned int decideColor(normColors *normRGB);
+char decideColor(normColors *normRGB, colors * RGBC, DC_motor *mL, DC_motor *mR);
+//unsigned int decideColor(normColors *normRGB);

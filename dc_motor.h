@@ -6,6 +6,7 @@
 #define _XTAL_FREQ 64000000
 extern int increment;
 extern char turnLeftPower;
+extern char turnRightPower;
 
 typedef struct DC_motor { //definition of DC_motor structure
     char power;         //motor power, out of 100
@@ -22,7 +23,7 @@ void setMotorPWM(DC_motor *m);
 void stop(DC_motor *mL, DC_motor *mR);
 void fastStop(DC_motor *mL, DC_motor *mR);
 void turnLeft(DC_motor *mL, DC_motor *mR, char power);
-void turnRight(DC_motor *mL, DC_motor *mR);
+void turnRight(DC_motor *mL, DC_motor *mR, char power);
 void fullSpeedAhead(DC_motor *mL, DC_motor *mR);
 void trundle(DC_motor *mL, DC_motor *mR);
 void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char reverse);
@@ -32,5 +33,6 @@ void turnLeft135(DC_motor *mL, DC_motor *mR);
 void turnRight135(DC_motor *mL, DC_motor *mR);
 void creep(DC_motor *mL, DC_motor *mR, int increments, char direction);
 char leftCali(DC_motor *mL, DC_motor *mR);
+char rightCali(DC_motor *mL, DC_motor *mR);
 
 #endif

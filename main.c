@@ -30,6 +30,7 @@ char instruction_array_index = 0;
 char reverseRouteFlag = 0;
 
 char turnLeftPower = 28;
+char turnRightPower = 28;
 
 void main(void){
     color_click_init(); //initialise the colour clicker.
@@ -37,8 +38,6 @@ void main(void){
     initBoardLEDs(); //initialise LEDs on picKit.
     initButtons(); //initialise buttons on picKit.
     
-    interrupts_init(); //initialise colour sensor interrupts.
-    Timer0_init(); //initialise timer overflow interrupts.
     
     //Structures to store the RGBC values read from the colour sensor, and then their normalised values.
     struct colors RGBC;
@@ -69,6 +68,11 @@ void main(void){
     //checkBattery();
 
     turnLeftPower = leftCali(&motorL, &motorR);
+    __delay_ms(500);
+    turnRightPower = rightCali(&motorL, &motorR);
+
+    interrupts_init(); //initialise colour sensor interrupts.
+    Timer0_init(); //initialise timer overflow interrupts.
     
     LEDturnON(); //turn on all 3 colours of the tri-colour LED + headlights.
     __delay_ms(1000);

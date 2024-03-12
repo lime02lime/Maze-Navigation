@@ -24099,6 +24099,7 @@ unsigned char __t3rd16on(void);
 
 extern int increment;
 extern char turnLeftPower;
+extern char turnRightPower;
 
 typedef struct DC_motor {
     char power;
@@ -24115,7 +24116,7 @@ void setMotorPWM(DC_motor *m);
 void stop(DC_motor *mL, DC_motor *mR);
 void fastStop(DC_motor *mL, DC_motor *mR);
 void turnLeft(DC_motor *mL, DC_motor *mR, char power);
-void turnRight(DC_motor *mL, DC_motor *mR);
+void turnRight(DC_motor *mL, DC_motor *mR, char power);
 void fullSpeedAhead(DC_motor *mL, DC_motor *mR);
 void trundle(DC_motor *mL, DC_motor *mR);
 void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char reverse);
@@ -24125,6 +24126,7 @@ void turnLeft135(DC_motor *mL, DC_motor *mR);
 void turnRight135(DC_motor *mL, DC_motor *mR);
 void creep(DC_motor *mL, DC_motor *mR, int increments, char direction);
 char leftCali(DC_motor *mL, DC_motor *mR);
+char rightCali(DC_motor *mL, DC_motor *mR);
 # 2 "instructions.c" 2
 
 # 1 "./instructions.h" 1
@@ -24136,6 +24138,7 @@ extern char instruction_array_index;
 extern char square;
 extern char reverseRouteFlag;
 extern char turnLeftPower;
+extern char turnRightPower;
 
 void executeInstruction(DC_motor *mL, DC_motor *mR, char colourCode);
 
@@ -24206,7 +24209,7 @@ void executeInstruction(DC_motor *mL, DC_motor *mR, char colourCode) {
 
 
 void Red(DC_motor *mL, DC_motor *mR){
-    turnRight(mL, mR);
+    turnRight(mL, mR, turnRightPower);
 }
 
 void Green(DC_motor *mL, DC_motor *mR) {
@@ -24219,7 +24222,7 @@ void Blue(DC_motor *mL, DC_motor *mR) {
 
 void Yellow(DC_motor *mL, DC_motor *mR) {
     trundleSquare(mL, mR, square, 1);
-    turnRight(mL, mR);
+    turnRight(mL, mR, turnRightPower);
 }
 
 void Pink(DC_motor *mL, DC_motor *mR) {
@@ -24253,7 +24256,7 @@ void reverseYellow(DC_motor *mL, DC_motor *mR) {
 }
 
 void reversePink(DC_motor *mL, DC_motor *mR) {
-    turnRight(mL, mR);
+    turnRight(mL, mR, turnRightPower);
     trundleSquare(mL, mR, square, 0);
     turn180(mL, mR);
 

@@ -51,7 +51,7 @@ void executeInstruction(DC_motor *mL, DC_motor *mR, char colourCode) {
 
 //THE FUNCTIONS BELOW GIVE THE SPECIFIC INSTRUCTIONS ASSOCIATED WITH EACH COLOUR
 void Red(DC_motor *mL, DC_motor *mR){
-    turnRight(mL, mR);
+    turnRight(mL, mR, turnRightPower);
 }
 
 void Green(DC_motor *mL, DC_motor *mR) {
@@ -64,7 +64,7 @@ void Blue(DC_motor *mL, DC_motor *mR) {
 
 void Yellow(DC_motor *mL, DC_motor *mR) {
     trundleSquare(mL, mR, square, 1);
-    turnRight(mL, mR);
+    turnRight(mL, mR, turnRightPower);
 }
 
 void Pink(DC_motor *mL, DC_motor *mR) {
@@ -98,7 +98,7 @@ void reverseYellow(DC_motor *mL, DC_motor *mR) {
 }
 
 void reversePink(DC_motor *mL, DC_motor *mR) {
-    turnRight(mL, mR);
+    turnRight(mL, mR, turnRightPower);
     trundleSquare(mL, mR, square, 0);
     turn180(mL, mR);
 

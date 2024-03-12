@@ -24099,6 +24099,7 @@ unsigned char __t3rd16on(void);
 
 extern int increment;
 extern char turnLeftPower;
+extern char turnRightPower;
 
 typedef struct DC_motor {
     char power;
@@ -24115,7 +24116,7 @@ void setMotorPWM(DC_motor *m);
 void stop(DC_motor *mL, DC_motor *mR);
 void fastStop(DC_motor *mL, DC_motor *mR);
 void turnLeft(DC_motor *mL, DC_motor *mR, char power);
-void turnRight(DC_motor *mL, DC_motor *mR);
+void turnRight(DC_motor *mL, DC_motor *mR, char power);
 void fullSpeedAhead(DC_motor *mL, DC_motor *mR);
 void trundle(DC_motor *mL, DC_motor *mR);
 void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char reverse);
@@ -24125,6 +24126,7 @@ void turnLeft135(DC_motor *mL, DC_motor *mR);
 void turnRight135(DC_motor *mL, DC_motor *mR);
 void creep(DC_motor *mL, DC_motor *mR, int increments, char direction);
 char leftCali(DC_motor *mL, DC_motor *mR);
+char rightCali(DC_motor *mL, DC_motor *mR);
 # 2 "dc_motor.c" 2
 
 
@@ -24242,6 +24244,29 @@ char leftCali(DC_motor *mL, DC_motor *mR){
     return power;
 }
 
+
+char rightCali(DC_motor *mL, DC_motor *mR){
+    while(PORTFbits.RF2);
+    char power = 26;
+    while (PORTFbits.RF2 || PORTFbits.RF3) {
+        _delay((unsigned long)((1000)*(64000000/4000.0)));
+        turnRight(mL,mR,power);
+
+        while (PORTFbits.RF2 && PORTFbits.RF3);
+        _delay((unsigned long)((80)*(64000000/4000.0)));
+        if(!PORTFbits.RF2 && !PORTFbits.RF3) {
+        } else{
+            if(!PORTFbits.RF2){
+                power++;
+            }
+            else{
+                power--;
+            }
+        }
+    }
+    return power;
+}
+
 void fastStop(DC_motor *mL, DC_motor *mR)
 {
 
@@ -24294,7 +24319,7 @@ void turnLeft(DC_motor *mL, DC_motor *mR, char power)
 }
 
 
-void turnRight(DC_motor *mL, DC_motor *mR)
+void turnRight(DC_motor *mL, DC_motor *mR, char power)
 {
 
     if (mL->power != 0 || mR->power != 0) {
@@ -24304,7 +24329,7 @@ void turnRight(DC_motor *mL, DC_motor *mR)
 
     mL->direction = 1;
     mR->direction = 0;
-    int maxpower = 28;
+    int maxpower = power;
 
 
     for (int i = 0; i < maxpower; i++) {
@@ -24327,7 +24352,7 @@ void turnRight(DC_motor *mL, DC_motor *mR)
         _delay((unsigned long)((5)*(64000000/4000.0)));
 
     }
-# 218 "dc_motor.c"
+# 241 "dc_motor.c"
 }
 
 

@@ -1,70 +1,73 @@
 Version 4.0 HI-TECH Software Intermediate Code
-"10 ./dc_motor.h
-[; ;./dc_motor.h: 10: typedef struct DC_motor {
+"11 ./dc_motor.h
+[; ;./dc_motor.h: 11: typedef struct DC_motor {
 [s S2015 `uc 1 `uc 1 `uc 1 `ui 1 `*uc 1 `*uc 1 ]
 [n S2015 DC_motor power direction brakemode PWMperiod posDutyHighByte negDutyHighByte ]
-"12 ./instructions.h
-[; ;./instructions.h: 12: void Red(DC_motor *mL, DC_motor *mR);
+"13 ./instructions.h
+[; ;./instructions.h: 13: void Red(DC_motor *mL, DC_motor *mR);
 [v _Red `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
-"13
-[; ;./instructions.h: 13: void Green(DC_motor *mL, DC_motor *mR);
-[v _Green `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
 "14
-[; ;./instructions.h: 14: void Blue(DC_motor *mL, DC_motor *mR);
-[v _Blue `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
+[; ;./instructions.h: 14: void Green(DC_motor *mL, DC_motor *mR);
+[v _Green `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
 "15
-[; ;./instructions.h: 15: void Yellow(DC_motor *mL, DC_motor *mR);
-[v _Yellow `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
+[; ;./instructions.h: 15: void Blue(DC_motor *mL, DC_motor *mR);
+[v _Blue `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
 "16
-[; ;./instructions.h: 16: void Pink(DC_motor *mL, DC_motor *mR);
-[v _Pink `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
+[; ;./instructions.h: 16: void Yellow(DC_motor *mL, DC_motor *mR);
+[v _Yellow `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
 "17
-[; ;./instructions.h: 17: void Orange(DC_motor *mL, DC_motor *mR);
-[v _Orange `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
+[; ;./instructions.h: 17: void Pink(DC_motor *mL, DC_motor *mR);
+[v _Pink `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
 "18
-[; ;./instructions.h: 18: void LightBlue(DC_motor *mL, DC_motor *mR);
-[v _LightBlue `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
+[; ;./instructions.h: 18: void Orange(DC_motor *mL, DC_motor *mR);
+[v _Orange `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
 "19
-[; ;./instructions.h: 19: void White(DC_motor *mL, DC_motor *mR);
-[v _White `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
+[; ;./instructions.h: 19: void LightBlue(DC_motor *mL, DC_motor *mR);
+[v _LightBlue `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
 "20
-[; ;./instructions.h: 20: void Black(DC_motor *mL, DC_motor *mR);
+[; ;./instructions.h: 20: void White(DC_motor *mL, DC_motor *mR);
+[v _White `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
+"21
+[; ;./instructions.h: 21: void Black(DC_motor *mL, DC_motor *mR);
 [v _Black `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
-"22
-[; ;./instructions.h: 22: void reverseYellow(DC_motor *mL, DC_motor *mR);
-[v _reverseYellow `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
 "23
-[; ;./instructions.h: 23: void reversePink(DC_motor *mL, DC_motor *mR);
+[; ;./instructions.h: 23: void reverseYellow(DC_motor *mL, DC_motor *mR);
+[v _reverseYellow `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
+"24
+[; ;./instructions.h: 24: void reversePink(DC_motor *mL, DC_motor *mR);
 [v _reversePink `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
-"24
-[; ;./instructions.h: 24: void reverseOrange(DC_motor *mL, DC_motor *mR);
-[v _reverseOrange `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
 "25
-[; ;./instructions.h: 25: void reverseLightBlue(DC_motor *mL, DC_motor *mR);
+[; ;./instructions.h: 25: void reverseOrange(DC_motor *mL, DC_motor *mR);
+[v _reverseOrange `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
+"26
+[; ;./instructions.h: 26: void reverseLightBlue(DC_motor *mL, DC_motor *mR);
 [v _reverseLightBlue `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
+"26 ./dc_motor.h
+[; ;./dc_motor.h: 26: void turnRight(DC_motor *mL, DC_motor *mR, char power);
+[v _turnRight `(v ~T0 @X0 0 ef3`*S2015`*S2015`uc ]
+"9 ./instructions.h
+[; ;./instructions.h: 9: extern char turnRightPower;
+[v _turnRightPower `uc ~T0 @X0 0 e ]
 "25 ./dc_motor.h
-[; ;./dc_motor.h: 25: void turnRight(DC_motor *mL, DC_motor *mR);
-[v _turnRight `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
-"24
-[; ;./dc_motor.h: 24: void turnLeft(DC_motor *mL, DC_motor *mR, char power);
+[; ;./dc_motor.h: 25: void turnLeft(DC_motor *mL, DC_motor *mR, char power);
 [v _turnLeft `(v ~T0 @X0 0 ef3`*S2015`*S2015`uc ]
 "8 ./instructions.h
 [; ;./instructions.h: 8: extern char turnLeftPower;
 [v _turnLeftPower `uc ~T0 @X0 0 e ]
-"30 ./dc_motor.h
-[; ;./dc_motor.h: 30: void turn180(DC_motor *mL, DC_motor *mR);
+"31 ./dc_motor.h
+[; ;./dc_motor.h: 31: void turn180(DC_motor *mL, DC_motor *mR);
 [v _turn180 `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
-"28
-[; ;./dc_motor.h: 28: void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char reverse);
+"29
+[; ;./dc_motor.h: 29: void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char reverse);
 [v _trundleSquare `(v ~T0 @X0 0 ef4`*S2015`*S2015`uc`uc ]
 "6 ./instructions.h
 [; ;./instructions.h: 6: extern char square;
 [v _square `uc ~T0 @X0 0 e ]
-"32 ./dc_motor.h
-[; ;./dc_motor.h: 32: void turnRight135(DC_motor *mL, DC_motor *mR);
+"33 ./dc_motor.h
+[; ;./dc_motor.h: 33: void turnRight135(DC_motor *mL, DC_motor *mR);
 [v _turnRight135 `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
-"31
-[; ;./dc_motor.h: 31: void turnLeft135(DC_motor *mL, DC_motor *mR);
+"32
+[; ;./dc_motor.h: 32: void turnLeft135(DC_motor *mL, DC_motor *mR);
 [v _turnLeft135 `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
 "7 ./instructions.h
 [; ;./instructions.h: 7: extern char reverseRouteFlag;
@@ -72,18 +75,18 @@ Version 4.0 HI-TECH Software Intermediate Code
 "7 ./dc_motor.h
 [; ;./dc_motor.h: 7: extern int increment;
 [v _increment `i ~T0 @X0 0 e ]
-"29
-[; ;./dc_motor.h: 29: void timed_trundle(DC_motor *mL, DC_motor *mR, int increments);
+"30
+[; ;./dc_motor.h: 30: void timed_trundle(DC_motor *mL, DC_motor *mR, int increments);
 [v _timed_trundle `(v ~T0 @X0 0 ef3`*S2015`*S2015`i ]
 "5 ./instructions.h
 [; ;./instructions.h: 5: extern char instruction_array_index;
 [v _instruction_array_index `uc ~T0 @X0 0 e ]
-[v F14191 `uc ~T0 @X0 -> 2 `i t ]
+[v F14196 `uc ~T0 @X0 -> 2 `i t ]
 "4
 [; ;./instructions.h: 4: extern char instruction_array[20][2];
-[v _instruction_array `F14191 ~T0 @X0 -> 0 `x e ]
-"22 ./dc_motor.h
-[; ;./dc_motor.h: 22: void stop(DC_motor *mL, DC_motor *mR);
+[v _instruction_array `F14196 ~T0 @X0 -> 0 `x e ]
+"23 ./dc_motor.h
+[; ;./dc_motor.h: 23: void stop(DC_motor *mL, DC_motor *mR);
 [v _stop `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
 "30262 C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h
 [; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 30262:     struct {
@@ -2237,8 +2240,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 [v _mR `*S2015 ~T0 @X0 1 r2 ]
 [f ]
 "54
-[; ;instructions.c: 54:     turnRight(mL, mR);
-[e ( _turnRight (2 , _mL _mR ]
+[; ;instructions.c: 54:     turnRight(mL, mR, turnRightPower);
+[e ( _turnRight (3 , , _mL _mR _turnRightPower ]
 "55
 [; ;instructions.c: 55: }
 [e :UE 2032 ]
@@ -2285,8 +2288,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;instructions.c: 66:     trundleSquare(mL, mR, square, 1);
 [e ( _trundleSquare (4 , , , _mL _mR _square -> -> 1 `i `uc ]
 "67
-[; ;instructions.c: 67:     turnRight(mL, mR);
-[e ( _turnRight (2 , _mL _mR ]
+[; ;instructions.c: 67:     turnRight(mL, mR, turnRightPower);
+[e ( _turnRight (3 , , _mL _mR _turnRightPower ]
 "68
 [; ;instructions.c: 68: }
 [e :UE 2035 ]
@@ -2396,8 +2399,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 [v _mR `*S2015 ~T0 @X0 1 r2 ]
 [f ]
 "101
-[; ;instructions.c: 101:     turnRight(mL, mR);
-[e ( _turnRight (2 , _mL _mR ]
+[; ;instructions.c: 101:     turnRight(mL, mR, turnRightPower);
+[e ( _turnRight (3 , , _mL _mR _turnRightPower ]
 "102
 [; ;instructions.c: 102:     trundleSquare(mL, mR, square, 0);
 [e ( _trundleSquare (4 , , , _mL _mR _square -> -> 0 `i `uc ]
@@ -2456,8 +2459,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 "121
 [; ;instructions.c: 121:     timed_trundle(mL, mR, last_increments);
 [e ( _timed_trundle (3 , , _mL _mR _last_increments ]
-[v F14289 `uc ~T0 @X0 -> 9 `i s ]
-[i F14289
+[v F14295 `uc ~T0 @X0 -> 9 `i s ]
+[i F14295
 :U ..
 "124
 [; ;instructions.c: 124:     char reverseMapping[9] = {1, 0, 2, 9, 10, 11, 12, -1, -1};
@@ -2473,7 +2476,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 ..
 ]
 [v _reverseMapping `uc ~T0 @X0 -> 9 `i a ]
-[e = _reverseMapping F14289 ]
+[e = _reverseMapping F14295 ]
 "125
 [; ;instructions.c: 125:     for (int i = instruction_array_index; i >= 0; i--) {
 {

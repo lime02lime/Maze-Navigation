@@ -115,6 +115,29 @@ char leftCali(DC_motor *mL, DC_motor *mR){
     return power;
 }
 
+
+char rightCali(DC_motor *mL, DC_motor *mR){
+    while(PORTFbits.RF2);
+    char power = 26;
+    while (PORTFbits.RF2 || PORTFbits.RF3) { //while both buttons aren't pressed, continue calibrating.
+        __delay_ms(1000);
+        turnRight(mL,mR,power);
+
+        while (PORTFbits.RF2 && PORTFbits.RF3);
+        __delay_ms(80);
+        if(!PORTFbits.RF2 && !PORTFbits.RF3) {
+        } else{
+            if(!PORTFbits.RF2){
+                power++;
+            }
+            else{
+                power--;
+            }
+        }
+    }
+    return power;
+}
+
 void fastStop(DC_motor *mL, DC_motor *mR)
 {
     // Look to see what current power is and floor it to nearest 10
@@ -167,7 +190,7 @@ void turnLeft(DC_motor *mL, DC_motor *mR, char power)
 }
 
 //function to make the robot turn right 
-void turnRight(DC_motor *mL, DC_motor *mR)
+void turnRight(DC_motor *mL, DC_motor *mR, char power)
 {   
     // If motors are on then stop the car
     if (mL->power != 0 || mR->power != 0) {
@@ -177,7 +200,7 @@ void turnRight(DC_motor *mL, DC_motor *mR)
      // Sets motors to turn in opposite directions to maintain buggy position
     mL->direction = 1;
     mR->direction = 0;
-    int maxpower = 28;
+    int maxpower = power;
     
     // Gradually increases power in the motors
     for (int i = 0; i < maxpower; i++) {

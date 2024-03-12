@@ -24109,6 +24109,7 @@ unsigned char __t3rd16on(void);
 
 extern int increment;
 extern char turnLeftPower;
+extern char turnRightPower;
 
 typedef struct DC_motor {
     char power;
@@ -24125,7 +24126,7 @@ void setMotorPWM(DC_motor *m);
 void stop(DC_motor *mL, DC_motor *mR);
 void fastStop(DC_motor *mL, DC_motor *mR);
 void turnLeft(DC_motor *mL, DC_motor *mR, char power);
-void turnRight(DC_motor *mL, DC_motor *mR);
+void turnRight(DC_motor *mL, DC_motor *mR, char power);
 void fullSpeedAhead(DC_motor *mL, DC_motor *mR);
 void trundle(DC_motor *mL, DC_motor *mR);
 void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char reverse);
@@ -24135,6 +24136,7 @@ void turnLeft135(DC_motor *mL, DC_motor *mR);
 void turnRight135(DC_motor *mL, DC_motor *mR);
 void creep(DC_motor *mL, DC_motor *mR, int increments, char direction);
 char leftCali(DC_motor *mL, DC_motor *mR);
+char rightCali(DC_motor *mL, DC_motor *mR);
 # 11 "main.c" 2
 
 # 1 "./color.h" 1
@@ -24252,6 +24254,7 @@ extern char instruction_array_index;
 extern char square;
 extern char reverseRouteFlag;
 extern char turnLeftPower;
+extern char turnRightPower;
 
 void executeInstruction(DC_motor *mL, DC_motor *mR, char colourCode);
 
@@ -24299,7 +24302,8 @@ char instruction_array[20][2];
 char instruction_array_index = 0;
 char reverseRouteFlag = 0;
 
-char turnLeftPower;
+char turnLeftPower = 28;
+char turnRightPower = 28;
 
 void main(void){
     color_click_init();
@@ -24307,8 +24311,6 @@ void main(void){
     initBoardLEDs();
     initButtons();
 
-    interrupts_init();
-    Timer0_init();
 
 
     struct colors RGBC;
@@ -24339,6 +24341,11 @@ void main(void){
 
 
     turnLeftPower = leftCali(&motorL, &motorR);
+    _delay((unsigned long)((500)*(64000000/4000.0)));
+    turnRightPower = rightCali(&motorL, &motorR);
+
+    interrupts_init();
+    Timer0_init();
 
     LEDturnON();
     _delay((unsigned long)((1000)*(64000000/4000.0)));

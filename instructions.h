@@ -5,6 +5,7 @@ extern char instruction_array[20][2];
 extern char instruction_array_index;
 extern char square;
 extern char reverseRouteFlag;
+extern char turnLeftPower;
 
 void executeInstruction(DC_motor *mL, DC_motor *mR, char colourCode);
 

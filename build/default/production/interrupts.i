@@ -24141,7 +24141,55 @@ unsigned char I2C_2_Master_Read(unsigned char ack);
 # 3 "interrupts.c" 2
 
 # 1 "./color.h" 1
-# 11 "./color.h"
+
+
+
+
+# 1 "./dc_motor.h" 1
+
+
+
+
+# 1 "./dc_motor.h" 1
+# 5 "./dc_motor.h" 2
+
+
+extern int increment;
+extern char turnLeftPower;
+
+typedef struct DC_motor {
+    char power;
+    char direction;
+    char brakemode;
+    unsigned int PWMperiod;
+    unsigned char *posDutyHighByte;
+    unsigned char *negDutyHighByte;
+} DC_motor;
+
+
+void initDCmotorsPWM(unsigned int PWMperiod);
+void setMotorPWM(DC_motor *m);
+void stop(DC_motor *mL, DC_motor *mR);
+void fastStop(DC_motor *mL, DC_motor *mR);
+void turnLeft(DC_motor *mL, DC_motor *mR, char power);
+void turnRight(DC_motor *mL, DC_motor *mR);
+void fullSpeedAhead(DC_motor *mL, DC_motor *mR);
+void trundle(DC_motor *mL, DC_motor *mR);
+void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char reverse);
+void timed_trundle(DC_motor *mL, DC_motor *mR, int increments);
+void turn180(DC_motor *mL, DC_motor *mR);
+void turnLeft135(DC_motor *mL, DC_motor *mR);
+void turnRight135(DC_motor *mL, DC_motor *mR);
+void creep(DC_motor *mL, DC_motor *mR, int increments, char direction);
+char leftCali(DC_motor *mL, DC_motor *mR);
+# 5 "./color.h" 2
+
+
+
+
+
+
+
 void color_click_init(void);
 
 
@@ -24174,15 +24222,17 @@ typedef struct colors {
 
 
 
+
 typedef struct normColors {
     unsigned int normRed;
     unsigned int normGreen;
     unsigned int normBlue;
+    unsigned int clear;
 } normColors;
 
 void readColors(colors *RGBC);
 void normalizeColors(colors *RGBC, normColors *normRGB);
-unsigned int decideColor(normColors *normRGB);
+char decideColor(normColors *normRGB, colors * RGBC, DC_motor *mL, DC_motor *mR);
 # 4 "interrupts.c" 2
 
 # 1 "./interact.h" 1
@@ -24213,12 +24263,17 @@ void interrupts_init(void)
     IPR0bits.INT0IP = 0;
     ANSELBbits.ANSELB0 = 0;
 
+
     color_writetoaddr(0x04, 0x00);
     color_writetoaddr(0x05, 0x01);
-    color_writetoaddr(0x06, 0x1C0);
-    color_writetoaddr(0x07, 0b0000001);
+    color_writetoaddr(0x06, 0b00000000);
+    color_writetoaddr(0x07, 0b00000010);
 
-    color_writetoaddr(0x0C, 0b0111);
+
+
+
+
+    color_writetoaddr(0x0C, 0b0011);
 
 
     PIE0bits.TMR0IE = 1;
@@ -24235,75 +24290,45 @@ void Timer0_init(void)
 {
     T0CON1bits.T0CS=0b010;
     T0CON1bits.T0ASYNC=1;
-    T0CON1bits.T0CKPS=0b0000;
+    T0CON1bits.T0CKPS=0b0101;
     T0CON0bits.T016BIT=1;
-# 78 "interrupts.c"
+
+
+
+
     TMR0H=0;
-    TMR0L=3036;
+    TMR0L=0;
     T0CON0bits.T0EN=1;
 }
+
 
 void __attribute__((picinterrupt(("high_priority")))) High_ISR() {
     if (PIR0bits.INT0IF) {
 
-
-
-
-
-
-
-        if (wall_detected==0) {
-            RGBC.clear = readClearColor();
-            LEDturnOFF();
-            LATGbits.LATG0 = 1;
-            _delay((unsigned long)((100)*(64000000/4000.0)));
-            RGBC.red = readRedColor();
-            _delay((unsigned long)((100)*(64000000/4000.0)));
-            LATGbits.LATG0 = 0;
-            LATEbits.LATE7 = 1;
-            _delay((unsigned long)((100)*(64000000/4000.0)));
-            RGBC.green = readGreenColor();
-            _delay((unsigned long)((100)*(64000000/4000.0)));
-            LATEbits.LATE7 = 0;
-            LATAbits.LATA3 = 1;
-            _delay((unsigned long)((100)*(64000000/4000.0)));
-            RGBC.blue = readBlueColor();
-            _delay((unsigned long)((100)*(64000000/4000.0)));
-            LATAbits.LATA3 = 0;
-
-            _delay((unsigned long)((1000)*(64000000/4000.0)));
-            wall_detected = 1;
-        }
-
+        LATDbits.LATD7 = 1;
+        wall_detected = 1;
 
         clearInterrupt();
-
         PIR0bits.INT0IF = 0;
+
+
+
+        INTCONbits.GIE=0;
     }
 
     if (PIR0bits.TMR0IF) {
         PIR0bits.TMR0IF = 0;
         increment++;
-
     }
 
 }
-# 146 "interrupts.c"
+
+
+
 void clearInterrupt(void){
     I2C_2_Master_Start();
     I2C_2_Master_Write(0x52 | 0x00);
     I2C_2_Master_Write(0xe0 | 0x06 );
     I2C_2_Master_Stop();
 
-}
-
-void toggleLED(void) {
-    int current = LATDbits.LATD7;
-    if (current == 0) {
-        LATDbits.LATD7 = 1;
-    }
-    else {
-        LATDbits.LATD7 = 0;
-
-    }
 }

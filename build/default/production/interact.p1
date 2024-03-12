@@ -2088,84 +2088,84 @@ Version 4.0 HI-TECH Software Intermediate Code
 "40592
 [; ;C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h: 40592: __asm("TOSU equ 0FFFh");
 [; <" TOSU equ 0FFFh ;# ">
-"6 interact.c
-[; ;interact.c: 6: void init_buttons_LED(void){
+"8 interact.c
+[; ;interact.c: 8: void init_buttons_LED(void){
 [v _init_buttons_LED `(v ~T0 @X0 1 ef ]
 {
 [e :U _init_buttons_LED ]
 [f ]
-"9
-[; ;interact.c: 9:     TRISGbits.TRISG0 = 0;
-[e = . . _TRISGbits 0 0 -> -> 0 `i `uc ]
 "10
-[; ;interact.c: 10:     TRISEbits.TRISE7 = 0;
-[e = . . _TRISEbits 0 7 -> -> 0 `i `uc ]
+[; ;interact.c: 10:     TRISGbits.TRISG0 = 0;
+[e = . . _TRISGbits 0 0 -> -> 0 `i `uc ]
 "11
-[; ;interact.c: 11:     TRISAbits.TRISA3 = 0;
-[e = . . _TRISAbits 0 3 -> -> 0 `i `uc ]
+[; ;interact.c: 11:     TRISEbits.TRISE7 = 0;
+[e = . . _TRISEbits 0 7 -> -> 0 `i `uc ]
 "12
-[; ;interact.c: 12:     TRISDbits.TRISD3 = 0;
-[e = . . _TRISDbits 0 3 -> -> 0 `i `uc ]
+[; ;interact.c: 12:     TRISAbits.TRISA3 = 0;
+[e = . . _TRISAbits 0 3 -> -> 0 `i `uc ]
 "13
-[; ;interact.c: 13:     TRISHbits.TRISH1 = 0;
-[e = . . _TRISHbits 0 1 -> -> 0 `i `uc ]
+[; ;interact.c: 13:     TRISDbits.TRISD3 = 0;
+[e = . . _TRISDbits 0 3 -> -> 0 `i `uc ]
 "14
-[; ;interact.c: 14:     TRISDbits.TRISD4 = 0;
+[; ;interact.c: 14:     TRISHbits.TRISH1 = 0;
+[e = . . _TRISHbits 0 1 -> -> 0 `i `uc ]
+"15
+[; ;interact.c: 15:     TRISDbits.TRISD4 = 0;
 [e = . . _TRISDbits 0 4 -> -> 0 `i `uc ]
-"17
-[; ;interact.c: 17:     LATGbits.LATG0 = 0;
-[e = . . _LATGbits 0 0 -> -> 0 `i `uc ]
-"18
-[; ;interact.c: 18:     LATEbits.LATE7 = 0;
-[e = . . _LATEbits 0 7 -> -> 0 `i `uc ]
 "19
-[; ;interact.c: 19:     LATAbits.LATA3 = 0;
-[e = . . _LATAbits 0 3 -> -> 0 `i `uc ]
+[; ;interact.c: 19:     LATGbits.LATG0 = 0;
+[e = . . _LATGbits 0 0 -> -> 0 `i `uc ]
 "20
-[; ;interact.c: 20: }
-[e :UE 2017 ]
+[; ;interact.c: 20:     LATEbits.LATE7 = 0;
+[e = . . _LATEbits 0 7 -> -> 0 `i `uc ]
+"21
+[; ;interact.c: 21:     LATAbits.LATA3 = 0;
+[e = . . _LATAbits 0 3 -> -> 0 `i `uc ]
+"22
+[; ;interact.c: 22: }
+[e :UE 2018 ]
 }
-"23
-[; ;interact.c: 23: void LEDturnON(void){
+"25
+[; ;interact.c: 25: void LEDturnON(void){
 [v _LEDturnON `(v ~T0 @X0 1 ef ]
 {
 [e :U _LEDturnON ]
 [f ]
-"24
-[; ;interact.c: 24:     LATDbits.LATD3 = 1;
+"26
+[; ;interact.c: 26:     LATDbits.LATD3 = 1;
 [e = . . _LATDbits 0 3 -> -> 1 `i `uc ]
-"27
-[; ;interact.c: 27:     LATGbits.LATG0 = 1;
-[e = . . _LATGbits 0 0 -> -> 1 `i `uc ]
 "28
-[; ;interact.c: 28:     LATEbits.LATE7 = 1;
-[e = . . _LATEbits 0 7 -> -> 1 `i `uc ]
+[; ;interact.c: 28:     LATGbits.LATG0 = 1;
+[e = . . _LATGbits 0 0 -> -> 1 `i `uc ]
 "29
-[; ;interact.c: 29:     LATAbits.LATA3 = 1;
-[e = . . _LATAbits 0 3 -> -> 1 `i `uc ]
+[; ;interact.c: 29:     LATEbits.LATE7 = 1;
+[e = . . _LATEbits 0 7 -> -> 1 `i `uc ]
 "30
-[; ;interact.c: 30: }
-[e :UE 2018 ]
+[; ;interact.c: 30:     LATAbits.LATA3 = 1;
+[e = . . _LATAbits 0 3 -> -> 1 `i `uc ]
+"31
+[; ;interact.c: 31: }
+[e :UE 2019 ]
 }
-"32
-[; ;interact.c: 32: void LEDturnOFF(void){
+"33
+[; ;interact.c: 33: void LEDturnOFF(void){
 [v _LEDturnOFF `(v ~T0 @X0 1 ef ]
 {
 [e :U _LEDturnOFF ]
 [f ]
-"33
-[; ;interact.c: 33:     LATDbits.LATD3 = 0;
+"34
+[; ;interact.c: 34:     LATDbits.LATD3 = 0;
 [e = . . _LATDbits 0 3 -> -> 0 `i `uc ]
-"36
-[; ;interact.c: 36:     LATGbits.LATG0 = 0;
-[e = . . _LATGbits 0 0 -> -> 0 `i `uc ]
 "37
-[; ;interact.c: 37:     LATEbits.LATE7 = 0;
-[e = . . _LATEbits 0 7 -> -> 0 `i `uc ]
+[; ;interact.c: 37:     LATGbits.LATG0 = 0;
+[e = . . _LATGbits 0 0 -> -> 0 `i `uc ]
 "38
-[; ;interact.c: 38:     LATAbits.LATA3 = 0;
-[e = . . _LATAbits 0 3 -> -> 0 `i `uc ]
+[; ;interact.c: 38:     LATEbits.LATE7 = 0;
+[e = . . _LATEbits 0 7 -> -> 0 `i `uc ]
 "39
-[; ;interact.c: 39: }
-[e :UE 2019 ]
+[; ;interact.c: 39:     LATAbits.LATA3 = 0;
+[e = . . _LATAbits 0 3 -> -> 0 `i `uc ]
+"40
+[; ;interact.c: 40: }
+[e :UE 2020 ]
 }

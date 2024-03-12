@@ -1,4 +1,4 @@
-# 1 "interact.c"
+# 1 "instructions.c"
 # 1 "<built-in>" 1
 # 1 "<built-in>" 3
 # 288 "<built-in>" 3
@@ -6,7 +6,12 @@
 # 1 "<built-in>" 2
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\language_support.h" 1 3
 # 2 "<built-in>" 2
-# 1 "interact.c" 2
+# 1 "instructions.c" 2
+
+# 1 "./dc_motor.h" 1
+
+
+
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\xc.h" 1 3
 # 18 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\xc.h" 3
 extern const char __xc8_OPTIM_SPEED;
@@ -24086,17 +24091,7 @@ __attribute__((__unsupported__("The READTIMER" "0" "() macro is not available wi
 unsigned char __t1rd16on(void);
 unsigned char __t3rd16on(void);
 # 33 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\xc.h" 2 3
-# 1 "interact.c" 2
-
-# 1 "./color.h" 1
-
-
-
-
-# 1 "./dc_motor.h" 1
-
-
-
+# 4 "./dc_motor.h" 2
 
 # 1 "./dc_motor.h" 1
 # 5 "./dc_motor.h" 2
@@ -24130,134 +24125,163 @@ void turnLeft135(DC_motor *mL, DC_motor *mR);
 void turnRight135(DC_motor *mL, DC_motor *mR);
 void creep(DC_motor *mL, DC_motor *mR, int increments, char direction);
 char leftCali(DC_motor *mL, DC_motor *mR);
-# 5 "./color.h" 2
+# 2 "instructions.c" 2
+
+# 1 "./instructions.h" 1
+
+
+
+extern char instruction_array[20][2];
+extern char instruction_array_index;
+extern char square;
+extern char reverseRouteFlag;
+extern char turnLeftPower;
+
+void executeInstruction(DC_motor *mL, DC_motor *mR, char colourCode);
+
+void Red(DC_motor *mL, DC_motor *mR);
+void Green(DC_motor *mL, DC_motor *mR);
+void Blue(DC_motor *mL, DC_motor *mR);
+void Yellow(DC_motor *mL, DC_motor *mR);
+void Pink(DC_motor *mL, DC_motor *mR);
+void Orange(DC_motor *mL, DC_motor *mR);
+void LightBlue(DC_motor *mL, DC_motor *mR);
+void White(DC_motor *mL, DC_motor *mR);
+void Black(DC_motor *mL, DC_motor *mR);
+
+void reverseYellow(DC_motor *mL, DC_motor *mR);
+void reversePink(DC_motor *mL, DC_motor *mR);
+void reverseOrange(DC_motor *mL, DC_motor *mR);
+void reverseLightBlue(DC_motor *mL, DC_motor *mR);
+void reverseRoute(DC_motor *mL, DC_motor *mR);
+# 3 "instructions.c" 2
 
 
 
 
 
-
-
-void color_click_init(void);
-
-
-
-
-
-
-void color_writetoaddr(char address, char value);
-unsigned int color_readfromaddress(char address);
-unsigned int color_readdoublefromaddress(char address);
-
-
-
-
-unsigned int readRedColor(void);
-unsigned int readGreenColor(void);
-unsigned int readBlueColor(void);
-unsigned int readClearColor(void);
-
-
-
-
-
-typedef struct colors {
-    unsigned int red;
-    unsigned int green;
-    unsigned int blue;
-    unsigned int clear;
-} colors;
-
-
-
-
-typedef struct normColors {
-    unsigned int normRed;
-    unsigned int normGreen;
-    unsigned int normBlue;
-    unsigned int clear;
-} normColors;
-
-void readColors(colors *RGBC);
-void normalizeColors(colors *RGBC, normColors *normRGB);
-char decideColor(normColors *normRGB, colors * RGBC, DC_motor *mL, DC_motor *mR);
-# 2 "interact.c" 2
-
-# 1 "./i2c.h" 1
-# 13 "./i2c.h"
-void I2C_2_Master_Init(void);
-
-
-
-
-void I2C_2_Master_Idle(void);
-
-
-
-
-void I2C_2_Master_Start(void);
-
-
-
-
-void I2C_2_Master_RepStart(void);
-
-
-
-
-void I2C_2_Master_Stop(void);
-
-
-
-
-void I2C_2_Master_Write(unsigned char data_byte);
-
-
-
-
-unsigned char I2C_2_Master_Read(unsigned char ack);
-# 3 "interact.c" 2
-
-# 1 "./interact.h" 1
-# 17 "./interact.h"
-void init_buttons_LED(void);
-void LEDturnOFF(void);
-void LEDturnON(void);
-# 4 "interact.c" 2
-
-
-
-
-void init_buttons_LED(void){
-
-    TRISGbits.TRISG0 = 0;
-    TRISEbits.TRISE7 = 0;
-    TRISAbits.TRISA3 = 0;
-    TRISDbits.TRISD3 = 0;
-    TRISHbits.TRISH1 = 0;
-    TRISDbits.TRISD4 = 0;
-
-
-
-    LATGbits.LATG0 = 0;
-    LATEbits.LATE7 = 0;
-    LATAbits.LATA3 = 0;
+void executeInstruction(DC_motor *mL, DC_motor *mR, char colourCode) {
+    switch (colourCode) {
+        case 0:
+            Red(mL, mR);
+            break;
+        case 1:
+            Green(mL, mR);
+            break;
+        case 2:
+            Blue(mL, mR);
+            break;
+        case 3:
+            Yellow(mL, mR);
+            break;
+        case 4:
+            Pink(mL, mR);
+            break;
+        case 5:
+            Orange(mL, mR);
+            break;
+        case 6:
+            LightBlue(mL, mR);
+            break;
+        case 7:
+            White(mL, mR);
+            break;
+        case 8:
+            Black(mL, mR);
+            break;
+        case 9:
+            reverseYellow(mL, mR);
+            break;
+        case 10:
+            reversePink(mL, mR);
+            break;
+        case 11:
+            reverseOrange(mL, mR);
+            break;
+        case 12:
+            reverseLightBlue(mL, mR);
+            break;
+    }
 }
 
 
-void LEDturnON(void){
-    LATDbits.LATD3 = 1;
-
-    LATGbits.LATG0 = 1;
-    LATEbits.LATE7 = 1;
-    LATAbits.LATA3 = 1;
+void Red(DC_motor *mL, DC_motor *mR){
+    turnRight(mL, mR);
 }
 
-void LEDturnOFF(void){
-    LATDbits.LATD3 = 0;
+void Green(DC_motor *mL, DC_motor *mR) {
+    turnLeft(mL, mR, turnLeftPower);
+}
+
+void Blue(DC_motor *mL, DC_motor *mR) {
+    turn180(mL, mR);
+}
+
+void Yellow(DC_motor *mL, DC_motor *mR) {
+    trundleSquare(mL, mR, square, 1);
+    turnRight(mL, mR);
+}
+
+void Pink(DC_motor *mL, DC_motor *mR) {
+    trundleSquare(mL, mR, square, 1);
+    turnLeft(mL, mR, turnLeftPower);
+
+}
+
+void Orange(DC_motor *mL, DC_motor *mR) {
+    turnRight135(mL, mR);
+}
+
+void LightBlue(DC_motor *mL, DC_motor *mR) {
+    turnLeft135(mL, mR);
+}
+
+void White(DC_motor *mL, DC_motor *mR) {
+    reverseRouteFlag=1;
+}
+
+void Black(DC_motor *mL, DC_motor *mR) {
+
+}
 
 
-    LATGbits.LATG0 = 0;
-    LATEbits.LATE7 = 0;
-    LATAbits.LATA3 = 0;
+
+void reverseYellow(DC_motor *mL, DC_motor *mR) {
+    turnLeft(mL, mR, turnLeftPower);
+    trundleSquare(mL, mR, square, 0);
+    turn180(mL, mR);
+}
+
+void reversePink(DC_motor *mL, DC_motor *mR) {
+    turnRight(mL, mR);
+    trundleSquare(mL, mR, square, 0);
+    turn180(mL, mR);
+
+}
+
+void reverseOrange(DC_motor *mL, DC_motor *mR) {
+    turnRight135(mL, mR);
+}
+
+void reverseLightBlue(DC_motor *mL, DC_motor *mR) {
+    turnLeft135(mL, mR);
+}
+
+
+
+void reverseRoute(DC_motor *mL, DC_motor *mR) {
+
+    int last_increments = increment;
+    turn180(mL, mR);
+    timed_trundle(mL, mR, last_increments);
+
+
+    char reverseMapping[9] = {1, 0, 2, 9, 10, 11, 12, -1, -1};
+    for (int i = instruction_array_index; i >= 0; i--) {
+        executeInstruction(mL, mR, reverseMapping[instruction_array[i][0]]);
+        timed_trundle(mL, mR, instruction_array[i][1]);
+    }
+    stop(mL, mR);
+    instruction_array_index = 0;
+    while (PORTFbits.RF2);
 }

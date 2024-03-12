@@ -55,7 +55,7 @@ void Red(DC_motor *mL, DC_motor *mR){
 }
 
 void Green(DC_motor *mL, DC_motor *mR) {
-    turnLeft(mL, mR);
+    turnLeft(mL, mR, turnLeftPower);
 }
 
 void Blue(DC_motor *mL, DC_motor *mR) {
@@ -69,7 +69,7 @@ void Yellow(DC_motor *mL, DC_motor *mR) {
 
 void Pink(DC_motor *mL, DC_motor *mR) {
     trundleSquare(mL, mR, square, 1);
-    turnLeft(mL, mR);
+    turnLeft(mL, mR, turnLeftPower);
 
 }
 
@@ -92,7 +92,7 @@ void Black(DC_motor *mL, DC_motor *mR) {
 // =======================
 
 void reverseYellow(DC_motor *mL, DC_motor *mR) {
-    turnLeft(mL, mR);
+    turnLeft(mL, mR, turnLeftPower);
     trundleSquare(mL, mR, square, 0);
     turn180(mL, mR);
 }

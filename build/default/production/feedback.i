@@ -1,4 +1,4 @@
-# 1 "interact.c"
+# 1 "feedback.c"
 # 1 "<built-in>" 1
 # 1 "<built-in>" 3
 # 288 "<built-in>" 3
@@ -6,7 +6,11 @@
 # 1 "<built-in>" 2
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\language_support.h" 1 3
 # 2 "<built-in>" 2
-# 1 "interact.c" 2
+# 1 "feedback.c" 2
+
+
+# 1 "./feedback.h" 1
+
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\xc.h" 1 3
 # 18 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\xc.h" 3
 extern const char __xc8_OPTIM_SPEED;
@@ -24086,178 +24090,81 @@ __attribute__((__unsupported__("The READTIMER" "0" "() macro is not available wi
 unsigned char __t1rd16on(void);
 unsigned char __t3rd16on(void);
 # 33 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\xc.h" 2 3
-# 1 "interact.c" 2
+# 2 "./feedback.h" 2
 
-# 1 "./color.h" 1
 
 
 
+void toggleLEDD7(void);
+void initBoardLEDs(void);
+void indicateInstruction(char period);
+void initButtons(void);
+void checkBattery(void);
+# 3 "feedback.c" 2
 
-# 1 "./dc_motor.h" 1
 
+void initBoardLEDs(void) {
+    TRISDbits.TRISD7 = 0;
+    LATDbits.LATD7 = 0;
+    TRISHbits.TRISH3 = 0;
+    LATHbits.LATH3 = 0;
+}
 
-
-
-# 1 "./dc_motor.h" 1
-# 5 "./dc_motor.h" 2
-
-
-extern int increment;
-extern char turnLeftPower;
-
-typedef struct DC_motor {
-    char power;
-    char direction;
-    char brakemode;
-    unsigned int PWMperiod;
-    unsigned char *posDutyHighByte;
-    unsigned char *negDutyHighByte;
-} DC_motor;
-
-
-void initDCmotorsPWM(unsigned int PWMperiod);
-void setMotorPWM(DC_motor *m);
-void stop(DC_motor *mL, DC_motor *mR);
-void fastStop(DC_motor *mL, DC_motor *mR);
-void turnLeft(DC_motor *mL, DC_motor *mR, char power);
-void turnRight(DC_motor *mL, DC_motor *mR);
-void fullSpeedAhead(DC_motor *mL, DC_motor *mR);
-void trundle(DC_motor *mL, DC_motor *mR);
-void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char reverse);
-void timed_trundle(DC_motor *mL, DC_motor *mR, int increments);
-void turn180(DC_motor *mL, DC_motor *mR);
-void turnLeft135(DC_motor *mL, DC_motor *mR);
-void turnRight135(DC_motor *mL, DC_motor *mR);
-void creep(DC_motor *mL, DC_motor *mR, int increments, char direction);
-char leftCali(DC_motor *mL, DC_motor *mR);
-# 5 "./color.h" 2
-
-
-
-
-
-
-
-void color_click_init(void);
-
-
-
-
-
-
-void color_writetoaddr(char address, char value);
-unsigned int color_readfromaddress(char address);
-unsigned int color_readdoublefromaddress(char address);
-
-
-
-
-unsigned int readRedColor(void);
-unsigned int readGreenColor(void);
-unsigned int readBlueColor(void);
-unsigned int readClearColor(void);
-
-
-
-
-
-typedef struct colors {
-    unsigned int red;
-    unsigned int green;
-    unsigned int blue;
-    unsigned int clear;
-} colors;
-
-
-
-
-typedef struct normColors {
-    unsigned int normRed;
-    unsigned int normGreen;
-    unsigned int normBlue;
-    unsigned int clear;
-} normColors;
-
-void readColors(colors *RGBC);
-void normalizeColors(colors *RGBC, normColors *normRGB);
-char decideColor(normColors *normRGB, colors * RGBC, DC_motor *mL, DC_motor *mR);
-# 2 "interact.c" 2
-
-# 1 "./i2c.h" 1
-# 13 "./i2c.h"
-void I2C_2_Master_Init(void);
-
-
-
-
-void I2C_2_Master_Idle(void);
-
-
-
-
-void I2C_2_Master_Start(void);
-
-
-
-
-void I2C_2_Master_RepStart(void);
-
-
-
-
-void I2C_2_Master_Stop(void);
-
-
-
-
-void I2C_2_Master_Write(unsigned char data_byte);
-
-
-
-
-unsigned char I2C_2_Master_Read(unsigned char ack);
-# 3 "interact.c" 2
-
-# 1 "./interact.h" 1
-# 17 "./interact.h"
-void init_buttons_LED(void);
-void LEDturnOFF(void);
-void LEDturnON(void);
-# 4 "interact.c" 2
-
-
-
-
-void init_buttons_LED(void){
-
-    TRISGbits.TRISG0 = 0;
-    TRISEbits.TRISE7 = 0;
-    TRISAbits.TRISA3 = 0;
-    TRISDbits.TRISD3 = 0;
-    TRISHbits.TRISH1 = 0;
-    TRISDbits.TRISD4 = 0;
-
-
-
-    LATGbits.LATG0 = 0;
-    LATEbits.LATE7 = 0;
-    LATAbits.LATA3 = 0;
+void initButtons(void) {
+    TRISFbits.TRISF2 = 1;
+    ANSELFbits.ANSELF2=0;
+    TRISFbits.TRISF3 = 1;
+    ANSELFbits.ANSELF3=0;
 }
 
 
-void LEDturnON(void){
-    LATDbits.LATD3 = 1;
+void toggleLEDD7(void) {
+    int current = LATDbits.LATD7;
+    if (current == 0) {
+        LATDbits.LATD7 = 1;
+    }
+    else {
+        LATDbits.LATD7 = 0;
 
-    LATGbits.LATG0 = 1;
-    LATEbits.LATE7 = 1;
-    LATAbits.LATA3 = 1;
+    }
 }
 
-void LEDturnOFF(void){
-    LATDbits.LATD3 = 0;
+void indicateInstruction(char period) {
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < period; j++) {
+            LATHbits.LATH3 = 1;
+            _delay((unsigned long)((150)*(64000000/4000.0)));
+            LATHbits.LATH3 = 0;
+            _delay((unsigned long)((150)*(64000000/4000.0)));
+        }
+        _delay((unsigned long)((500)*(64000000/4000.0)));
+    }
+}
+
+void checkBattery(void) {
+
+    TRISFbits.TRISF6=1;
+    ANSELFbits.ANSELF6=1;
 
 
-    LATGbits.LATG0 = 0;
-    LATEbits.LATE7 = 0;
-    LATAbits.LATA3 = 0;
+    ADREFbits.ADNREF = 0;
+    ADREFbits.ADPREF = 0b00;
+    ADPCH=0b101110;
+    ADCON0bits.ADFM = 0;
+    ADCON0bits.ADCS = 1;
+    ADCON0bits.ADON = 1;
+
+    ADCON0bits.GO = 1;
+    while (ADCON0bits.GO);
+    int tmpval = ADRESH;
+    char max_typical = 0b01101101;
+    char percent = tmpval * 100 / max_typical;
+    while (tmpval >= 0) {
+        LATHbits.LATH3 = 1;
+        _delay((unsigned long)((150)*(64000000/4000.0)));
+        LATHbits.LATH3 = 0;
+        _delay((unsigned long)((150)*(64000000/4000.0)));
+        tmpval -= 10;
+    }
+
 }

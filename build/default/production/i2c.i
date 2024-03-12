@@ -24124,6 +24124,10 @@ unsigned char I2C_2_Master_Read(unsigned char ack);
 # 2 "i2c.c" 2
 
 
+
+
+
+
 void I2C_2_Master_Init(void)
 {
 

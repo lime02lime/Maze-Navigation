@@ -17,7 +17,7 @@
 #include "feedback.h"
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz
-#define PAUSE_BETWEEN_INSTRUCTIONS 1 // For testing, ill introduce pause after execution of instruction broken with button RF2 press
+#define PAUSE_BETWEEN_INSTRUCTIONS 0 // For testing, ill introduce pause after execution of instruction broken with button RF2 press
 #define NO_TRUNDLING 0 // For testing, no forward movement between instructions
 
 //unsigned int revsc
@@ -28,6 +28,8 @@ char square = 8 * 2;// increments per second * seconds
 char instruction_array[20][2];
 char instruction_array_index = 0;
 char reverseRouteFlag = 0;
+
+char turnLeftPower = 28;
 
 void main(void){
     color_click_init(); //initialise the colour clicker.
@@ -41,9 +43,6 @@ void main(void){
     //Structures to store the RGBC values read from the colour sensor, and then their normalised values.
     struct colors RGBC;
     struct normColors normRGB;
-    
-    LEDturnON(); //turn on all 3 colours of the tri-colour LED + headlights.
-    __delay_ms(1000);
     
     // Setting up motors
     unsigned int PWMperiod = 99;
@@ -67,7 +66,12 @@ void main(void){
     setMotorPWM(&motorR);
     
     // Checking battery
-    checkBattery();
+    //checkBattery();
+
+    turnLeftPower = leftCali(&motorL, &motorR);
+    
+    LEDturnON(); //turn on all 3 colours of the tri-colour LED + headlights.
+    __delay_ms(1000);
     
     while (PORTFbits.RF2); //wait until button press to start.
     increment = 0; //resetting the timer counter once we start.
@@ -82,7 +86,7 @@ void main(void){
             
             normalizeColors(&RGBC, &normRGB); //normalise the colour reading
 
-            char colourCode = decideColor(&normRGB); //deciding what colour it is
+            char colourCode = decideColor(&normRGB, &RGBC, &motorL, &motorR); //deciding what colour it is
             //finding and running the corresponding instructions:
             
             // Indicating the instruction code

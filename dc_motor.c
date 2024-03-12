@@ -93,6 +93,28 @@ void stop(DC_motor *mL, DC_motor *mR)
     }
 }
 
+char leftCali(DC_motor *mL, DC_motor *mR){
+    while(PORTFbits.RF2);
+    char power = 26;
+    while (PORTFbits.RF2 || PORTFbits.RF3) { //while both buttons aren't pressed, continue calibrating.
+        __delay_ms(1000);
+        turnLeft(mL,mR,power);
+
+        while (PORTFbits.RF2 && PORTFbits.RF3);
+        __delay_ms(80);
+        if(!PORTFbits.RF2 && !PORTFbits.RF3) {
+        } else{
+            if(!PORTFbits.RF2){
+                power--;
+            }
+            else{
+                power++;
+            }
+        }
+    }
+    return power;
+}
+
 void fastStop(DC_motor *mL, DC_motor *mR)
 {
     // Look to see what current power is and floor it to nearest 10
@@ -108,7 +130,7 @@ void fastStop(DC_motor *mL, DC_motor *mR)
 }
 
 //function to make the robot turn left 
-void turnLeft(DC_motor *mL, DC_motor *mR)
+void turnLeft(DC_motor *mL, DC_motor *mR, char power)
 {
     // Check if motors are on, if they are then stop the car
     if (mL->power != 0 || mR->power != 0) {
@@ -118,7 +140,7 @@ void turnLeft(DC_motor *mL, DC_motor *mR)
     // Sets motors to turn in opposite directions to maintain buggy position
     mL->direction = 0;
     mR->direction = 1;
-    int maxpower = 40;
+    int maxpower = power;
     
     // Gradually increases power in the motors
     for (int i = 0; i < maxpower; i++) {
@@ -126,11 +148,11 @@ void turnLeft(DC_motor *mL, DC_motor *mR)
         mR->power = i;
         setMotorPWM(mL);
         setMotorPWM(mR);
-        __delay_ms(5);
+        __delay_ms(15);
         
     }
     // holds maximum power
-    __delay_ms(325);
+    __delay_ms(280);
     
     // Gradually decreases power in the motors to a stop
     for (int i = maxpower; i >= 0; i--) {
@@ -155,7 +177,7 @@ void turnRight(DC_motor *mL, DC_motor *mR)
      // Sets motors to turn in opposite directions to maintain buggy position
     mL->direction = 1;
     mR->direction = 0;
-    int maxpower = 40;
+    int maxpower = 28;
     
     // Gradually increases power in the motors
     for (int i = 0; i < maxpower; i++) {
@@ -163,11 +185,11 @@ void turnRight(DC_motor *mL, DC_motor *mR)
         mR->power = i;
         setMotorPWM(mL);
         setMotorPWM(mR);
-        __delay_ms(5);
+        __delay_ms(15);
         
     }
     // holds maximum power
-    __delay_ms(270);
+    __delay_ms(250);
     
     // Gradually decreases power in the motors to a stop
     for (int i = maxpower; i >= 0; i--) {

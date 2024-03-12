@@ -16,6 +16,7 @@
 #pragma config WDTE = OFF
 
 
+
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\xc.h" 1 3
 # 18 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\xc.h" 3
 extern const char __xc8_OPTIM_SPEED;
@@ -24095,11 +24096,49 @@ __attribute__((__unsupported__("The READTIMER" "0" "() macro is not available wi
 unsigned char __t1rd16on(void);
 unsigned char __t3rd16on(void);
 # 33 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\xc.h" 2 3
-# 9 "main.c" 2
+# 10 "main.c" 2
 
+# 1 "./dc_motor.h" 1
+
+
+
+
+# 1 "./dc_motor.h" 1
+# 5 "./dc_motor.h" 2
+
+
+extern int increment;
+extern char turnLeftPower;
+
+typedef struct DC_motor {
+    char power;
+    char direction;
+    char brakemode;
+    unsigned int PWMperiod;
+    unsigned char *posDutyHighByte;
+    unsigned char *negDutyHighByte;
+} DC_motor;
+
+
+void initDCmotorsPWM(unsigned int PWMperiod);
+void setMotorPWM(DC_motor *m);
+void stop(DC_motor *mL, DC_motor *mR);
+void fastStop(DC_motor *mL, DC_motor *mR);
+void turnLeft(DC_motor *mL, DC_motor *mR, char power);
+void turnRight(DC_motor *mL, DC_motor *mR);
+void fullSpeedAhead(DC_motor *mL, DC_motor *mR);
+void trundle(DC_motor *mL, DC_motor *mR);
+void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char reverse);
+void timed_trundle(DC_motor *mL, DC_motor *mR, int increments);
+void turn180(DC_motor *mL, DC_motor *mR);
+void turnLeft135(DC_motor *mL, DC_motor *mR);
+void turnRight135(DC_motor *mL, DC_motor *mR);
+void creep(DC_motor *mL, DC_motor *mR, int increments, char direction);
+char leftCali(DC_motor *mL, DC_motor *mR);
+# 11 "main.c" 2
 
 # 1 "./color.h" 1
-# 11 "./color.h"
+# 12 "./color.h"
 void color_click_init(void);
 
 
@@ -24132,16 +24171,18 @@ typedef struct colors {
 
 
 
+
 typedef struct normColors {
     unsigned int normRed;
     unsigned int normGreen;
     unsigned int normBlue;
+    unsigned int clear;
 } normColors;
 
 void readColors(colors *RGBC);
 void normalizeColors(colors *RGBC, normColors *normRGB);
-unsigned int decideColor(normColors *normRGB);
-# 11 "main.c" 2
+char decideColor(normColors *normRGB, colors * RGBC, DC_motor *mL, DC_motor *mR);
+# 12 "main.c" 2
 
 # 1 "./i2c.h" 1
 # 13 "./i2c.h"
@@ -24176,14 +24217,14 @@ void I2C_2_Master_Write(unsigned char data_byte);
 
 
 unsigned char I2C_2_Master_Read(unsigned char ack);
-# 12 "main.c" 2
+# 13 "main.c" 2
 
 # 1 "./interact.h" 1
 # 17 "./interact.h"
 void init_buttons_LED(void);
 void LEDturnOFF(void);
 void LEDturnON(void);
-# 13 "main.c" 2
+# 14 "main.c" 2
 
 # 1 "./interrupts.h" 1
 
@@ -24200,99 +24241,164 @@ unsigned int readInterrupt(void);
 void clearInterrupt(void);
 void toggleLED(void);
 void Timer0_init(void);
-# 14 "main.c" 2
+# 15 "main.c" 2
+
+# 1 "./instructions.h" 1
+
+
+
+extern char instruction_array[20][2];
+extern char instruction_array_index;
+extern char square;
+extern char reverseRouteFlag;
+extern char turnLeftPower;
+
+void executeInstruction(DC_motor *mL, DC_motor *mR, char colourCode);
+
+void Red(DC_motor *mL, DC_motor *mR);
+void Green(DC_motor *mL, DC_motor *mR);
+void Blue(DC_motor *mL, DC_motor *mR);
+void Yellow(DC_motor *mL, DC_motor *mR);
+void Pink(DC_motor *mL, DC_motor *mR);
+void Orange(DC_motor *mL, DC_motor *mR);
+void LightBlue(DC_motor *mL, DC_motor *mR);
+void White(DC_motor *mL, DC_motor *mR);
+void Black(DC_motor *mL, DC_motor *mR);
+
+void reverseYellow(DC_motor *mL, DC_motor *mR);
+void reversePink(DC_motor *mL, DC_motor *mR);
+void reverseOrange(DC_motor *mL, DC_motor *mR);
+void reverseLightBlue(DC_motor *mL, DC_motor *mR);
+void reverseRoute(DC_motor *mL, DC_motor *mR);
+# 16 "main.c" 2
+
+# 1 "./feedback.h" 1
 
 
 
 
-unsigned int red;
-unsigned int green;
-unsigned int blue;
-unsigned int clear;
+
+void toggleLEDD7(void);
+void initBoardLEDs(void);
+void indicateInstruction(char period);
+void initButtons(void);
+void checkBattery(void);
+# 17 "main.c" 2
+
+
+
+
+
+
+
 int increment = 0;
 char wall_detected = 0;
-struct colors RGBC;
-struct normColors normRGB;
-unsigned int colourCode = 0;
-unsigned int w;
-unsigned int x;
-unsigned int y;
-unsigned int z;
+
+char square = 8 * 2;
+char instruction_array[20][2];
+char instruction_array_index = 0;
+char reverseRouteFlag = 0;
+
+char turnLeftPower;
 
 void main(void){
     color_click_init();
     init_buttons_LED();
-    TRISDbits.TRISD7 = 0;
-    LATDbits.LATD7 = 0;
+    initBoardLEDs();
+    initButtons();
+
     interrupts_init();
     Timer0_init();
+
+
+    struct colors RGBC;
+    struct normColors normRGB;
+
+
+    unsigned int PWMperiod = 99;
+    initDCmotorsPWM(PWMperiod);
+
+    struct DC_motor motorL;
+    motorL.power = 0;
+    motorL.direction = 1;
+    motorL.brakemode = 1;
+    motorL.PWMperiod = PWMperiod;
+    motorL.posDutyHighByte = &CCPR1H;
+    motorL.negDutyHighByte = &CCPR2H;
+    setMotorPWM(&motorL);
+    struct DC_motor motorR;
+    motorR.power = 0;
+    motorR.direction = 1;
+    motorR.brakemode = 1;
+    motorR.PWMperiod = PWMperiod;
+    motorR.posDutyHighByte = &CCPR3H;
+    motorR.negDutyHighByte = &CCPR4H;
+    setMotorPWM(&motorR);
+
+
+
+
+    turnLeftPower = leftCali(&motorL, &motorR);
 
     LEDturnON();
     _delay((unsigned long)((1000)*(64000000/4000.0)));
 
-    LATDbits.LATD7 = 1;
+    while (PORTFbits.RF2);
+    increment = 0;
+
     while(1) {
-
-
-
-
-
-
 
         if (wall_detected) {
 
+            fastStop(&motorL, &motorR);
+
+            readColors(&RGBC);
+
             normalizeColors(&RGBC, &normRGB);
 
+            char colourCode = decideColor(&normRGB, &RGBC, &motorL, &motorR);
 
-            unsigned int colourCode = decideColor(&normRGB);
 
-            if (colourCode == 1) {
-                TRISHbits.TRISH3 = 0;
-                for (char i=0; i<1; i++) {
-                    LATHbits.LATH3 = 1;
-                    _delay((unsigned long)((150)*(64000000/4000.0)));
-                    LATHbits.LATH3 = 0;
-                    _delay((unsigned long)((100)*(64000000/4000.0)));
-                }
-            }
 
-            if (colourCode == 2) {
-                TRISHbits.TRISH3 = 0;
-                for (char i=0; i<2; i++) {
-                    LATHbits.LATH3 = 1;
-                    _delay((unsigned long)((150)*(64000000/4000.0)));
-                    LATHbits.LATH3 = 0;
-                    _delay((unsigned long)((100)*(64000000/4000.0)));
-                }
-            }
+            indicateInstruction(colourCode);
 
-            if (colourCode == 3) {
-                TRISHbits.TRISH3 = 0;
-                for (char i=0; i<3; i++) {
-                    LATHbits.LATH3 = 1;
-                    _delay((unsigned long)((150)*(64000000/4000.0)));
-                    LATHbits.LATH3 = 0;
-                    _delay((unsigned long)((100)*(64000000/4000.0)));
-                }
-            }
 
-            if (colourCode == 4) {
-                TRISHbits.TRISH3 = 0;
-                for (char i=0; i<4; i++) {
-                    LATHbits.LATH3 = 1;
-                    _delay((unsigned long)((150)*(64000000/4000.0)));
-                    LATHbits.LATH3 = 0;
-                    _delay((unsigned long)((100)*(64000000/4000.0)));
-                }
-            }
+
+
+
+            instruction_array[instruction_array_index][0] = colourCode;
+            instruction_array[instruction_array_index][1] = increment;
+            instruction_array_index += 1;
+
+            executeInstruction(&motorL, &motorR, colourCode);
+            LEDturnON();
+            increment = 0;
+
 
 
             wall_detected = 0;
+            clearInterrupt();
+            INTCONbits.GIE=1;
 
-            LEDturnON();
-            LATHbits.LATH3 = 0;
+            LATDbits.LATD7 = 0;
+
+
+            if (0) {
+                while (PORTFbits.RF2);
+            }
         }
 
 
+        if (reverseRouteFlag) {
+            reverseRoute(&motorL, &motorR);
+        }
+
+
+        if (!PORTFbits.RF3) {
+            reverseRouteFlag=1;
+        }
+        if (!0) {
+            trundle(&motorL, &motorR);
+        }
     }
 }

@@ -23,6 +23,10 @@
       <itemPath>interrupts.h</itemPath>
       <itemPath>instructions.c</itemPath>
       <itemPath>instructions.h</itemPath>
+      <itemPath>dc_motor.c</itemPath>
+      <itemPath>dc_motor.h</itemPath>
+      <itemPath>feedback.c</itemPath>
+      <itemPath>feedback.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

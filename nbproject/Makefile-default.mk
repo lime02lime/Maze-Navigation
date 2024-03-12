@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=color.c i2c.c main.c interact.c interrupts.c instructions.c
+SOURCEFILES_QUOTED_IF_SPACED=color.c i2c.c main.c interact.c interrupts.c instructions.c dc_motor.c feedback.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/color.p1 ${OBJECTDIR}/i2c.p1 ${OBJECTDIR}/main.p1 ${OBJECTDIR}/interact.p1 ${OBJECTDIR}/interrupts.p1 ${OBJECTDIR}/instructions.p1
-POSSIBLE_DEPFILES=${OBJECTDIR}/color.p1.d ${OBJECTDIR}/i2c.p1.d ${OBJECTDIR}/main.p1.d ${OBJECTDIR}/interact.p1.d ${OBJECTDIR}/interrupts.p1.d ${OBJECTDIR}/instructions.p1.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/color.p1 ${OBJECTDIR}/i2c.p1 ${OBJECTDIR}/main.p1 ${OBJECTDIR}/interact.p1 ${OBJECTDIR}/interrupts.p1 ${OBJECTDIR}/instructions.p1 ${OBJECTDIR}/dc_motor.p1 ${OBJECTDIR}/feedback.p1
+POSSIBLE_DEPFILES=${OBJECTDIR}/color.p1.d ${OBJECTDIR}/i2c.p1.d ${OBJECTDIR}/main.p1.d ${OBJECTDIR}/interact.p1.d ${OBJECTDIR}/interrupts.p1.d ${OBJECTDIR}/instructions.p1.d ${OBJECTDIR}/dc_motor.p1.d ${OBJECTDIR}/feedback.p1.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/color.p1 ${OBJECTDIR}/i2c.p1 ${OBJECTDIR}/main.p1 ${OBJECTDIR}/interact.p1 ${OBJECTDIR}/interrupts.p1 ${OBJECTDIR}/instructions.p1
+OBJECTFILES=${OBJECTDIR}/color.p1 ${OBJECTDIR}/i2c.p1 ${OBJECTDIR}/main.p1 ${OBJECTDIR}/interact.p1 ${OBJECTDIR}/interrupts.p1 ${OBJECTDIR}/instructions.p1 ${OBJECTDIR}/dc_motor.p1 ${OBJECTDIR}/feedback.p1
 
 # Source Files
-SOURCEFILES=color.c i2c.c main.c interact.c interrupts.c instructions.c
+SOURCEFILES=color.c i2c.c main.c interact.c interrupts.c instructions.c dc_motor.c feedback.c
 
 
 
@@ -136,6 +136,22 @@ ${OBJECTDIR}/instructions.p1: instructions.c  nbproject/Makefile-${CND_CONF}.mk
 	@-${MV} ${OBJECTDIR}/instructions.d ${OBJECTDIR}/instructions.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/instructions.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
+${OBJECTDIR}/dc_motor.p1: dc_motor.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/dc_motor.p1.d 
+	@${RM} ${OBJECTDIR}/dc_motor.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1  -mdebugger=none   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mno-default-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/dc_motor.p1 dc_motor.c 
+	@-${MV} ${OBJECTDIR}/dc_motor.d ${OBJECTDIR}/dc_motor.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/dc_motor.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/feedback.p1: feedback.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/feedback.p1.d 
+	@${RM} ${OBJECTDIR}/feedback.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1  -mdebugger=none   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mno-default-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/feedback.p1 feedback.c 
+	@-${MV} ${OBJECTDIR}/feedback.d ${OBJECTDIR}/feedback.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/feedback.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
 else
 ${OBJECTDIR}/color.p1: color.c  nbproject/Makefile-${CND_CONF}.mk 
 	@${MKDIR} "${OBJECTDIR}" 
@@ -184,6 +200,22 @@ ${OBJECTDIR}/instructions.p1: instructions.c  nbproject/Makefile-${CND_CONF}.mk
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mno-default-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/instructions.p1 instructions.c 
 	@-${MV} ${OBJECTDIR}/instructions.d ${OBJECTDIR}/instructions.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/instructions.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/dc_motor.p1: dc_motor.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/dc_motor.p1.d 
+	@${RM} ${OBJECTDIR}/dc_motor.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mno-default-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/dc_motor.p1 dc_motor.c 
+	@-${MV} ${OBJECTDIR}/dc_motor.d ${OBJECTDIR}/dc_motor.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/dc_motor.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/feedback.p1: feedback.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/feedback.p1.d 
+	@${RM} ${OBJECTDIR}/feedback.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mno-default-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/feedback.p1 feedback.c 
+	@-${MV} ${OBJECTDIR}/feedback.d ${OBJECTDIR}/feedback.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/feedback.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
 endif
 

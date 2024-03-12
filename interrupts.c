@@ -1,22 +1,15 @@
-#include <xc.h>
+
 #include "interrupts.h"
-#include "i2c.h"
-#include "color.h"
-#include "interact.h"
-
-extern int increment;
-extern char wall_detected;
-extern struct colors RGBC;
-extern struct normColors normRGB;
 
 
 
-void interrupts_init(void)
+
+
+void interrupts_init(DC_motor *mL, DC_motor *mR)
 {
 //****************************************
     //CONFIGURE GENERAL INTERRUPTS BELOW
 //****************************************
-    // turn on global interrupts, peripheral interrupts and the interrupt source
     // Allowing interrupt INT0 on pin RB0 through Peripheral port select (PPS)
     INT0PPS = 0x08;
     PIE0bits.INT0IE = 1;
@@ -27,36 +20,36 @@ void interrupts_init(void)
     //set the interrupt thresholds on the TCS3471:
     color_writetoaddr(0x04, 0x00); //low thresh, lower byte
     color_writetoaddr(0x05, 0x01); //low thresh, upper byte (used to be 0b00000001)
+    unsigned int threshold = calibrate_brightness_sensor(mL, mR)
+    char upper_threshold = threshold & 0b1111111100000000;
+    char lower_threshold = threshold & 0b0000000011111111;
+
     color_writetoaddr(0x06, 0b00000000); //upper thresh, lower byte (AH house - 0b10111111)
     color_writetoaddr(0x07, 0b00000010); //upper  thresh, upper byte (AH house 0b00000001)
-    // EMIL SETTINGS
-    // color_writetoaddr(0x06, 0x1C0); //upper thresh, lower byte 
-    // color_writetoaddr(0x07, 0b0000001); //upper  thresh, upper byte
 
     //set persistence register
     color_writetoaddr(0x0C, 0b0011); //1 clear channel value outside of threshold range will trigger interrupt.
     
 //    INTCONbits.IPEN=1; //enable priority levels on interrupts - don't uncomment this for now, will land us in trouble
-    PIE0bits.TMR0IE = 1;
-    INTCONbits.PEIE=1; //peripheral interrupts enable
+    
     
 //****************************************    
     // CONFIGURE TIMER INTERRUPTS BELOW
 //****************************************
-//    //TIMER INTERRUPTS
-//    PIE0bits.TMR0IE = 1; // Turning on the interrupt from the timer
-//    PIR0bits.TMR0IF = 0; // set initial interrupt flag
+    PIE0bits.TMR0IE = 1;
+    PIR0bits.TMR0IF = 0; // set initial interrupt flag
 //    IPR0bits.TMR0IP = 0; // Setting the priority of this interrupt to low
-//    INTCONbits.PEIE = 1;  //Turning on the peripheral interrupts
-       
+    INTCONbits.PEIE=1; //peripheral interrupts enable
     
+    
+    // Clears interrupt from colour clicker
     clearInterrupt();
-
     // It's a good idea to turn on global interrupts last, once all other interrupt configuration is done.
     INTCONbits.GIE=1; 	//turn on interrupts GLOBALLY (when this is off, all interrupts are deactivated)
 
 }
 
+// Configuring Timer 0 settings
 void Timer0_init(void)
 {
     T0CON1bits.T0CS=0b010; // Fosc/4

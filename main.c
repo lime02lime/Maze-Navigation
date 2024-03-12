@@ -35,16 +35,6 @@ void main(void){
     initBoardLEDs(); //initialise LEDs on picKit.
     initButtons(); //initialise buttons on picKit.
     
-    interrupts_init(); //initialise colour sensor interrupts.
-    Timer0_init(); //initialise timer overflow interrupts.
-    
-    //Structures to store the RGBC values read from the colour sensor, and then their normalised values.
-    struct colors RGBC;
-    struct normColors normRGB;
-    
-    LEDturnON(); //turn on all 3 colours of the tri-colour LED + headlights.
-    __delay_ms(1000);
-    
     // Setting up motors
     unsigned int PWMperiod = 99;
     initDCmotorsPWM(PWMperiod);
@@ -66,6 +56,18 @@ void main(void){
     motorR.negDutyHighByte = &CCPR4H;
     setMotorPWM(&motorR);
     
+    interrupts_init(&motorL, &motorR); //initialise colour sensor interrupts.
+    Timer0_init(); //initialise timer overflow interrupts.
+    
+    //Structures to store the RGBC values read from the colour sensor, and then their normalised values.
+    struct colors RGBC;
+    struct normColors normRGB;
+    
+    LEDturnON(); //turn on all 3 colours of the tri-colour LED + headlights.
+    __delay_ms(1000);
+    
+    
+    
     // Checking battery
     checkBattery();
     
@@ -82,7 +84,7 @@ void main(void){
             
             normalizeColors(&RGBC, &normRGB); //normalise the colour reading
 
-            char colourCode = decideColor(&normRGB); //deciding what colour it is
+            char colourCode = decideColor(&normRGB, &RGBC, &motorL, &motorR); //deciding what colour it is
             //finding and running the corresponding instructions:
             
             // Indicating the instruction code

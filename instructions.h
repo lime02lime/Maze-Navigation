@@ -1,3 +1,5 @@
+#ifndef _instructions_H
+#define _instructions_H
 
 #define _XTAL_FREQ 64000000 
 
@@ -23,3 +25,5 @@ void reversePink(DC_motor *mL, DC_motor *mR);
 void reverseOrange(DC_motor *mL, DC_motor *mR);
 void reverseLightBlue(DC_motor *mL, DC_motor *mR);
 void reverseRoute(DC_motor *mL, DC_motor *mR);
+
+#endif

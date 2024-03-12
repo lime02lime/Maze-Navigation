@@ -86,7 +86,7 @@ void White(DC_motor *mL, DC_motor *mR) {
 }
 
 void Black(DC_motor *mL, DC_motor *mR) {
-    
+    reverseRouteFlag=1;
 }
 
 // =======================

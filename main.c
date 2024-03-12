@@ -15,6 +15,7 @@
 #include "interrupts.h"
 #include "instructions.h"
 #include "feedback.h"
+#include "calibration.h"
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz
 #define PAUSE_BETWEEN_INSTRUCTIONS 1 // For testing, ill introduce pause after execution of instruction broken with button RF2 press

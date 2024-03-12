@@ -2,9 +2,6 @@
 #include "interrupts.h"
 
 
-
-
-
 void interrupts_init(DC_motor *mL, DC_motor *mR)
 {
 //****************************************
@@ -20,12 +17,17 @@ void interrupts_init(DC_motor *mL, DC_motor *mR)
     //set the interrupt thresholds on the TCS3471:
     color_writetoaddr(0x04, 0x00); //low thresh, lower byte
     color_writetoaddr(0x05, 0x01); //low thresh, upper byte (used to be 0b00000001)
-    unsigned int threshold = calibrate_brightness_sensor(mL, mR)
-    char upper_threshold = threshold & 0b1111111100000000;
+    unsigned int threshold = calibrate_brightness_sensor(mL, mR);
+    char upper_threshold = (threshold & 0b1111111100000000) >> 8;
     char lower_threshold = threshold & 0b0000000011111111;
 
-    color_writetoaddr(0x06, 0b00000000); //upper thresh, lower byte (AH house - 0b10111111)
-    color_writetoaddr(0x07, 0b00000010); //upper  thresh, upper byte (AH house 0b00000001)
+    color_writetoaddr(0x06, lower_threshold); //upper thresh, lower byte (AH house - 0b00000000)
+    color_writetoaddr(0x07, upper_threshold); //upper  thresh, upper byte (AH house 0b00000010)
+//    unsigned int thresholds_on_board = color_readdoublefromaddress(0x06);
+//    if (thresholds_on_board){};
+//    int something = thresholds_on_board;
+//    color_writetoaddr(0x06, 0b00000000); //upper thresh, lower byte (AH house - 0b00000000)
+//    color_writetoaddr(0x07, 0b00000010); //upper  thresh, upper byte (AH house 0b00000010)
 
     //set persistence register
     color_writetoaddr(0x0C, 0b0011); //1 clear channel value outside of threshold range will trigger interrupt.

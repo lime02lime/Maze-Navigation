@@ -6,6 +6,7 @@
 #include "color.h"
 #include "interact.h"
 #include "dc_motor.h"
+#include "calibration.h"
 
 extern int increment;
 extern char wall_detected;
@@ -15,7 +16,9 @@ extern struct normColors normRGB;
 
 #define _XTAL_FREQ 64000000
 
-void Interrupts_init(DC_motor *mL, DC_motor *mR);
+void interrupts_init(DC_motor *mL, DC_motor *mR);
+void Timer0_init(void);
 void __interrupt(high_priority) HighISR();
+void clearInterrupt(void);
 
 #endif

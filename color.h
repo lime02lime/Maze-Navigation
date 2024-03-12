@@ -39,7 +39,7 @@ typedef struct colors { //definition of RGBC structure
     unsigned int clear; //value read for CLEAR
 } colors;
 
-#endif
+
 
 //Structure for the normalised colour values:
 typedef struct normColors { 
@@ -53,3 +53,5 @@ void readColors(colors *RGBC);
 void normalizeColors(colors *RGBC, normColors *normRGB);
 char decideColor(normColors *normRGB, colors * RGBC, DC_motor *mL, DC_motor *mR);
 //unsigned int decideColor(normColors *normRGB);
+
+#endif

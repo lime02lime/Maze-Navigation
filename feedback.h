@@ -1,3 +1,5 @@
+#ifndef _feedback_H
+#define _feedback_H
 
 #include <xc.h>
 
@@ -8,3 +10,5 @@ void initBoardLEDs(void);
 void indicateInstruction(char period);
 void initButtons(void);
 void checkBattery(void);
+
+#endif

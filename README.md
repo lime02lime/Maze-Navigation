@@ -2,57 +2,52 @@
 # Course project - Mine navigation search and rescue
 
 ## Project Readme - Alex & Emil
-This is the project code README, while the project brief can be found at the bottom of this page. The following few sections will go through the functionality of each file included.
+The objective with this project is to code and confiugure the hardware for a buggy to navigate a maze. The movement of the buggy is informed by coloured cards that are fixed to the walls of the maze, where different colours have associated instructions for movement. The buggy is equipped with a tri-colour LED (red, green, blue light) which can be controlled individually or collectively, as well as a light sensor which reads values for red, green, blue, and clear (brightness).
 
-### Main.c
-Our **main.c** has a simple set of functions to aid legibility and limit its memory occupation. It performs the following tasks:
-- Initialize modules (LEDs, motors, etc) and interrupts.
-- Move the buggy forward until interrupted.
-- Once interrupted, it reads the color, normalizes the readings, decides what the color is, and executes the corresponding action code.
-- Finally it clears interrupts and resumes its forward motion.
+The overarching functionality of the buggy, coded in the main.c file is structured as follows:
+1. Initialize modules (LEDs, motors, and light sensor) and interrupts.
+2. Press RF2 to begin maze navigation.
+3. The buggy moves forward until interrupted.
+4. Once interrupted, it reads the color, normalizes the readings, decides what the color is, and executes the corresponding action code.
+5. Finally it clears interrupts and resumes its forward motion (back to step #3).
 
-### Interrupts.c
-The **interrupts.c** file contains functions to initialize and define interrupt functionality. These are its features:
-- interrupts_init instructs the Light Sensor about the thresholds for brightness interrupt. This is calibrated based on the brightness on the day. The premise is that the brightness read will increase as a surface gets closer and reflects more of the light from the LEDs.
-- timer0 is initialized, which is used to keep track of the moves that have been made in order to retrace steps to escape.
-- the Interrupt Service Routine handles the color sensor interrupt and timer overflow.
-- for the color sensor interrupt, the ISR quickly stops the buggy and raises a flag which is checked for in the Main file to decide what happens next.
-- the timer overflow simply increments a counter.
+### Wall Detection and Interrupts
+**Surface Detection:**
+The buggy's forward motion is halted when a surface is detected in its path. This detection is based on the Clear reading from the colour sensor, which raises the RB0 pin on the picKit to trigger an interrupt. As a surface gets closer, more of the light emitted from the buggy LEDs will be reflected from the surface and therefore the readings increase in value. The interrupts.c file contains the initialisation of the interrupts as well as the Interrupt Service Routine. When this interrupt is triggered, the buggy is quickly halted to avoid collision with the surface. The threshold for the sensor interrupt is also configured here. This value is highly dependent on the ambient lighting conditions, and is therefore configured with an initial calibration routine.
 
-### Color.c
-This file contains most of the functions that perform interaction with the color clicker (TCS3471) or other color-related code. This includes:
-- Initializing the color clicker.
-- Functions to communicate with the color clicker - enabled by I2C functionality included in the i2c.c file (outlined below).
-- Reading the the colors and brightness (RGBC) from the sensor. These are stored in a RGBC Struct.
-- Normalizing the colors to the brightness (Clear reading), and these values are stored in a dedicated Struct. However, the brightness turns out to not equal the sum of the RGB readings so therefore we find the sum of these and use that to normalize - allows more consistency in outputs.
-- decideColor looks at the normalized RGB values to decide what color it is looking at, which later informs the instructions that are executed. This is calibrated using a trained decision tree (further info on this below).
+**Timer:**
+The interrupts.c file also configures the timer, which is crucial to keep track of the buggy's movements in order to return home safely. Each overflow of the timer increments a time counter (variable name _increment_). For each movement of the buggy, the associated time is fetched from _increment_ and stored. The timer is configured with a 1:32 prescaler so that it overflows every 0.125 seconds - this elables sufficiently precise timekeeping while keeping the _increment_ variable low enough to not overflow before completing the maze.
 
-### Instructions.c
-This file contains the following:
-- A switch to execute different instructions depending on what the decided color is.
-- Functions with motor instructions corresponding to each color (E.g. RED = turn right 90 degrees, etc.).
-- Functionality to return home once instructed to do so.
+### Buggy Movement and Navigation
+Once the sensor interrupt is triggered, the buggy quickly halts and raises a flag (char _wall_detected_) that a wall has been detected. The main while loop checks for this flag and if it is raised performs the following actions:
+1. Records the colour readings from the sensor and stores these in the RGBC Structure.
+2. Normalises the readings to the brightness (in our case this is taken as the sum of the RGB components) and stores thse values in the normRGB Structure.
+3. Decides what colour the card is through a decision tree process (elaborated in the Colour Clicker section).
+4. Stores the current _increment_ value and the instruction associated with the colour identified, so that when returning home, the buggy knows how far to move in this segment and what action has been performed.
+5. The colour-associated action is executed (as coded in the instructions.c file).
+6. Finally, the sensor interrupt is cleared and the buggy resumes its forward motion in the main.c while loop until the interrupt is raised again.
 
-### Interact.c
-This file enables interaction with the buggy lights, including functions to initialize and control the buggy headlights, rear lights, and tri-color LED.
+The dc_motor.c file contains the code to control the motors on the buggy. Functions are defined to enable movement forward, backwards, and to turn at specified angles. The accuracy of the buggy's turns is dependent on the friction between its wheels and the surface. Consequently, calibration is required to achieve the desired turn angles.
 
-### Dc_motor.c
-This file contains all the code to control the motion of the buggy.
-- Initialization of the motors
-- Functions to dictate movement, including forward and backward motion, stopping, as well as instructions to turn (90, 135, or 180 deg).
-- One of the key features included here is the function to move for a specified period of time - which allows the buggy to retrace its steps home.
-- Another one controls the buggy to move one "square" forward/backwards, which is included in the color instructions.
+### Colour Clicker
+The color.c file contains most of the colour sensing functionality. This includes two main parts:
+1. Colour sensing - readColours() can be called to collect RGBC data from the colour sensor. It reads the colours one at a time, turning on only the LED colour corresponding to the colour being read. This improves the sensor's ability to distinguish between colours. For the Clear reading, all three LEDs are turned on.
+2. Colour deciding - decideColour() implements a decision tree approach to establish what colour is faced. It accesses the normalised colour values and returns an integer as its colour decision - each of the 9 colours having a number assigned to it.
 
-### I2c.c
-This file contains the code that was provided as part of the project brief. It provides functions for the very basic communication with the color clicker, which ultimately allows us to control the tri-color LED and to read from the color sensor (TCS3471).
+Communication with the colour clicker is performed via an I2C protocol. The functions to enable this communication are contained within the i2c.c file, provided alongside the project brief. 
 
-### Further Information
-Deciding what color is in front of the buggy is an arduous task to complete manually. Therefore, we collected data from our own testing and used Machine Learning methods to facilitate this task. Using libraries in Python, we trained decision trees to find the optimal decision boundaries for our data. The results were used to code our own decision tree (decideColor) in the colors.c file.
- 
+
+### Returning Home
+During the buggy's travel through the maze, each navigation action is stored in an array. Because there is no direct way to measure distances, time is instead used as a proxy. The time interval spent on each straight is recorded every time a navigation action is performed, and stored in the array alongside the navigation action taken. The idea is that upon reaching the end of the maze (indicated by a white card, or a black wall - dead end), the navigation array is traversed backwards to return to the buggy to the starting location. Naturally, it is coded so that the opposite direction of each turn is performed on the way back. 
 
 
 
-## Challenge brief
+
+
+
+
+
+## Challenge brief (original assignment instructions).
 
 Your task is to develop an autonomous robot that can navigate a "mine" using a series of instructions coded in coloured cards and return to its starting position.  Your robot must be able to perform the following: 
 

@@ -24089,7 +24089,57 @@ unsigned char __t3rd16on(void);
 # 1 "color.c" 2
 
 # 1 "./color.h" 1
-# 11 "./color.h"
+
+
+
+
+# 1 "./dc_motor.h" 1
+
+
+
+
+# 1 "./dc_motor.h" 1
+# 5 "./dc_motor.h" 2
+
+
+extern int increment;
+extern char turnLeftPower;
+extern char turnRightPower;
+
+typedef struct DC_motor {
+    char power;
+    char direction;
+    char brakemode;
+    unsigned int PWMperiod;
+    unsigned char *posDutyHighByte;
+    unsigned char *negDutyHighByte;
+} DC_motor;
+
+
+void initDCmotorsPWM(unsigned int PWMperiod);
+void setMotorPWM(DC_motor *m);
+void stop(DC_motor *mL, DC_motor *mR);
+void fastStop(DC_motor *mL, DC_motor *mR);
+void turnLeft(DC_motor *mL, DC_motor *mR, char power);
+void turnRight(DC_motor *mL, DC_motor *mR, char power);
+void fullSpeedAhead(DC_motor *mL, DC_motor *mR);
+void trundle(DC_motor *mL, DC_motor *mR);
+void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char reverse);
+void timed_trundle(DC_motor *mL, DC_motor *mR, int increments);
+void turn180(DC_motor *mL, DC_motor *mR);
+void turnLeft135(DC_motor *mL, DC_motor *mR, turnLeftPower);
+void turnRight135(DC_motor *mL, DC_motor *mR, turnRightPower);
+void creep(DC_motor *mL, DC_motor *mR, int increments, char direction);
+char leftCali(DC_motor *mL, DC_motor *mR);
+char rightCali(DC_motor *mL, DC_motor *mR);
+# 5 "./color.h" 2
+
+
+
+
+
+
+
 void color_click_init(void);
 
 
@@ -24122,15 +24172,17 @@ typedef struct colors {
 
 
 
+
 typedef struct normColors {
     unsigned int normRed;
     unsigned int normGreen;
     unsigned int normBlue;
+    unsigned int clear;
 } normColors;
 
 void readColors(colors *RGBC);
 void normalizeColors(colors *RGBC, normColors *normRGB);
-unsigned int decideColor(normColors *normRGB);
+char decideColor(normColors *normRGB, colors * RGBC, DC_motor *mL, DC_motor *mR);
 # 2 "color.c" 2
 
 # 1 "./i2c.h" 1
@@ -24176,31 +24228,18 @@ void LEDturnON(void);
 # 4 "color.c" 2
 
 
+
 void color_click_init(void)
 {
 
     I2C_2_Master_Init();
 
 
-
- color_writetoaddr(0x00, 0x01);
-    _delay((unsigned long)((3)*(64000000/4000.0)));
-
-
-
-
-
- color_writetoaddr(0x00, 0x03);
-
-
  color_writetoaddr(0x01, 0xF6);
 
 
-
-
-
-
     color_writetoaddr(0x00, 0x13);
+    _delay((unsigned long)((3)*(64000000/4000.0)));
 
     }
 
@@ -24239,6 +24278,7 @@ void color_writetoaddr(char address, char value){
     I2C_2_Master_Stop();
 }
 
+
 unsigned int readRedColor(void)
 {
  unsigned int tmp;
@@ -24252,6 +24292,7 @@ unsigned int readRedColor(void)
  I2C_2_Master_Stop();
  return tmp;
 }
+
 
 unsigned int readGreenColor(void)
 {
@@ -24267,6 +24308,7 @@ unsigned int readGreenColor(void)
  return tmp;
 }
 
+
 unsigned int readBlueColor(void)
 {
  unsigned int tmp;
@@ -24280,6 +24322,7 @@ unsigned int readBlueColor(void)
  I2C_2_Master_Stop();
  return tmp;
 }
+
 
 unsigned int readClearColor(void)
 {
@@ -24295,62 +24338,92 @@ unsigned int readClearColor(void)
  return tmp;
 }
 
+
+
 void normalizeColors(colors *RGBC, normColors *normRGB) {
     unsigned int sum = (RGBC->red) + (RGBC->green) + (RGBC->blue);
+
+
 
     normRGB->normRed = (RGBC->red) / ((sum)/100);
     normRGB->normGreen = (RGBC->green) / ((sum)/100);
     normRGB->normBlue = (RGBC->blue) / ((sum)/100);
-
-
-
-
+    normRGB->clear = RGBC->clear;
 }
 
+
 void readColors(colors *RGBC) {
+
+
     LEDturnON();
     RGBC->clear = readClearColor();
     _delay((unsigned long)((100)*(64000000/4000.0)));
     LEDturnOFF();
+
+
     LATGbits.LATG0 = 1;
     _delay((unsigned long)((100)*(64000000/4000.0)));
     RGBC->red = readRedColor();
     _delay((unsigned long)((100)*(64000000/4000.0)));
     LATGbits.LATG0 = 0;
+
+
     LATEbits.LATE7 = 1;
     _delay((unsigned long)((100)*(64000000/4000.0)));
     RGBC->green = readGreenColor();
     _delay((unsigned long)((100)*(64000000/4000.0)));
     LATEbits.LATE7 = 0;
+
+
     LATAbits.LATA3 = 1;
     _delay((unsigned long)((100)*(64000000/4000.0)));
     RGBC->blue = readBlueColor();
     _delay((unsigned long)((100)*(64000000/4000.0)));
     LATAbits.LATA3 = 0;
-
 }
 
-unsigned int decideColor(normColors *normRGB) {
 
-    if (normRGB->normBlue > 18) {
+char decideColor(normColors *normRGB, colors *RGBC, DC_motor *mL, DC_motor *mR) {
+    if (normRGB->normBlue > 17) {
+        creep(mL, mR, 16, 0);
         return 2;
     }
-    if (normRGB->normGreen > 40) {
-        return 1;
-    } else {
-    if (normRGB->normRed > 55) {
+    if (normRGB->normBlue > 12 && normRGB->normRed < 50) {
+        creep(mL, mR, 16, 0);
+        return 6;
+    }
+    if (normRGB->normRed > 70,normRGB->normGreen < 22) {
+        creep(mL, mR, 16, 0);
+        return 0;
+    }
+    else {
 
-        if (normRGB->normGreen > 30) {
-            if (normRGB->normBlue > 12) {
-                return 4;
-            }
+        LEDturnON();
+        _delay((unsigned long)((1000)*(64000000/4000.0)));
+        creep(mL, mR, 8, 1);
+        readColors(RGBC);
+        normalizeColors(RGBC, normRGB);
+        creep(mL, mR, 16, 0);
+    }
 
+        if (normRGB->clear < 0x300) {
+            return 8;
+        }
+        if (normRGB->normGreen > 48) {
+            return 1;
+        }
+        if (normRGB->normRed > 60 && normRGB->normGreen < 30) {
+            return 5;
+        }
+        if (normRGB->normBlue < 7) {
             return 3;
         }
-        return 0;
-    }}
-
-
-    return 0;
-
-}
+        else {
+            if (normRGB->normGreen > 34) {
+                return 7;
+            }
+            else {
+                return 4;
+            }
+        }
+    }

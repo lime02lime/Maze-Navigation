@@ -24089,7 +24089,57 @@ unsigned char __t3rd16on(void);
 # 1 "interact.c" 2
 
 # 1 "./color.h" 1
-# 11 "./color.h"
+
+
+
+
+# 1 "./dc_motor.h" 1
+
+
+
+
+# 1 "./dc_motor.h" 1
+# 5 "./dc_motor.h" 2
+
+
+extern int increment;
+extern char turnLeftPower;
+extern char turnRightPower;
+
+typedef struct DC_motor {
+    char power;
+    char direction;
+    char brakemode;
+    unsigned int PWMperiod;
+    unsigned char *posDutyHighByte;
+    unsigned char *negDutyHighByte;
+} DC_motor;
+
+
+void initDCmotorsPWM(unsigned int PWMperiod);
+void setMotorPWM(DC_motor *m);
+void stop(DC_motor *mL, DC_motor *mR);
+void fastStop(DC_motor *mL, DC_motor *mR);
+void turnLeft(DC_motor *mL, DC_motor *mR, char power);
+void turnRight(DC_motor *mL, DC_motor *mR, char power);
+void fullSpeedAhead(DC_motor *mL, DC_motor *mR);
+void trundle(DC_motor *mL, DC_motor *mR);
+void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char reverse);
+void timed_trundle(DC_motor *mL, DC_motor *mR, int increments);
+void turn180(DC_motor *mL, DC_motor *mR);
+void turnLeft135(DC_motor *mL, DC_motor *mR, turnLeftPower);
+void turnRight135(DC_motor *mL, DC_motor *mR, turnRightPower);
+void creep(DC_motor *mL, DC_motor *mR, int increments, char direction);
+char leftCali(DC_motor *mL, DC_motor *mR);
+char rightCali(DC_motor *mL, DC_motor *mR);
+# 5 "./color.h" 2
+
+
+
+
+
+
+
 void color_click_init(void);
 
 
@@ -24122,15 +24172,17 @@ typedef struct colors {
 
 
 
+
 typedef struct normColors {
     unsigned int normRed;
     unsigned int normGreen;
     unsigned int normBlue;
+    unsigned int clear;
 } normColors;
 
 void readColors(colors *RGBC);
 void normalizeColors(colors *RGBC, normColors *normRGB);
-unsigned int decideColor(normColors *normRGB);
+char decideColor(normColors *normRGB, colors * RGBC, DC_motor *mL, DC_motor *mR);
 # 2 "interact.c" 2
 
 # 1 "./i2c.h" 1
@@ -24176,8 +24228,9 @@ void LEDturnON(void);
 # 4 "interact.c" 2
 
 
-void init_buttons_LED(void){
 
+
+void init_buttons_LED(void){
 
     TRISGbits.TRISG0 = 0;
     TRISEbits.TRISE7 = 0;
@@ -24185,6 +24238,7 @@ void init_buttons_LED(void){
     TRISDbits.TRISD3 = 0;
     TRISHbits.TRISH1 = 0;
     TRISDbits.TRISD4 = 0;
+
 
 
     LATGbits.LATG0 = 0;
@@ -24195,7 +24249,6 @@ void init_buttons_LED(void){
 
 void LEDturnON(void){
     LATDbits.LATD3 = 1;
-
 
     LATGbits.LATG0 = 1;
     LATEbits.LATE7 = 1;

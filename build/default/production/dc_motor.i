@@ -1,4 +1,4 @@
-# 1 "i2c.c"
+# 1 "dc_motor.c"
 # 1 "<built-in>" 1
 # 1 "<built-in>" 3
 # 288 "<built-in>" 3
@@ -6,7 +6,12 @@
 # 1 "<built-in>" 2
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\language_support.h" 1 3
 # 2 "<built-in>" 2
-# 1 "i2c.c" 2
+# 1 "dc_motor.c" 2
+
+# 1 "./dc_motor.h" 1
+
+
+
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\xc.h" 1 3
 # 18 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\xc.h" 3
 extern const char __xc8_OPTIM_SPEED;
@@ -24086,104 +24091,514 @@ __attribute__((__unsupported__("The READTIMER" "0" "() macro is not available wi
 unsigned char __t1rd16on(void);
 unsigned char __t3rd16on(void);
 # 33 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\xc.h" 2 3
-# 1 "i2c.c" 2
+# 4 "./dc_motor.h" 2
 
-# 1 "./i2c.h" 1
-# 13 "./i2c.h"
-void I2C_2_Master_Init(void);
-
+# 1 "./dc_motor.h" 1
+# 5 "./dc_motor.h" 2
 
 
+extern int increment;
+extern char turnLeftPower;
+extern char turnRightPower;
 
-void I2C_2_Master_Idle(void);
-
-
-
-
-void I2C_2_Master_Start(void);
-
-
-
-
-void I2C_2_Master_RepStart(void);
-
-
+typedef struct DC_motor {
+    char power;
+    char direction;
+    char brakemode;
+    unsigned int PWMperiod;
+    unsigned char *posDutyHighByte;
+    unsigned char *negDutyHighByte;
+} DC_motor;
 
 
-void I2C_2_Master_Stop(void);
+void initDCmotorsPWM(unsigned int PWMperiod);
+void setMotorPWM(DC_motor *m);
+void stop(DC_motor *mL, DC_motor *mR);
+void fastStop(DC_motor *mL, DC_motor *mR);
+void turnLeft(DC_motor *mL, DC_motor *mR, char power);
+void turnRight(DC_motor *mL, DC_motor *mR, char power);
+void fullSpeedAhead(DC_motor *mL, DC_motor *mR);
+void trundle(DC_motor *mL, DC_motor *mR);
+void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char reverse);
+void timed_trundle(DC_motor *mL, DC_motor *mR, int increments);
+void turn180(DC_motor *mL, DC_motor *mR);
+void turnLeft135(DC_motor *mL, DC_motor *mR, turnLeftPower);
+void turnRight135(DC_motor *mL, DC_motor *mR, turnRightPower);
+void creep(DC_motor *mL, DC_motor *mR, int increments, char direction);
+char leftCali(DC_motor *mL, DC_motor *mR);
+char rightCali(DC_motor *mL, DC_motor *mR);
+# 2 "dc_motor.c" 2
+
+
+void initDCmotorsPWM(unsigned int PWMperiod){
+
+    TRISEbits.TRISE2 = 0;
+    TRISEbits.TRISE4 = 0;
+    TRISCbits.TRISC7 = 0;
+    TRISGbits.TRISG6 = 0;
+
+
+    RE2PPS=0x05;
+    RE4PPS=0x06;
+    RC7PPS=0x07;
+    RG6PPS=0x08;
+
+
+    T2CONbits.CKPS=0b100;
+    T2HLTbits.MODE=0b00000;
+    T2CLKCONbits.CS=0b0001;
 
 
 
-
-void I2C_2_Master_Write(unsigned char data_byte);
-
-
-
-
-unsigned char I2C_2_Master_Read(unsigned char ack);
-# 2 "i2c.c" 2
+    T2PR=PWMperiod;
+    T2CONbits.ON=1;
 
 
 
+    CCPR1H=0;
+    CCPR2H=0;
+    CCPR3H=0;
+    CCPR4H=0;
 
 
-
-void I2C_2_Master_Init(void)
-{
-
-  SSP2CON1bits.SSPM= 0b1000;
-  SSP2CON1bits.SSPEN = 1;
-  SSP2ADD = (64000000/(4*100000))-1;
+    CCPTMRS0bits.C1TSEL=0;
+    CCPTMRS0bits.C2TSEL=0;
+    CCPTMRS0bits.C3TSEL=0;
+    CCPTMRS0bits.C4TSEL=0;
 
 
-  TRISDbits.TRISD5 = 1;
-  TRISDbits.TRISD6 = 1;
-  ANSELDbits.ANSELD5=0;
-  ANSELDbits.ANSELD6=0;
-  SSP2DATPPS=0x1D;
-  SSP2CLKPPS=0x1E;
-  RD5PPS=0x1C;
-  RD6PPS=0x1B;
+    CCP1CONbits.FMT=1;
+    CCP1CONbits.CCP1MODE=0b1100;
+    CCP1CONbits.EN=1;
+
+    CCP2CONbits.FMT=1;
+    CCP2CONbits.CCP2MODE=0b1100;
+    CCP2CONbits.EN=1;
+
+    CCP3CONbits.FMT=1;
+    CCP3CONbits.CCP3MODE=0b1100;
+    CCP3CONbits.EN=1;
+
+    CCP4CONbits.FMT=1;
+    CCP4CONbits.CCP4MODE=0b1100;
+    CCP4CONbits.EN=1;
 }
 
-void I2C_2_Master_Idle(void)
+
+void setMotorPWM(DC_motor *m)
 {
-  while ((SSP2STAT & 0x04) || (SSP2CON2 & 0x1F));
+    unsigned char posDuty, negDuty;
+
+    if(m->brakemode) {
+        posDuty=m->PWMperiod - ((unsigned int)(m->power)*(m->PWMperiod))/100;
+        negDuty=m->PWMperiod;
+    }
+    else {
+        posDuty=0;
+  negDuty=((unsigned int)(m->power)*(m->PWMperiod))/100;
+    }
+
+    if (m->direction) {
+        *(m->posDutyHighByte)=posDuty;
+        *(m->negDutyHighByte)=negDuty;
+    } else {
+        *(m->posDutyHighByte)=negDuty;
+        *(m->negDutyHighByte)=posDuty;
+    }
 }
 
-void I2C_2_Master_Start(void)
+
+void stop(DC_motor *mL, DC_motor *mR)
 {
-  I2C_2_Master_Idle();
-  SSP2CON2bits.SEN = 1;
+
+    unsigned int current_power = mL->power;
+
+    for (int i=current_power; i>= 0; i--) {
+        mL->power = i;
+        mR->power = i;
+        setMotorPWM(mL);
+        setMotorPWM(mR);
+        _delay((unsigned long)((5)*(64000000/4000.0)));
+    }
 }
 
-void I2C_2_Master_RepStart(void)
-{
-  I2C_2_Master_Idle();
-  SSP2CON2bits.RSEN = 1;
+char leftCali(DC_motor *mL, DC_motor *mR){
+    while(PORTFbits.RF2);
+    char power = turnLeftPower;
+    while (PORTFbits.RF2 || PORTFbits.RF3) {
+        _delay((unsigned long)((1000)*(64000000/4000.0)));
+        turnLeft(mL,mR,power);
+
+        while (PORTFbits.RF2 && PORTFbits.RF3);
+        _delay((unsigned long)((80)*(64000000/4000.0)));
+        if(!PORTFbits.RF2 && !PORTFbits.RF3) {
+        } else{
+            if(!PORTFbits.RF2){
+                power--;
+            }
+            else{
+                power++;
+            }
+        }
+    }
+    return power;
 }
 
-void I2C_2_Master_Stop()
-{
-  I2C_2_Master_Idle();
-  SSP2CON2bits.PEN = 1;
+
+char rightCali(DC_motor *mL, DC_motor *mR){
+    while(PORTFbits.RF2);
+    char power = turnRightPower;
+    while (PORTFbits.RF2 || PORTFbits.RF3) {
+        _delay((unsigned long)((1000)*(64000000/4000.0)));
+        turnRight(mL,mR,power);
+
+        while (PORTFbits.RF2 && PORTFbits.RF3);
+        _delay((unsigned long)((80)*(64000000/4000.0)));
+        if(!PORTFbits.RF2 && !PORTFbits.RF3) {
+        } else{
+            if(!PORTFbits.RF2){
+                power++;
+            }
+            else{
+                power--;
+            }
+        }
+    }
+    return power;
 }
 
-void I2C_2_Master_Write(unsigned char data_byte)
+void fastStop(DC_motor *mL, DC_motor *mR)
 {
-  I2C_2_Master_Idle();
-  SSP2BUF = data_byte;
+
+    unsigned int current_power = mL->power;
+
+    for (int i=current_power; i>= 0; i--) {
+        mL->power = i;
+        mR->power = i;
+        setMotorPWM(mL);
+        setMotorPWM(mR);
+        _delay((unsigned long)((1)*(64000000/4000.0)));
+    }
 }
 
-unsigned char I2C_2_Master_Read(unsigned char ack)
+
+void turnLeft(DC_motor *mL, DC_motor *mR, char power)
 {
-  unsigned char tmp;
-  I2C_2_Master_Idle();
-  SSP2CON2bits.RCEN = 1;
-  I2C_2_Master_Idle();
-  tmp = SSP2BUF;
-  I2C_2_Master_Idle();
-  SSP2CON2bits.ACKDT = !ack;
-  SSP2CON2bits.ACKEN = 1;
-  return tmp;
+
+    if (mL->power != 0 || mR->power != 0) {
+        stop(mL, mR);
+    }
+
+
+    mL->direction = 0;
+    mR->direction = 1;
+    int maxpower = power;
+
+
+    for (int i = 0; i < maxpower; i++) {
+        mL->power = i;
+        mR->power = i;
+        setMotorPWM(mL);
+        setMotorPWM(mR);
+        _delay((unsigned long)((12)*(64000000/4000.0)));
+
+    }
+
+    _delay((unsigned long)((280)*(64000000/4000.0)));
+
+
+    for (int i = maxpower; i >= 0; i--) {
+        mL->power = i;
+        mR->power = i;
+        setMotorPWM(mL);
+        setMotorPWM(mR);
+        _delay((unsigned long)((5)*(64000000/4000.0)));
+
+    }
+
+}
+
+
+void turnRight(DC_motor *mL, DC_motor *mR, char power)
+{
+
+    if (mL->power != 0 || mR->power != 0) {
+        stop(mL, mR);
+    }
+
+
+    mL->direction = 1;
+    mR->direction = 0;
+    int maxpower = power;
+
+
+    for (int i = 0; i < maxpower; i++) {
+        mL->power = i;
+        mR->power = i;
+        setMotorPWM(mL);
+        setMotorPWM(mR);
+        _delay((unsigned long)((12)*(64000000/4000.0)));
+
+    }
+
+    _delay((unsigned long)((250)*(64000000/4000.0)));
+
+
+    for (int i = maxpower; i >= 0; i--) {
+        mL->power = i;
+        mR->power = i;
+        setMotorPWM(mL);
+        setMotorPWM(mR);
+        _delay((unsigned long)((5)*(64000000/4000.0)));
+
+    }
+# 241 "dc_motor.c"
+}
+
+
+void turn180(DC_motor *mL, DC_motor *mR)
+{
+
+
+
+
+    turnLeft(mL, mR, turnLeftPower);
+    _delay((unsigned long)((100)*(64000000/4000.0)));
+    turnLeft(mL, mR, turnLeftPower);
+    _delay((unsigned long)((500)*(64000000/4000.0)));
+
+}
+
+
+void turnLeft135(DC_motor *mL, DC_motor *mR, turnLeftPower)
+{
+
+    if (mL->power != 0 || mR->power != 0) {
+        stop(mL, mR);
+    }
+
+
+    mL->direction = 0;
+    mR->direction = 1;
+    int maxpower = (turnLeftPower*10/9)-1;
+
+
+    for (int i = 0; i < maxpower; i++) {
+        mL->power = i;
+        mR->power = i;
+        setMotorPWM(mL);
+        setMotorPWM(mR);
+        _delay((unsigned long)((15)*(64000000/4000.0)));
+
+    }
+
+    _delay((unsigned long)((410)*(64000000/4000.0)));
+
+
+    for (int i = maxpower; i >= 0; i--) {
+        mL->power = i;
+        mR->power = i;
+        setMotorPWM(mL);
+        setMotorPWM(mR);
+        _delay((unsigned long)((5)*(64000000/4000.0)));
+
+    }
+
+}
+
+
+void turnRight135(DC_motor *mL, DC_motor *mR, turnRightPower)
+{
+
+    if (mL->power != 0 || mR->power != 0) {
+        stop(mL, mR);
+    }
+
+
+    mL->direction = 1;
+    mR->direction = 0;
+    int maxpower = (turnRightPower*10/9);
+
+
+    for (int i = 0; i < maxpower; i++) {
+        mL->power = i;
+        mR->power = i;
+        setMotorPWM(mL);
+        setMotorPWM(mR);
+        _delay((unsigned long)((5)*(64000000/4000.0)));
+
+    }
+
+    _delay((unsigned long)((410)*(64000000/4000.0)));
+
+
+    for (int i = maxpower; i >= 0; i--) {
+        mL->power = i;
+        mR->power = i;
+        setMotorPWM(mL);
+        setMotorPWM(mR);
+        _delay((unsigned long)((5)*(64000000/4000.0)));
+
+    }
+
+}
+
+
+
+void fullSpeedAhead(DC_motor *mL, DC_motor *mR)
+{
+
+    mL->direction = 1;
+    mR->direction = 1;
+
+    unsigned int current_power = mL->power;
+
+    for (int i=current_power; i<= 100; i++) {
+        mL->power = i;
+        mR->power = i;
+        setMotorPWM(mL);
+        setMotorPWM(mR);
+        _delay((unsigned long)((5)*(64000000/4000.0)));
+    }
+
+}
+
+void trundle(DC_motor *mL, DC_motor *mR)
+{
+
+
+
+
+    mL->direction = 1;
+    mR->direction = 1;
+
+    char current_power = mL->power;
+    char trundle_power = 18;
+
+    if (trundle_power > current_power) {
+        for (int i=current_power; i<= trundle_power; i++) {
+            mL->power = i+15;
+            mR->power = i;
+            setMotorPWM(mL);
+            setMotorPWM(mR);
+            _delay((unsigned long)((5)*(64000000/4000.0)));
+        }
+    }
+    else {
+        for (int i=current_power; i>= trundle_power; i--) {
+            mL->power = i;
+            mR->power = i;
+            setMotorPWM(mL);
+            setMotorPWM(mR);
+            _delay((unsigned long)((5)*(64000000/4000.0)));
+        }
+    }
+
+}
+
+void creep(DC_motor *mL, DC_motor *mR, int increments, char direction) {
+    if (mL->power != 0 || mR->power != 0) {
+        stop(mL, mR);
+    }
+    increment = 0;
+
+    mL->direction = direction;
+    mR->direction = direction;
+
+    char current_power = mL->power;
+    char creep_power;
+    if (direction==1 ) {
+        creep_power = 18;
+    } else {
+        creep_power = 10;
+    }
+
+
+    if (creep_power > current_power) {
+        for (int i=current_power; i<= creep_power; i++) {
+            mL->power = i;
+            mR->power = i;
+            setMotorPWM(mL);
+            setMotorPWM(mR);
+            _delay((unsigned long)((5)*(64000000/4000.0)));
+        }
+    }
+    else {
+        for (int i=current_power; i>= creep_power; i--) {
+            mL->power = i;
+            mR->power = i;
+            setMotorPWM(mL);
+            setMotorPWM(mR);
+            _delay((unsigned long)((5)*(64000000/4000.0)));
+        }
+    }
+    while (increment < increments);
+    stop(mL, mR);
+
+}
+
+void timed_trundle(DC_motor *mL, DC_motor *mR, int increments) {
+    if (mL->power != 0 || mR->power != 0) {
+        stop(mL, mR);
+    }
+    increment = 0;
+
+    mL->direction = 1;
+    mR->direction = 1;
+
+    char current_power = mL->power;
+    char trundle_power = 18;
+
+    if (trundle_power > current_power) {
+        for (int i=current_power; i<= trundle_power; i++) {
+            mL->power = i;
+            mR->power = i;
+            setMotorPWM(mL);
+            setMotorPWM(mR);
+            _delay((unsigned long)((5)*(64000000/4000.0)));
+        }
+    }
+    else {
+        for (int i=current_power; i>= trundle_power; i--) {
+            mL->power = i;
+            mR->power = i;
+            setMotorPWM(mL);
+            setMotorPWM(mR);
+            _delay((unsigned long)((5)*(64000000/4000.0)));
+        }
+    }
+
+    while (increment < increments);
+    stop(mL, mR);
+}
+
+
+void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char reverse) {
+
+    if (mL->power != 0 || mR->power != 0) {
+        stop(mL, mR);
+    }
+
+    if (reverse == 1) {
+        mL->direction = 0;
+        mR->direction = 0;
+    }
+    else {
+        mL->direction = 1;
+        mR->direction = 1;
+    }
+
+    for (int i=0; i<= 20; i++) {
+        mL->power = i;
+        mR->power = i;
+        setMotorPWM(mL);
+        setMotorPWM(mR);
+        _delay((unsigned long)((5)*(64000000/4000.0)));
+    }
+
+
+    char start_increment = increment;
+    while (increment - start_increment < square);
+    stop(mL, mR);
+
 }

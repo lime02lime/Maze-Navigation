@@ -1,4 +1,4 @@
-# 1 "i2c.c"
+# 1 "instructions.c"
 # 1 "<built-in>" 1
 # 1 "<built-in>" 3
 # 288 "<built-in>" 3
@@ -6,7 +6,12 @@
 # 1 "<built-in>" 2
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\language_support.h" 1 3
 # 2 "<built-in>" 2
-# 1 "i2c.c" 2
+# 1 "instructions.c" 2
+
+# 1 "./dc_motor.h" 1
+
+
+
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\xc.h" 1 3
 # 18 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\xc.h" 3
 extern const char __xc8_OPTIM_SPEED;
@@ -24086,104 +24091,197 @@ __attribute__((__unsupported__("The READTIMER" "0" "() macro is not available wi
 unsigned char __t1rd16on(void);
 unsigned char __t3rd16on(void);
 # 33 "C:\\Program Files\\Microchip\\xc8\\v2.45\\pic\\include\\xc.h" 2 3
-# 1 "i2c.c" 2
+# 4 "./dc_motor.h" 2
 
-# 1 "./i2c.h" 1
-# 13 "./i2c.h"
-void I2C_2_Master_Init(void);
-
+# 1 "./dc_motor.h" 1
+# 5 "./dc_motor.h" 2
 
 
+extern int increment;
+extern char turnLeftPower;
+extern char turnRightPower;
 
-void I2C_2_Master_Idle(void);
-
-
-
-
-void I2C_2_Master_Start(void);
-
-
-
-
-void I2C_2_Master_RepStart(void);
-
-
+typedef struct DC_motor {
+    char power;
+    char direction;
+    char brakemode;
+    unsigned int PWMperiod;
+    unsigned char *posDutyHighByte;
+    unsigned char *negDutyHighByte;
+} DC_motor;
 
 
-void I2C_2_Master_Stop(void);
+void initDCmotorsPWM(unsigned int PWMperiod);
+void setMotorPWM(DC_motor *m);
+void stop(DC_motor *mL, DC_motor *mR);
+void fastStop(DC_motor *mL, DC_motor *mR);
+void turnLeft(DC_motor *mL, DC_motor *mR, char power);
+void turnRight(DC_motor *mL, DC_motor *mR, char power);
+void fullSpeedAhead(DC_motor *mL, DC_motor *mR);
+void trundle(DC_motor *mL, DC_motor *mR);
+void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char reverse);
+void timed_trundle(DC_motor *mL, DC_motor *mR, int increments);
+void turn180(DC_motor *mL, DC_motor *mR);
+void turnLeft135(DC_motor *mL, DC_motor *mR, turnLeftPower);
+void turnRight135(DC_motor *mL, DC_motor *mR, turnRightPower);
+void creep(DC_motor *mL, DC_motor *mR, int increments, char direction);
+char leftCali(DC_motor *mL, DC_motor *mR);
+char rightCali(DC_motor *mL, DC_motor *mR);
+# 2 "instructions.c" 2
+
+# 1 "./instructions.h" 1
+
+
+
+extern char instruction_array[20][2];
+extern char instruction_array_index;
+extern char square;
+extern char reverseRouteFlag;
+extern char turnLeftPower;
+extern char turnRightPower;
+
+void executeInstruction(DC_motor *mL, DC_motor *mR, char colourCode);
+
+void Red(DC_motor *mL, DC_motor *mR);
+void Green(DC_motor *mL, DC_motor *mR);
+void Blue(DC_motor *mL, DC_motor *mR);
+void Yellow(DC_motor *mL, DC_motor *mR);
+void Pink(DC_motor *mL, DC_motor *mR);
+void Orange(DC_motor *mL, DC_motor *mR);
+void LightBlue(DC_motor *mL, DC_motor *mR);
+void White(DC_motor *mL, DC_motor *mR);
+void Black(DC_motor *mL, DC_motor *mR);
+
+void reverseYellow(DC_motor *mL, DC_motor *mR);
+void reversePink(DC_motor *mL, DC_motor *mR);
+void reverseOrange(DC_motor *mL, DC_motor *mR);
+void reverseLightBlue(DC_motor *mL, DC_motor *mR);
+void reverseRoute(DC_motor *mL, DC_motor *mR);
+# 3 "instructions.c" 2
 
 
 
 
-void I2C_2_Master_Write(unsigned char data_byte);
 
-
-
-
-unsigned char I2C_2_Master_Read(unsigned char ack);
-# 2 "i2c.c" 2
-
-
-
-
-
-
-void I2C_2_Master_Init(void)
-{
-
-  SSP2CON1bits.SSPM= 0b1000;
-  SSP2CON1bits.SSPEN = 1;
-  SSP2ADD = (64000000/(4*100000))-1;
-
-
-  TRISDbits.TRISD5 = 1;
-  TRISDbits.TRISD6 = 1;
-  ANSELDbits.ANSELD5=0;
-  ANSELDbits.ANSELD6=0;
-  SSP2DATPPS=0x1D;
-  SSP2CLKPPS=0x1E;
-  RD5PPS=0x1C;
-  RD6PPS=0x1B;
+void executeInstruction(DC_motor *mL, DC_motor *mR, char colourCode) {
+    switch (colourCode) {
+        case 0:
+            Red(mL, mR);
+            break;
+        case 1:
+            Green(mL, mR);
+            break;
+        case 2:
+            Blue(mL, mR);
+            break;
+        case 3:
+            Yellow(mL, mR);
+            break;
+        case 4:
+            Pink(mL, mR);
+            break;
+        case 5:
+            Orange(mL, mR);
+            break;
+        case 6:
+            LightBlue(mL, mR);
+            break;
+        case 7:
+            White(mL, mR);
+            break;
+        case 8:
+            Black(mL, mR);
+            break;
+        case 9:
+            reverseYellow(mL, mR);
+            break;
+        case 10:
+            reversePink(mL, mR);
+            break;
+        case 11:
+            reverseOrange(mL, mR);
+            break;
+        case 12:
+            reverseLightBlue(mL, mR);
+            break;
+    }
 }
 
-void I2C_2_Master_Idle(void)
-{
-  while ((SSP2STAT & 0x04) || (SSP2CON2 & 0x1F));
+
+void Red(DC_motor *mL, DC_motor *mR){
+    turnRight(mL, mR, turnRightPower);
 }
 
-void I2C_2_Master_Start(void)
-{
-  I2C_2_Master_Idle();
-  SSP2CON2bits.SEN = 1;
+void Green(DC_motor *mL, DC_motor *mR) {
+    turnLeft(mL, mR, turnLeftPower);
 }
 
-void I2C_2_Master_RepStart(void)
-{
-  I2C_2_Master_Idle();
-  SSP2CON2bits.RSEN = 1;
+void Blue(DC_motor *mL, DC_motor *mR) {
+    turn180(mL, mR);
 }
 
-void I2C_2_Master_Stop()
-{
-  I2C_2_Master_Idle();
-  SSP2CON2bits.PEN = 1;
+void Yellow(DC_motor *mL, DC_motor *mR) {
+    trundleSquare(mL, mR, square, 1);
+    turnRight(mL, mR, turnRightPower);
 }
 
-void I2C_2_Master_Write(unsigned char data_byte)
-{
-  I2C_2_Master_Idle();
-  SSP2BUF = data_byte;
+void Pink(DC_motor *mL, DC_motor *mR) {
+    trundleSquare(mL, mR, square, 1);
+    turnLeft(mL, mR, turnLeftPower);
+
 }
 
-unsigned char I2C_2_Master_Read(unsigned char ack)
-{
-  unsigned char tmp;
-  I2C_2_Master_Idle();
-  SSP2CON2bits.RCEN = 1;
-  I2C_2_Master_Idle();
-  tmp = SSP2BUF;
-  I2C_2_Master_Idle();
-  SSP2CON2bits.ACKDT = !ack;
-  SSP2CON2bits.ACKEN = 1;
-  return tmp;
+void Orange(DC_motor *mL, DC_motor *mR) {
+    turnRight135(mL, mR, turnRightPower);
+}
+
+void LightBlue(DC_motor *mL, DC_motor *mR) {
+    turnLeft135(mL, mR, turnLeftPower);
+}
+
+void White(DC_motor *mL, DC_motor *mR) {
+    reverseRouteFlag=1;
+    turn180(mL, mR);
+}
+
+void Black(DC_motor *mL, DC_motor *mR) {
+    reverseRouteFlag=1;
+    turn180(mL, mR);
+}
+
+
+
+void reverseYellow(DC_motor *mL, DC_motor *mR) {
+    turnLeft(mL, mR, turnLeftPower);
+    trundleSquare(mL, mR, square, 0);
+    turn180(mL, mR);
+}
+
+void reversePink(DC_motor *mL, DC_motor *mR) {
+    turnRight(mL, mR, turnRightPower);
+    trundleSquare(mL, mR, square, 0);
+    turn180(mL, mR);
+
+}
+
+void reverseOrange(DC_motor *mL, DC_motor *mR) {
+    turnRight135(mL, mR, turnRightPower);
+}
+
+void reverseLightBlue(DC_motor *mL, DC_motor *mR) {
+    turnLeft135(mL, mR, turnLeftPower);
+}
+
+
+
+void reverseRoute(DC_motor *mL, DC_motor *mR) {
+# 128 "instructions.c"
+    char reverseMapping[9] = {1, 0, 2, 9, 10, 11, 12, -1, -1};
+    for (int i = (instruction_array_index-1); i >= 0; i--) {
+        executeInstruction(mL, mR, reverseMapping[instruction_array[i][0]]);
+        timed_trundle(mL, mR, instruction_array[i][1]);
+    }
+    stop(mL, mR);
+    instruction_array_index = 0;
+    while (PORTFbits.RF2);
 }

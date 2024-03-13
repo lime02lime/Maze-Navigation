@@ -18,7 +18,7 @@
 #include "calibration.h"
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz
-#define PAUSE_BETWEEN_INSTRUCTIONS 1 // For testing, ill introduce pause after execution of instruction broken with button RF2 press
+#define PAUSE_BETWEEN_INSTRUCTIONS 0 // For testing, ill introduce pause after execution of instruction broken with button RF2 press
 #define NO_TRUNDLING 0 // For testing, no forward movement between instructions
 
 //unsigned int revsc
@@ -30,11 +30,19 @@ char instruction_array[20][2];
 char instruction_array_index = 0;
 char reverseRouteFlag = 0;
 
+char turnLeftPower = 30;
+char turnRightPower = 31;
+
 void main(void){
     color_click_init(); //initialise the colour clicker.
     init_buttons_LED(); //initialise LEDs on buggy and colour clicker.
     initBoardLEDs(); //initialise LEDs on picKit.
     initButtons(); //initialise buttons on picKit.
+    
+    
+    //Structures to store the RGBC values read from the colour sensor, and then their normalised values.
+    struct colors RGBC;
+    struct normColors normRGB;
     
     // Setting up motors
     unsigned int PWMperiod = 99;
@@ -60,17 +68,23 @@ void main(void){
     interrupts_init(&motorL, &motorR); //initialise colour sensor interrupts.
     Timer0_init(); //initialise timer overflow interrupts.
     
-    //Structures to store the RGBC values read from the colour sensor, and then their normalised values.
-    struct colors RGBC;
-    struct normColors normRGB;
-    
     LEDturnON(); //turn on all 3 colours of the tri-colour LED + headlights.
     __delay_ms(1000);
     
     
     
     // Checking battery
-    checkBattery();
+    //checkBattery();
+
+    turnLeftPower = leftCali(&motorL, &motorR);
+    __delay_ms(500);
+    turnRightPower = rightCali(&motorL, &motorR);
+
+    interrupts_init(); //initialise colour sensor interrupts.
+    Timer0_init(); //initialise timer overflow interrupts.
+    
+    LEDturnON(); //turn on all 3 colours of the tri-colour LED + headlights.
+    __delay_ms(1000);
     
     while (PORTFbits.RF2); //wait until button press to start.
     increment = 0; //resetting the timer counter once we start.
@@ -121,11 +135,7 @@ void main(void){
         if (reverseRouteFlag) {
             reverseRoute(&motorL, &motorR);
         }
-        
-        // For testing
-        if (!PORTFbits.RF3) {
-            reverseRouteFlag=1;
-        }
+        // NO_TRUNDLING is a flag you can set for testing if you don't want the motor to move forward between colour detections
         if (!NO_TRUNDLING) {
             trundle(&motorL, &motorR);
         }

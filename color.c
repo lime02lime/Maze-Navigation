@@ -158,15 +158,17 @@ void readColors(colors *RGBC) {
 }
 
 // Routine to detect colour of piece of paper 
-char decideColor(normColors *normRGB, colors * RGBC, DC_motor *mL, DC_motor *mR) {
+char decideColor(normColors *normRGB, colors *RGBC, DC_motor *mL, DC_motor *mR) {
     if (normRGB->normBlue > 17) {
         creep(mL, mR, 16, 0);
         return 2; //BLUE
     }
     if (normRGB->normBlue > 12 && normRGB->normRed < 50) {
+        creep(mL, mR, 16, 0);
         return 6; // LIGHT BLUE
     }
     if (normRGB->normRed > 70,normRGB->normGreen < 22) {
+        creep(mL, mR, 16, 0);
         return 0; // RED
     }
     else { 

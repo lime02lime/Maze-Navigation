@@ -3,4 +3,5 @@ interrupts.c  \
 interrupts.h  \
 i2c.h  \
 color.h  \
+dc_motor.h  \
 interact.h 

@@ -24132,8 +24132,8 @@ void trundle(DC_motor *mL, DC_motor *mR);
 void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char reverse);
 void timed_trundle(DC_motor *mL, DC_motor *mR, int increments);
 void turn180(DC_motor *mL, DC_motor *mR);
-void turnLeft135(DC_motor *mL, DC_motor *mR);
-void turnRight135(DC_motor *mL, DC_motor *mR);
+void turnLeft135(DC_motor *mL, DC_motor *mR, turnLeftPower);
+void turnRight135(DC_motor *mL, DC_motor *mR, turnRightPower);
 void creep(DC_motor *mL, DC_motor *mR, int increments, char direction);
 char leftCali(DC_motor *mL, DC_motor *mR);
 char rightCali(DC_motor *mL, DC_motor *mR);
@@ -24302,8 +24302,8 @@ char instruction_array[20][2];
 char instruction_array_index = 0;
 char reverseRouteFlag = 0;
 
-char turnLeftPower = 28;
-char turnRightPower = 28;
+char turnLeftPower = 30;
+char turnRightPower = 31;
 
 void main(void){
     color_click_init();
@@ -24400,10 +24400,6 @@ void main(void){
             reverseRoute(&motorL, &motorR);
         }
 
-
-        if (!PORTFbits.RF3) {
-            reverseRouteFlag=1;
-        }
         if (!0) {
             trundle(&motorL, &motorR);
         }

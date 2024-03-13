@@ -164,9 +164,11 @@ char decideColor(normColors *normRGB, colors *RGBC, DC_motor *mL, DC_motor *mR) 
         return 2; //BLUE
     }
     if (normRGB->normBlue > 12 && normRGB->normRed < 50) {
+        creep(mL, mR, 16, 0);
         return 6; // LIGHT BLUE
     }
     if (normRGB->normRed > 70,normRGB->normGreen < 22) {
+        creep(mL, mR, 16, 0);
         return 0; // RED
     }
     else { 

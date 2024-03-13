@@ -24122,8 +24122,8 @@ void trundle(DC_motor *mL, DC_motor *mR);
 void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char reverse);
 void timed_trundle(DC_motor *mL, DC_motor *mR, int increments);
 void turn180(DC_motor *mL, DC_motor *mR);
-void turnLeft135(DC_motor *mL, DC_motor *mR);
-void turnRight135(DC_motor *mL, DC_motor *mR);
+void turnLeft135(DC_motor *mL, DC_motor *mR, turnLeftPower);
+void turnRight135(DC_motor *mL, DC_motor *mR, turnRightPower);
 void creep(DC_motor *mL, DC_motor *mR, int increments, char direction);
 char leftCali(DC_motor *mL, DC_motor *mR);
 char rightCali(DC_motor *mL, DC_motor *mR);
@@ -24232,19 +24232,21 @@ void Pink(DC_motor *mL, DC_motor *mR) {
 }
 
 void Orange(DC_motor *mL, DC_motor *mR) {
-    turnRight135(mL, mR);
+    turnRight135(mL, mR, turnRightPower);
 }
 
 void LightBlue(DC_motor *mL, DC_motor *mR) {
-    turnLeft135(mL, mR);
+    turnLeft135(mL, mR, turnLeftPower);
 }
 
 void White(DC_motor *mL, DC_motor *mR) {
     reverseRouteFlag=1;
+    turn180(mL, mR);
 }
 
 void Black(DC_motor *mL, DC_motor *mR) {
-
+    reverseRouteFlag=1;
+    turn180(mL, mR);
 }
 
 
@@ -24263,24 +24265,19 @@ void reversePink(DC_motor *mL, DC_motor *mR) {
 }
 
 void reverseOrange(DC_motor *mL, DC_motor *mR) {
-    turnRight135(mL, mR);
+    turnRight135(mL, mR, turnRightPower);
 }
 
 void reverseLightBlue(DC_motor *mL, DC_motor *mR) {
-    turnLeft135(mL, mR);
+    turnLeft135(mL, mR, turnLeftPower);
 }
 
 
 
 void reverseRoute(DC_motor *mL, DC_motor *mR) {
-
-    int last_increments = increment;
-    turn180(mL, mR);
-    timed_trundle(mL, mR, last_increments);
-
-
+# 128 "instructions.c"
     char reverseMapping[9] = {1, 0, 2, 9, 10, 11, 12, -1, -1};
-    for (int i = instruction_array_index; i >= 0; i--) {
+    for (int i = (instruction_array_index-1); i >= 0; i--) {
         executeInstruction(mL, mR, reverseMapping[instruction_array[i][0]]);
         timed_trundle(mL, mR, instruction_array[i][1]);
     }

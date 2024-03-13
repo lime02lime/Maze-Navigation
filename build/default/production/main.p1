@@ -2137,10 +2137,10 @@ Version 4.0 HI-TECH Software Intermediate Code
 [i _square
 -> * -> 8 `i -> 2 `i `uc
 ]
-[v F14310 `uc ~T0 @X0 -> 2 `i t ]
+[v F14312 `uc ~T0 @X0 -> 2 `i t ]
 "28
 [; ;main.c: 28: char instruction_array[20][2];
-[v _instruction_array `F14310 ~T0 @X0 -> 20 `i e ]
+[v _instruction_array `F14312 ~T0 @X0 -> 20 `i e ]
 "29
 [; ;main.c: 29: char instruction_array_index = 0;
 [v _instruction_array_index `uc ~T0 @X0 1 e ]
@@ -2154,16 +2154,16 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> -> 0 `i `uc
 ]
 "32
-[; ;main.c: 32: char turnLeftPower = 28;
+[; ;main.c: 32: char turnLeftPower = 30;
 [v _turnLeftPower `uc ~T0 @X0 1 e ]
 [i _turnLeftPower
--> -> 28 `i `uc
+-> -> 30 `i `uc
 ]
 "33
-[; ;main.c: 33: char turnRightPower = 28;
+[; ;main.c: 33: char turnRightPower = 31;
 [v _turnRightPower `uc ~T0 @X0 1 e ]
 [i _turnRightPower
--> -> 28 `i `uc
+-> -> 31 `i `uc
 ]
 [v $root$_main `(v ~T0 @X0 0 e ]
 "35
@@ -2360,35 +2360,24 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;main.c: 128:         }
 }
 [e :U 2030 ]
-"131
-[; ;main.c: 131:         if (!PORTFbits.RF3) {
-[e $ ! ! != -> . . _PORTFbits 0 3 `i -> 0 `i 2031  ]
+"130
+[; ;main.c: 130:         if (!0) {
+[e $ ! ! != -> 0 `i -> 0 `i 2031  ]
 {
+"131
+[; ;main.c: 131:             trundle(&motorL, &motorR);
+[e ( _trundle (2 , &U _motorL &U _motorR ]
 "132
-[; ;main.c: 132:             reverseRouteFlag=1;
-[e = _reverseRouteFlag -> -> 1 `i `uc ]
-"133
-[; ;main.c: 133:         }
+[; ;main.c: 132:         }
 }
 [e :U 2031 ]
-"134
-[; ;main.c: 134:         if (!0) {
-[e $ ! ! != -> 0 `i -> 0 `i 2032  ]
-{
-"135
-[; ;main.c: 135:             trundle(&motorL, &motorR);
-[e ( _trundle (2 , &U _motorL &U _motorR ]
-"136
-[; ;main.c: 136:         }
-}
-[e :U 2032 ]
-"137
-[; ;main.c: 137:     }
+"133
+[; ;main.c: 133:     }
 }
 [e :U 2022 ]
 [e $U 2023  ]
 [e :U 2024 ]
-"138
-[; ;main.c: 138: }
+"134
+[; ;main.c: 134: }
 [e :UE 2018 ]
 }

@@ -29,8 +29,8 @@ char instruction_array[20][2];
 char instruction_array_index = 0;
 char reverseRouteFlag = 0;
 
-char turnLeftPower = 28;
-char turnRightPower = 28;
+char turnLeftPower = 30;
+char turnRightPower = 31;
 
 void main(void){
     color_click_init(); //initialise the colour clicker.
@@ -127,10 +127,6 @@ void main(void){
             reverseRoute(&motorL, &motorR);
         }
         
-        // For testing
-        if (!PORTFbits.RF3) {
-            reverseRouteFlag=1;
-        }
         if (!NO_TRUNDLING) {
             trundle(&motorL, &motorR);
         }

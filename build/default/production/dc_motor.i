@@ -24122,8 +24122,8 @@ void trundle(DC_motor *mL, DC_motor *mR);
 void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char reverse);
 void timed_trundle(DC_motor *mL, DC_motor *mR, int increments);
 void turn180(DC_motor *mL, DC_motor *mR);
-void turnLeft135(DC_motor *mL, DC_motor *mR);
-void turnRight135(DC_motor *mL, DC_motor *mR);
+void turnLeft135(DC_motor *mL, DC_motor *mR, turnLeftPower);
+void turnRight135(DC_motor *mL, DC_motor *mR, turnRightPower);
 void creep(DC_motor *mL, DC_motor *mR, int increments, char direction);
 char leftCali(DC_motor *mL, DC_motor *mR);
 char rightCali(DC_motor *mL, DC_motor *mR);
@@ -24224,7 +24224,7 @@ void stop(DC_motor *mL, DC_motor *mR)
 
 char leftCali(DC_motor *mL, DC_motor *mR){
     while(PORTFbits.RF2);
-    char power = 26;
+    char power = turnLeftPower;
     while (PORTFbits.RF2 || PORTFbits.RF3) {
         _delay((unsigned long)((1000)*(64000000/4000.0)));
         turnLeft(mL,mR,power);
@@ -24247,7 +24247,7 @@ char leftCali(DC_motor *mL, DC_motor *mR){
 
 char rightCali(DC_motor *mL, DC_motor *mR){
     while(PORTFbits.RF2);
-    char power = 26;
+    char power = turnRightPower;
     while (PORTFbits.RF2 || PORTFbits.RF3) {
         _delay((unsigned long)((1000)*(64000000/4000.0)));
         turnRight(mL,mR,power);
@@ -24300,7 +24300,7 @@ void turnLeft(DC_motor *mL, DC_motor *mR, char power)
         mR->power = i;
         setMotorPWM(mL);
         setMotorPWM(mR);
-        _delay((unsigned long)((15)*(64000000/4000.0)));
+        _delay((unsigned long)((12)*(64000000/4000.0)));
 
     }
 
@@ -24337,7 +24337,7 @@ void turnRight(DC_motor *mL, DC_motor *mR, char power)
         mR->power = i;
         setMotorPWM(mL);
         setMotorPWM(mR);
-        _delay((unsigned long)((15)*(64000000/4000.0)));
+        _delay((unsigned long)((12)*(64000000/4000.0)));
 
     }
 
@@ -24359,41 +24359,18 @@ void turnRight(DC_motor *mL, DC_motor *mR, char power)
 void turn180(DC_motor *mL, DC_motor *mR)
 {
 
-    if (mL->power != 0 || mR->power != 0) {
-        stop(mL, mR);
-    }
 
 
-    mL->direction = 0;
-    mR->direction = 1;
-    int maxpower = 40;
 
-
-    for (int i = 0; i < maxpower; i++) {
-        mL->power = i;
-        mR->power = i;
-        setMotorPWM(mL);
-        setMotorPWM(mR);
-        _delay((unsigned long)((5)*(64000000/4000.0)));
-
-    }
-
+    turnLeft(mL, mR, turnLeftPower);
+    _delay((unsigned long)((100)*(64000000/4000.0)));
+    turnLeft(mL, mR, turnLeftPower);
     _delay((unsigned long)((500)*(64000000/4000.0)));
-
-
-    for (int i = maxpower; i >= 0; i--) {
-        mL->power = i;
-        mR->power = i;
-        setMotorPWM(mL);
-        setMotorPWM(mR);
-        _delay((unsigned long)((5)*(64000000/4000.0)));
-
-    }
 
 }
 
 
-void turnLeft135(DC_motor *mL, DC_motor *mR)
+void turnLeft135(DC_motor *mL, DC_motor *mR, turnLeftPower)
 {
 
     if (mL->power != 0 || mR->power != 0) {
@@ -24403,7 +24380,7 @@ void turnLeft135(DC_motor *mL, DC_motor *mR)
 
     mL->direction = 0;
     mR->direction = 1;
-    int maxpower = 40;
+    int maxpower = (turnLeftPower*10/9)-1;
 
 
     for (int i = 0; i < maxpower; i++) {
@@ -24411,7 +24388,7 @@ void turnLeft135(DC_motor *mL, DC_motor *mR)
         mR->power = i;
         setMotorPWM(mL);
         setMotorPWM(mR);
-        _delay((unsigned long)((5)*(64000000/4000.0)));
+        _delay((unsigned long)((15)*(64000000/4000.0)));
 
     }
 
@@ -24430,7 +24407,7 @@ void turnLeft135(DC_motor *mL, DC_motor *mR)
 }
 
 
-void turnRight135(DC_motor *mL, DC_motor *mR)
+void turnRight135(DC_motor *mL, DC_motor *mR, turnRightPower)
 {
 
     if (mL->power != 0 || mR->power != 0) {
@@ -24440,7 +24417,7 @@ void turnRight135(DC_motor *mL, DC_motor *mR)
 
     mL->direction = 1;
     mR->direction = 0;
-    int maxpower = 40;
+    int maxpower = (turnRightPower*10/9);
 
 
     for (int i = 0; i < maxpower; i++) {
@@ -24496,11 +24473,11 @@ void trundle(DC_motor *mL, DC_motor *mR)
     mR->direction = 1;
 
     char current_power = mL->power;
-    char trundle_power = 12;
+    char trundle_power = 18;
 
     if (trundle_power > current_power) {
         for (int i=current_power; i<= trundle_power; i++) {
-            mL->power = i;
+            mL->power = i+15;
             mR->power = i;
             setMotorPWM(mL);
             setMotorPWM(mR);
@@ -24529,7 +24506,13 @@ void creep(DC_motor *mL, DC_motor *mR, int increments, char direction) {
     mR->direction = direction;
 
     char current_power = mL->power;
-    char creep_power = 10;
+    char creep_power;
+    if (direction==1 ) {
+        creep_power = 18;
+    } else {
+        creep_power = 10;
+    }
+
 
     if (creep_power > current_power) {
         for (int i=current_power; i<= creep_power; i++) {
@@ -24564,7 +24547,7 @@ void timed_trundle(DC_motor *mL, DC_motor *mR, int increments) {
     mR->direction = 1;
 
     char current_power = mL->power;
-    char trundle_power = 10;
+    char trundle_power = 18;
 
     if (trundle_power > current_power) {
         for (int i=current_power; i<= trundle_power; i++) {

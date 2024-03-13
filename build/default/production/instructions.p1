@@ -64,28 +64,25 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;./instructions.h: 6: extern char square;
 [v _square `uc ~T0 @X0 0 e ]
 "33 ./dc_motor.h
-[; ;./dc_motor.h: 33: void turnRight135(DC_motor *mL, DC_motor *mR);
-[v _turnRight135 `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
+[; ;./dc_motor.h: 33: void turnRight135(DC_motor *mL, DC_motor *mR, turnRightPower);
+[v _turnRight135 `(v ~T0 @X0 0 ef3`*S2015`*S2015`i ]
 "32
-[; ;./dc_motor.h: 32: void turnLeft135(DC_motor *mL, DC_motor *mR);
-[v _turnLeft135 `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
+[; ;./dc_motor.h: 32: void turnLeft135(DC_motor *mL, DC_motor *mR, turnLeftPower);
+[v _turnLeft135 `(v ~T0 @X0 0 ef3`*S2015`*S2015`i ]
 "7 ./instructions.h
 [; ;./instructions.h: 7: extern char reverseRouteFlag;
 [v _reverseRouteFlag `uc ~T0 @X0 0 e ]
-"7 ./dc_motor.h
-[; ;./dc_motor.h: 7: extern int increment;
-[v _increment `i ~T0 @X0 0 e ]
-"30
-[; ;./dc_motor.h: 30: void timed_trundle(DC_motor *mL, DC_motor *mR, int increments);
-[v _timed_trundle `(v ~T0 @X0 0 ef3`*S2015`*S2015`i ]
-"5 ./instructions.h
+"5
 [; ;./instructions.h: 5: extern char instruction_array_index;
 [v _instruction_array_index `uc ~T0 @X0 0 e ]
-[v F14196 `uc ~T0 @X0 -> 2 `i t ]
+[v F14198 `uc ~T0 @X0 -> 2 `i t ]
 "4
 [; ;./instructions.h: 4: extern char instruction_array[20][2];
-[v _instruction_array `F14196 ~T0 @X0 -> 0 `x e ]
-"23 ./dc_motor.h
+[v _instruction_array `F14198 ~T0 @X0 -> 0 `x e ]
+"30 ./dc_motor.h
+[; ;./dc_motor.h: 30: void timed_trundle(DC_motor *mL, DC_motor *mR, int increments);
+[v _timed_trundle `(v ~T0 @X0 0 ef3`*S2015`*S2015`i ]
+"23
 [; ;./dc_motor.h: 23: void stop(DC_motor *mL, DC_motor *mR);
 [v _stop `(v ~T0 @X0 0 ef2`*S2015`*S2015 ]
 "30262 C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/PIC18F-K_DFP/1.11.281/xc8\pic\include\proc\pic18f67k40.h
@@ -2321,8 +2318,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 [v _mR `*S2015 ~T0 @X0 1 r2 ]
 [f ]
 "77
-[; ;instructions.c: 77:     turnRight135(mL, mR);
-[e ( _turnRight135 (2 , _mL _mR ]
+[; ;instructions.c: 77:     turnRight135(mL, mR, turnRightPower);
+[e ( _turnRight135 (3 , , _mL _mR -> _turnRightPower `i ]
 "78
 [; ;instructions.c: 78: }
 [e :UE 2037 ]
@@ -2336,8 +2333,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 [v _mR `*S2015 ~T0 @X0 1 r2 ]
 [f ]
 "81
-[; ;instructions.c: 81:     turnLeft135(mL, mR);
-[e ( _turnLeft135 (2 , _mL _mR ]
+[; ;instructions.c: 81:     turnLeft135(mL, mR, turnLeftPower);
+[e ( _turnLeft135 (3 , , _mL _mR -> _turnLeftPower `i ]
 "82
 [; ;instructions.c: 82: }
 [e :UE 2038 ]
@@ -2354,11 +2351,14 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;instructions.c: 85:     reverseRouteFlag=1;
 [e = _reverseRouteFlag -> -> 1 `i `uc ]
 "86
-[; ;instructions.c: 86: }
+[; ;instructions.c: 86:     turn180(mL, mR);
+[e ( _turn180 (2 , _mL _mR ]
+"87
+[; ;instructions.c: 87: }
 [e :UE 2039 ]
 }
-"88
-[; ;instructions.c: 88: void Black(DC_motor *mL, DC_motor *mR) {
+"89
+[; ;instructions.c: 89: void Black(DC_motor *mL, DC_motor *mR) {
 [v _Black `(v ~T0 @X0 1 ef2`*S2015`*S2015 ]
 {
 [e :U _Black ]
@@ -2366,104 +2366,100 @@ Version 4.0 HI-TECH Software Intermediate Code
 [v _mR `*S2015 ~T0 @X0 1 r2 ]
 [f ]
 "90
-[; ;instructions.c: 90: }
+[; ;instructions.c: 90:     reverseRouteFlag=1;
+[e = _reverseRouteFlag -> -> 1 `i `uc ]
+"91
+[; ;instructions.c: 91:     turn180(mL, mR);
+[e ( _turn180 (2 , _mL _mR ]
+"92
+[; ;instructions.c: 92: }
 [e :UE 2040 ]
 }
-"94
-[; ;instructions.c: 94: void reverseYellow(DC_motor *mL, DC_motor *mR) {
+"96
+[; ;instructions.c: 96: void reverseYellow(DC_motor *mL, DC_motor *mR) {
 [v _reverseYellow `(v ~T0 @X0 1 ef2`*S2015`*S2015 ]
 {
 [e :U _reverseYellow ]
 [v _mL `*S2015 ~T0 @X0 1 r1 ]
 [v _mR `*S2015 ~T0 @X0 1 r2 ]
 [f ]
-"95
-[; ;instructions.c: 95:     turnLeft(mL, mR, turnLeftPower);
-[e ( _turnLeft (3 , , _mL _mR _turnLeftPower ]
-"96
-[; ;instructions.c: 96:     trundleSquare(mL, mR, square, 0);
-[e ( _trundleSquare (4 , , , _mL _mR _square -> -> 0 `i `uc ]
 "97
-[; ;instructions.c: 97:     turn180(mL, mR);
-[e ( _turn180 (2 , _mL _mR ]
+[; ;instructions.c: 97:     turnLeft(mL, mR, turnLeftPower);
+[e ( _turnLeft (3 , , _mL _mR _turnLeftPower ]
 "98
-[; ;instructions.c: 98: }
+[; ;instructions.c: 98:     trundleSquare(mL, mR, square, 0);
+[e ( _trundleSquare (4 , , , _mL _mR _square -> -> 0 `i `uc ]
+"99
+[; ;instructions.c: 99:     turn180(mL, mR);
+[e ( _turn180 (2 , _mL _mR ]
+"100
+[; ;instructions.c: 100: }
 [e :UE 2041 ]
 }
-"100
-[; ;instructions.c: 100: void reversePink(DC_motor *mL, DC_motor *mR) {
+"102
+[; ;instructions.c: 102: void reversePink(DC_motor *mL, DC_motor *mR) {
 [v _reversePink `(v ~T0 @X0 1 ef2`*S2015`*S2015 ]
 {
 [e :U _reversePink ]
 [v _mL `*S2015 ~T0 @X0 1 r1 ]
 [v _mR `*S2015 ~T0 @X0 1 r2 ]
 [f ]
-"101
-[; ;instructions.c: 101:     turnRight(mL, mR, turnRightPower);
-[e ( _turnRight (3 , , _mL _mR _turnRightPower ]
-"102
-[; ;instructions.c: 102:     trundleSquare(mL, mR, square, 0);
-[e ( _trundleSquare (4 , , , _mL _mR _square -> -> 0 `i `uc ]
 "103
-[; ;instructions.c: 103:     turn180(mL, mR);
-[e ( _turn180 (2 , _mL _mR ]
+[; ;instructions.c: 103:     turnRight(mL, mR, turnRightPower);
+[e ( _turnRight (3 , , _mL _mR _turnRightPower ]
+"104
+[; ;instructions.c: 104:     trundleSquare(mL, mR, square, 0);
+[e ( _trundleSquare (4 , , , _mL _mR _square -> -> 0 `i `uc ]
 "105
-[; ;instructions.c: 105: }
+[; ;instructions.c: 105:     turn180(mL, mR);
+[e ( _turn180 (2 , _mL _mR ]
+"107
+[; ;instructions.c: 107: }
 [e :UE 2042 ]
 }
-"107
-[; ;instructions.c: 107: void reverseOrange(DC_motor *mL, DC_motor *mR) {
+"109
+[; ;instructions.c: 109: void reverseOrange(DC_motor *mL, DC_motor *mR) {
 [v _reverseOrange `(v ~T0 @X0 1 ef2`*S2015`*S2015 ]
 {
 [e :U _reverseOrange ]
 [v _mL `*S2015 ~T0 @X0 1 r1 ]
 [v _mR `*S2015 ~T0 @X0 1 r2 ]
 [f ]
-"108
-[; ;instructions.c: 108:     turnRight135(mL, mR);
-[e ( _turnRight135 (2 , _mL _mR ]
-"109
-[; ;instructions.c: 109: }
+"110
+[; ;instructions.c: 110:     turnRight135(mL, mR, turnRightPower);
+[e ( _turnRight135 (3 , , _mL _mR -> _turnRightPower `i ]
+"111
+[; ;instructions.c: 111: }
 [e :UE 2043 ]
 }
-"111
-[; ;instructions.c: 111: void reverseLightBlue(DC_motor *mL, DC_motor *mR) {
+"113
+[; ;instructions.c: 113: void reverseLightBlue(DC_motor *mL, DC_motor *mR) {
 [v _reverseLightBlue `(v ~T0 @X0 1 ef2`*S2015`*S2015 ]
 {
 [e :U _reverseLightBlue ]
 [v _mL `*S2015 ~T0 @X0 1 r1 ]
 [v _mR `*S2015 ~T0 @X0 1 r2 ]
 [f ]
-"112
-[; ;instructions.c: 112:     turnLeft135(mL, mR);
-[e ( _turnLeft135 (2 , _mL _mR ]
-"113
-[; ;instructions.c: 113: }
+"114
+[; ;instructions.c: 114:     turnLeft135(mL, mR, turnLeftPower);
+[e ( _turnLeft135 (3 , , _mL _mR -> _turnLeftPower `i ]
+"115
+[; ;instructions.c: 115: }
 [e :UE 2044 ]
 }
-"117
-[; ;instructions.c: 117: void reverseRoute(DC_motor *mL, DC_motor *mR) {
+"119
+[; ;instructions.c: 119: void reverseRoute(DC_motor *mL, DC_motor *mR) {
 [v _reverseRoute `(v ~T0 @X0 1 ef2`*S2015`*S2015 ]
 {
 [e :U _reverseRoute ]
 [v _mL `*S2015 ~T0 @X0 1 r1 ]
 [v _mR `*S2015 ~T0 @X0 1 r2 ]
 [f ]
-"119
-[; ;instructions.c: 119:     int last_increments = increment;
-[v _last_increments `i ~T0 @X0 1 a ]
-[e = _last_increments _increment ]
-"120
-[; ;instructions.c: 120:     turn180(mL, mR);
-[e ( _turn180 (2 , _mL _mR ]
-"121
-[; ;instructions.c: 121:     timed_trundle(mL, mR, last_increments);
-[e ( _timed_trundle (3 , , _mL _mR _last_increments ]
-[v F14295 `uc ~T0 @X0 -> 9 `i s ]
-[i F14295
+[v F14296 `uc ~T0 @X0 -> 9 `i s ]
+[i F14296
 :U ..
-"124
-[; ;instructions.c: 124:     char reverseMapping[9] = {1, 0, 2, 9, 10, 11, 12, -1, -1};
+"128
+[; ;instructions.c: 128:     char reverseMapping[9] = {1, 0, 2, 9, 10, 11, 12, -1, -1};
 -> -> 1 `i `uc
 -> -> 0 `i `uc
 -> -> 2 `i `uc
@@ -2476,43 +2472,43 @@ Version 4.0 HI-TECH Software Intermediate Code
 ..
 ]
 [v _reverseMapping `uc ~T0 @X0 -> 9 `i a ]
-[e = _reverseMapping F14295 ]
-"125
-[; ;instructions.c: 125:     for (int i = instruction_array_index; i >= 0; i--) {
+[e = _reverseMapping F14296 ]
+"129
+[; ;instructions.c: 129:     for (int i = (instruction_array_index-1); i >= 0; i--) {
 {
 [v _i `i ~T0 @X0 1 a ]
-[e = _i -> _instruction_array_index `i ]
+[e = _i - -> _instruction_array_index `i -> 1 `i ]
 [e $ >= _i -> 0 `i 2046  ]
 [e $U 2047  ]
 [e :U 2046 ]
 {
-"126
-[; ;instructions.c: 126:         executeInstruction(mL, mR, reverseMapping[instruction_array[i][0]]);
+"130
+[; ;instructions.c: 130:         executeInstruction(mL, mR, reverseMapping[instruction_array[i][0]]);
 [e ( _executeInstruction (3 , , _mL _mR *U + &U _reverseMapping * -> *U + &U *U + &U _instruction_array * -> -> _i `ui `ux -> * -> # *U &U *U &U _instruction_array `ui -> -> 2 `i `ui `ux * -> -> -> 0 `i `ui `ux -> -> # *U &U *U + &U _instruction_array * -> -> _i `ui `ux -> * -> # *U &U *U &U _instruction_array `ui -> -> 2 `i `ui `ux `ui `ux `ux -> -> # *U &U _reverseMapping `ui `ux ]
-"127
-[; ;instructions.c: 127:         timed_trundle(mL, mR, instruction_array[i][1]);
+"131
+[; ;instructions.c: 131:         timed_trundle(mL, mR, instruction_array[i][1]);
 [e ( _timed_trundle (3 , , _mL _mR -> *U + &U *U + &U _instruction_array * -> -> _i `ui `ux -> * -> # *U &U *U &U _instruction_array `ui -> -> 2 `i `ui `ux * -> -> -> 1 `i `ui `ux -> -> # *U &U *U + &U _instruction_array * -> -> _i `ui `ux -> * -> # *U &U *U &U _instruction_array `ui -> -> 2 `i `ui `ux `ui `ux `i ]
-"128
-[; ;instructions.c: 128:     }
+"132
+[; ;instructions.c: 132:     }
 }
 [e -- _i -> 1 `i ]
 [e $ >= _i -> 0 `i 2046  ]
 [e :U 2047 ]
 }
-"129
-[; ;instructions.c: 129:     stop(mL, mR);
+"133
+[; ;instructions.c: 133:     stop(mL, mR);
 [e ( _stop (2 , _mL _mR ]
-"130
-[; ;instructions.c: 130:     instruction_array_index = 0;
+"134
+[; ;instructions.c: 134:     instruction_array_index = 0;
 [e = _instruction_array_index -> -> 0 `i `uc ]
-"131
-[; ;instructions.c: 131:     while (PORTFbits.RF2);
+"135
+[; ;instructions.c: 135:     while (PORTFbits.RF2);
 [e $U 2049  ]
 [e :U 2050 ]
 [e :U 2049 ]
 [e $ != -> . . _PORTFbits 0 2 `i -> 0 `i 2050  ]
 [e :U 2051 ]
-"132
-[; ;instructions.c: 132: }
+"136
+[; ;instructions.c: 136: }
 [e :UE 2045 ]
 }

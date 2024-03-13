@@ -16,7 +16,7 @@ extern struct normColors normRGB;
 
 #define _XTAL_FREQ 64000000
 
-void interrupts_init(DC_motor *mL, DC_motor *mR);
+void interrupts_init(DC_motor *mL, DC_motor *mR, char skip_calibration);
 void Timer0_init(void);
 void __interrupt(high_priority) HighISR();
 void clearInterrupt(void);

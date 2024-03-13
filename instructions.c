@@ -118,15 +118,15 @@ void reverseLightBlue(DC_motor *mL, DC_motor *mR) {
 //This function allows the buggy to retrace its steps to return home.
 void reverseRoute(DC_motor *mL, DC_motor *mR) {
     // Correcting for final reverse (this reverse can be found in color.c in function decideColour, it has increments of 16)
-    instruction_array[instruction_array_index-1][1] -= 16;
+//    instruction_array[instruction_array_index-1][1] -= 10;
     
     // [0, 1, 2, 3, 4, 5, 6, 7, 8]
     char reverseMapping[9] = {1, 0, 2, 9, 10, 11, 12, -1, -1}; // -1 won't execute any instruction, only start the trundling
     for (int i = (instruction_array_index-1); i >= 0; i--) {
         executeInstruction(mL, mR, reverseMapping[instruction_array[i][0]]);
-        timed_trundle(mL, mR, instruction_array[i][1]);
+        timed_trundle(mL, mR, instruction_array[i][1] -= 5); // Constant of 5 needed to compensate for reversal after colour detection
+        fastStop(mL, mR); // stop the buggy
     }
     stop(mL, mR);
     instruction_array_index = 0;
-    while (PORTFbits.RF2);
 }

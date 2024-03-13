@@ -1,7 +1,9 @@
-#ifndef _interact_H
-#define _interact_H
+#ifndef _lights_H
+#define _lights_H
 
 #include <xc.h>
+#include "color.h"
+#include "i2c.h"
 
 #define _XTAL_FREQ 64000000
 

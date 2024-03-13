@@ -1,7 +1,5 @@
-#include <xc.h>
+
 #include "color.h"
-#include "i2c.h"
-#include "interact.h"
 
 
 void color_click_init(void)
@@ -16,8 +14,10 @@ void color_click_init(void)
     color_writetoaddr(0x00, 0x13); 
     __delay_ms(3); //need to wait 3ms for everthing to start up
     
-    }
+}
 
+
+// following master-slave communication structure to READ low and high byte from colour clicker (used in testing)
 unsigned int color_readdoublefromaddress(char address) {
     unsigned int tmp;
 	I2C_2_Master_Start();         //Start condition
@@ -157,7 +157,7 @@ void readColors(colors *RGBC) {
     blueLED = 0;
 }
 
-// Routine to detect colour of piece of paper 
+// Routine to decide colour of the piece of paper 
 char decideColor(normColors *normRGB, colors *RGBC, DC_motor *mL, DC_motor *mR) {
     if (normRGB->normBlue > 17) {
         creep(mL, mR, 16, 0);
@@ -179,7 +179,7 @@ char decideColor(normColors *normRGB, colors *RGBC, DC_motor *mL, DC_motor *mR) 
         readColors(RGBC); 
         normalizeColors(RGBC, normRGB);
         creep(mL, mR, 16, 0);
-    }
+    
         
         if (normRGB->clear < 0x300) {
             return 8; // BLACK
@@ -191,7 +191,7 @@ char decideColor(normColors *normRGB, colors *RGBC, DC_motor *mL, DC_motor *mR) 
             return 5; // ORANGE
         }
         if (normRGB->normBlue < 7) {
-            return 3; //    YELLOW
+            return 3; // YELLOW
         }
         else {
             if (normRGB->normGreen > 34) {
@@ -202,35 +202,5 @@ char decideColor(normColors *normRGB, colors *RGBC, DC_motor *mL, DC_motor *mR) 
             }
         }
     }
+}
     
-    
-
-
-//unsigned int decideColor(normColors *normRGB) {
-//    
-//    if (normRGB->normBlue > 18) {
-//        return 2; //BLUE
-//    }
-//    if (normRGB->normGreen > 40) {
-//        if (normRGB->normBlue > 12) {
-//            return 6; //LIGHT BLUE
-//        }
-//        
-//        return 1; //GREEN
-//    } else {
-//    if (normRGB->normRed > 55) {
-//        //further decision splits
-//        if (normRGB->normGreen > 30) {
-//            if (normRGB->normBlue > 12) {
-//                return 4; //PINK
-//            }
-//            
-//            return 3; //YELLOW
-//        }
-//        return 0; //RED
-//    }}
-//    
-//    //if nothing:
-//    return 0;
-//    
-//}

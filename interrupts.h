@@ -4,7 +4,7 @@
 #include <xc.h>
 #include "i2c.h"
 #include "color.h"
-#include "interact.h"
+#include "lights.h"
 #include "dc_motor.h"
 #include "calibration.h"
 

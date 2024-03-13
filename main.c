@@ -11,43 +11,51 @@
 #include "dc_motor.h"
 #include "color.h"
 #include "i2c.h"
-#include "interact.h"
+#include "lights.h"
 #include "interrupts.h"
 #include "instructions.h"
 #include "feedback.h"
 #include "calibration.h"
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz
-#define PAUSE_BETWEEN_INSTRUCTIONS 0 // For testing, introduce pause after execution of instruction broken with button RF2 press
-#define NO_TRUNDLING 0 // For testing, no forward movement between instructions
-#define SKIP_CALIBRATION 1 // For testing, skipping the lengthy calibration
-#define INDICATE_INSTRUCTION 1 // For testing, will blink LED number of times corresponding to colour code
+// Flags used to activate / deactivate functionality for testing
+#define PAUSE_BETWEEN_INSTRUCTIONS 0 // Introduce pause after execution of instruction broken with button RF2 press
+#define NO_TRUNDLING 0 // No forward movement between instructions
+#define SKIP_CALIBRATION 1 // Skipping motor and brightness calibration
+#define INDICATE_INSTRUCTION 1 // Blink LED number of times corresponding to colour code
+#define CHECK_BATTERY 1 // Whether to check and indicate battery level
 
-//unsigned int revsc
-int increment = 0; // this is the 'base' time counter, increments every 16 seconds
-char wall_detected = 0;
+// =================
+// Setting globals
+// =================
+int increment = 0; // this is the 'base' time counter, increments every 0.125 seconds
+char wall_detected = 0; // Flag changed when wall detected through color clicker interrupt
 
-char square = 22; // found through experimentation
-char instruction_array[20][2];
-char instruction_array_index = 0;
-char reverseRouteFlag = 0;
+char square = 22; // increments needed to traverse a square
+char instruction_array[20][2]; // array to store history of instructions
+char instruction_array_index = 0; // stores index of last instruction performed
+char reverseRouteFlag = 0; // flag for main loop to know when to activate route reversa routine
 
-char turnLeftPower = 30;
-char turnRightPower = 31;
+char turnLeftPower = 30; // Default power for motors when turning left
+char turnRightPower = 31; // Default power for motors when turning right
+
 
 void main(void){
+    // ================
+    // Initialisation and calibration routines
+    // ================
+    
     color_click_init(); //initialise the colour clicker.
     init_buttons_LED(); //initialise LEDs on buggy and colour clicker.
     initBoardLEDs(); //initialise LEDs on picKit.
     initButtons(); //initialise buttons on picKit.
-    
     
     //Structures to store the RGBC values read from the colour sensor, and then their normalised values.
     struct colors RGBC;
     struct normColors normRGB;
     
     // Setting up motors
-    unsigned int PWMperiod = 99;
+    char PWMperiod = 99;
     initDCmotorsPWM(PWMperiod);
     
     struct DC_motor motorL;
@@ -67,50 +75,52 @@ void main(void){
     motorR.negDutyHighByte = &CCPR4H;
     setMotorPWM(&motorR);
     
-    
-    
-    LEDturnON(); //turn on all 3 colours of the tri-colour LED + headlights.
-    __delay_ms(1000);
-    
-    
-    
     // Checking battery
-    //checkBattery();
-    if (SKIP_CALIBRATION) {
-        // Do nothing
-    } else {
-        turnLeftPower = leftCali(&motorL, &motorR);
+    if (CHECK_BATTERY) {
+        checkBattery();
+    }
+    // Motor calibration
+    if (!SKIP_CALIBRATION) {
+        leftCali(&motorL, &motorR);
         __delay_ms(500);
-        turnLeftPower = leftCali(&motorL, &motorR);
+        rightCali(&motorL, &motorR);
     } 
+    // Brightness calibration
     interrupts_init(&motorL, &motorR, SKIP_CALIBRATION); //initialise colour sensor interrupts.
     Timer0_init(); //initialise timer overflow interrupts.
     
-    LEDturnON(); //turn on all 3 colours of the tri-colour LED + headlights.
+    //turn on all 3 colours of the tri-colour LED + headlights
+    LEDturnON(); 
     __delay_ms(1000);
     
     while (PORTFbits.RF2); //wait until button press to start.
-    increment = 0; //resetting the timer counter once we start.
+    increment = 0; //resetting the timer counter upon start
     
-    while(1) { //loop infinitely until a wall is detected
+    // ======================================
+    // Main while loop
+    // ======================================
+    
+    while(1) { 
         
-        if (wall_detected) { //this would be raised in the ISR once a wall is detected.
+        
+        if (wall_detected) { // raised in ISR once wall detected.
             // Record how long the buggy has trundled for
             char time_trundled = increment;
-            fastStop(&motorL, &motorR); // stop the buggy
+            stop(&motorL, &motorR); // stop the buggy
 
             // Read colour
-            readColors(&RGBC); //determine the colour of the card in front of the buggy
-            normalizeColors(&RGBC, &normRGB); //normalise the colour reading
-            char colourCode = decideColor(&normRGB, &RGBC, &motorL, &motorR); //deciding what colour it is
+            readColors(&RGBC); // Read RGBC pixels from colour clicker
+            normalizeColors(&RGBC, &normRGB); //normalise colour reading
+            char colourCode = decideColor(&normRGB, &RGBC, &motorL, &motorR); //decide colour and return colour code
             
             if (INDICATE_INSTRUCTION) {
                 // Indicating the colour code to tester
                 indicateInstruction(colourCode);
             }
 
-            // Adds instruction to history
+            // Adds instruction (defined by colour code) to history
             instruction_array[instruction_array_index][0] = colourCode;
+            // Add trundle duration before interrupt to history
             instruction_array[instruction_array_index][1] = time_trundled;
             instruction_array_index += 1;
             
@@ -123,7 +133,7 @@ void main(void){
             clearInterrupt(); 
             INTCONbits.GIE=1; // Allow interrupts again now that instruction execution has finished
             LATDbits.LATD7 = 0; //turn off the picKit LED that was turned on by the interrupt
-            increment = 0;
+            increment = 0; // reset timer
             
             //if we want to press a button to resume its course after completing a set of instructions:
             if (PAUSE_BETWEEN_INSTRUCTIONS) {
@@ -134,12 +144,12 @@ void main(void){
         //check if it is time to return home
         if (reverseRouteFlag) {
             reverseRoute(&motorL, &motorR);
-            reverseRouteFlag = 0;
-            while (PORTFbits.RF2);
+            reverseRouteFlag = 0; // resets flag
+            while (PORTFbits.RF2); // pauses to wait for restart
             // Resetting timer
             increment=0;
         }
-        // NO_TRUNDLING is a flag you can set for testing if you don't want the motor to move forward between colour detections
+        // Continue trundling if flag has been set to allow it
         if (!NO_TRUNDLING) {
             trundle(&motorL, &motorR);
         }

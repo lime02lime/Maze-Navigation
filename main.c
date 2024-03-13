@@ -126,7 +126,7 @@ void main(void){
         if (reverseRouteFlag) {
             reverseRoute(&motorL, &motorR);
         }
-        
+        // NO_TRUNDLING is a flag you can set for testing if you don't want the motor to move forward between colour detections
         if (!NO_TRUNDLING) {
             trundle(&motorL, &motorR);
         }

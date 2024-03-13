@@ -458,13 +458,13 @@ void timed_trundle(DC_motor *mL, DC_motor *mR, int increments) {
 }
 
 // Square is a time interval
-void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char reverse) {
+void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char direction) {
     // Make sure to bring motor to a stop it isn't already
     if (mL->power != 0 || mR->power != 0) {
         stop(mL, mR);
     }
     // Ensure motor directions are forward
-    if (reverse == 1) {
+    if (direction == 0) {
         mL->direction = 0;
         mR->direction = 0;
     }

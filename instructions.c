@@ -63,12 +63,12 @@ void Blue(DC_motor *mL, DC_motor *mR) {
 }
 
 void Yellow(DC_motor *mL, DC_motor *mR) {
-    trundleSquare(mL, mR, square, 1);
+    trundleSquare(mL, mR, square, 0);
     turnRight(mL, mR, turnRightPower);
 }
 
 void Pink(DC_motor *mL, DC_motor *mR) {
-    trundleSquare(mL, mR, square, 1);
+    trundleSquare(mL, mR, square, 0);
     turnLeft(mL, mR, turnLeftPower);
 
 }
@@ -94,38 +94,34 @@ void Black(DC_motor *mL, DC_motor *mR) {
 // =======================
 
 void reverseYellow(DC_motor *mL, DC_motor *mR) {
-    turnLeft(mL, mR, turnLeftPower);
-    trundleSquare(mL, mR, square, 0);
+    turnRight(mL, mR, turnLeftPower);
+    trundleSquare(mL, mR, square, 1);
     turn180(mL, mR);
 }
 
 void reversePink(DC_motor *mL, DC_motor *mR) {
-    turnRight(mL, mR, turnRightPower);
-    trundleSquare(mL, mR, square, 0);
+    turnLeft(mL, mR, turnRightPower);
+    trundleSquare(mL, mR, square, 1);
     turn180(mL, mR);
 
 }
 
 void reverseOrange(DC_motor *mL, DC_motor *mR) {
-    turnRight135(mL, mR, turnRightPower);
+    turnLeft135(mL, mR, turnRightPower);
 }
 
 void reverseLightBlue(DC_motor *mL, DC_motor *mR) {
-    turnLeft135(mL, mR, turnLeftPower);
+    turnRight135(mL, mR, turnLeftPower);
 }
 
 
 //This function allows the buggy to retrace its steps to return home.
 void reverseRoute(DC_motor *mL, DC_motor *mR) {
-    // face the way you came (in theory won't need this when we get white colour detection working)
-//    int last_increments = increment;
-//    turn180(mL, mR);
-//    timed_trundle(mL, mR, last_increments);
-//    TRISDbits.TRISD7 = 0;
-//    LATDbits.LATD7 = 1;
+    // Correcting for final reverse (this reverse can be found in color.c in function decideColour, it has increments of 16)
+    instruction_array[instruction_array_index-1][1] -= 16;
     
     // [0, 1, 2, 3, 4, 5, 6, 7, 8]
-    char reverseMapping[9] = {1, 0, 2, 9, 10, 11, 12, -1, -1};
+    char reverseMapping[9] = {1, 0, 2, 9, 10, 11, 12, -1, -1}; // -1 won't execute any instruction, only start the trundling
     for (int i = (instruction_array_index-1); i >= 0; i--) {
         executeInstruction(mL, mR, reverseMapping[instruction_array[i][0]]);
         timed_trundle(mL, mR, instruction_array[i][1]);

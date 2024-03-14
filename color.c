@@ -163,10 +163,6 @@ char decideColor(normColors *normRGB, colors *RGBC, DC_motor *mL, DC_motor *mR) 
         creep(mL, mR, 16*8, 0);
         return 2; //BLUE
     }
-    if (normRGB->normBlue > 12 && normRGB->normRed < 50) {
-        creep(mL, mR, 16*8, 0);
-        return 6; // LIGHT BLUE
-    }
     if (normRGB->normRed > 70 && normRGB->normGreen < 22) {
         creep(mL, mR, 16*8, 0);
         return 0; // RED
@@ -179,8 +175,11 @@ char decideColor(normColors *normRGB, colors *RGBC, DC_motor *mL, DC_motor *mR) 
         readColors(RGBC); 
         normalizeColors(RGBC, normRGB);
         creep(mL, mR, 16*8, 0);
-    
         
+        if (normRGB->normBlue > 12 && normRGB->normRed < 50) {
+            return 6; // LIGHT BLUE
+        }
+    
         if (normRGB->clear < 0x300) {
             return 8; // BLACK
         }

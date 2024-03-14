@@ -12,6 +12,10 @@ The overarching functionality of the buggy, coded in the main.c file is structur
 5. Finally it clears interrupts and resumes its forward motion (back to step #3).
 6. Once the final White card or a Black dead end are detected, the buggy returns to home to the starting point.
 
+A video of the buggy navigating a sample maze is linked below. The calibration routine is separate in order to reduce the file size, and is linked in the Calibration section further down.
+
+[Press this link to watch the complete maze run on YouTube](https://youtu.be/NJkiyJc0TDg)
+
 ### Wall Detection and Interrupts
 **Surface Detection:**
 The buggy's forward motion is halted when a surface is detected in its path. This detection is based on the Clear reading from the colour sensor, which raises the RB0 pin on the picKit to trigger an interrupt. As a surface gets closer, more of the light emitted from the buggy LEDs will be reflected from the surface and therefore the readings increase in value. The interrupts.c file contains the initialisation of the interrupts as well as the Interrupt Service Routine. When this interrupt is triggered, the buggy is quickly halted to avoid collision with the surface. The threshold for the sensor interrupt is also configured here. This value is highly dependent on the ambient lighting conditions, and is therefore configured with an initial calibration routine.
@@ -49,7 +53,7 @@ It is worth noting that we have separate calibration routines for Left and Right
 
 This procedure is used to ensure that the buggy does not trigger the interrupt in response to ambient light, while ensuring that it can read the black card as well as all of the brighter colour cards. A video of the calibration is linked to below.
 
-[Press this link to watch the video on YouTube](https://youtu.be/75zoIOjzlGE)
+[Press this link to watch the calibration routine on YouTube](https://youtu.be/75zoIOjzlGE)
 
 ### Colour Clicker
 The color.c file contains most of the colour sensing functionality. This includes two main parts:

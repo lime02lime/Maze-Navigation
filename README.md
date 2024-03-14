@@ -2,37 +2,48 @@
 # Course project - Mine navigation search and rescue
 
 ## Project Readme - Alex & Emil
-The objective with this project is to code and confiugure the hardware for a buggy to navigate a maze. The movement of the buggy is informed by coloured cards that are fixed to the walls of the maze, where different colours have associated instructions for movement. The buggy is equipped with a tri-colour LED (red, green, blue light) which can be controlled individually or collectively, as well as a light sensor which reads values for red, green, blue, and clear (brightness).
+The objective of this project is to code and configure the hardware for a buggy to navigate a maze. The movement of the buggy is informed by coloured cards that are fixed to the walls of the maze, where different colours have associated instructions for movement. The buggy is equipped with a tri-colour LED (red, green, blue light) whose LEDs can be controlled individually or collectively, as well as a light sensor which reads brightness values for individual red, green, blue, and clear sensors (RGBC).
 
 The overarching functionality of the buggy, coded in the main.c file is structured as follows:
 1. Initialize modules (LEDs, motors, and light sensor) and interrupts.
-2. Press RF2 to begin maze navigation.
-3. The buggy moves forward until interrupted.
+2. Press button RF2 to begin maze navigation.
+3. The buggy moves forward until interrupted by sensing a colour card close in front of it.
 4. Once interrupted, it reads the color, normalizes the readings, decides what the color is, and executes the corresponding action code.
 5. Finally it clears interrupts and resumes its forward motion (back to step #3).
-6. Once the final White card or a Black dead end are detected, the buggy returns to home to the starting point.
+6. Once the final White card or a Black dead end are detected, the buggy returns home to the starting point by reversing the instructions that took it to that White / Black card.
+
+A video of the buggy navigating a sample maze is linked below. The calibration routine is separate in order to reduce the file size, and is linked in the Calibration section further down.
+
+[Press this link to watch the complete maze run on YouTube](https://youtu.be/NJkiyJc0TDg)
 
 ### Wall Detection and Interrupts
 **Surface Detection:**
-The buggy's forward motion is halted when a surface is detected in its path. This detection is based on the Clear reading from the colour sensor, which raises the RB0 pin on the picKit to trigger an interrupt. As a surface gets closer, more of the light emitted from the buggy LEDs will be reflected from the surface and therefore the readings increase in value. The interrupts.c file contains the initialisation of the interrupts as well as the Interrupt Service Routine. When this interrupt is triggered, the buggy is quickly halted to avoid collision with the surface. The threshold for the sensor interrupt is also configured here. This value is highly dependent on the ambient lighting conditions, and is therefore configured with an initial calibration routine.
+The buggy's forward motion is halted when a surface is detected in its path. This detection is based on an interrupt triggered by the INT pin from the TCS3471 colour sensor, based on how many times a Clear reading from the detector has exceeded a certain brightness threshold. This is connected through the buggy to the RB0 pin on the picKit to trigger an interrupt which is configured through the Peripheral Port Select (PPS) module of the microcontroller. As a surface gets closer, more of the light emitted from the buggy LEDs will be reflected from the surface and therefore the Clear readings increase in value. The interrupts.c file contains the initialisation of the interrupts as well as the Interrupt Service Routine. When this interrupt is triggered, the buggy is quickly halted to avoid collision with the surface. The threshold for the sensor interrupt is also configured here. This value is highly dependent on the ambient lighting conditions, and is therefore configured with an initial calibration routine.
 
 **Timer:**
-The interrupts.c file also configures the timer, which is crucial to keep track of the buggy's movements in order to return home safely. Each overflow of the timer increments a time counter (variable name _increment_). For each movement of the buggy, the associated time is fetched from _increment_ and stored. The timer is configured with a 1:32 prescaler so that it overflows every 0.125 seconds - this elables sufficiently precise timekeeping while keeping the _increment_ variable low enough to not overflow before completing the maze.
+The interrupts.c file also configures the timer, which is crucial to keep track of the buggy's movements in order to return home safely. Each overflow of the timer increments a time counter (variable name _increment_). For each movement of the buggy, the associated time is fetched from _increment_ and stored. The timer is configured with a 1:4 prescaler so that it overflows with a frequency of 64 Hz - this enables sufficiently precise timekeeping to provide accuracy when timing motor movements while keeping the _increment_ variable low enough to not overflow before completing the maze. 
 
 ### Buggy Movement and Navigation
 Once the sensor interrupt is triggered, the buggy quickly halts and raises a flag (char _wall_detected_) that a wall has been detected. The main while loop checks for this flag and if it is raised performs the following actions:
 1. Records the colour readings from the sensor and stores these in the RGBC Structure.
-2. Normalises the readings to the brightness (in our case this is taken as the sum of the RGB components) and stores thse values in the normRGB Structure.
+2. Normalises the readings to the brightness (in our case this is taken as the sum of the RGB components) and stores these values in the normRGB Structure.
 3. Decides what colour the card is through a decision tree process (elaborated in the Colour Clicker section).
-4. Some colours are difficult to distinguish, which gets the buggy to creep close up to the wall, performing steps 1-3 again in order to decide on a colour, before moving on to step 5.
+4. Most colours are difficult to distinguish from a distance, which gets the buggy to creep slowly right up against the colour card, performing steps 1-3 again in order to decide on a colour, before moving on to step 5.
 5. Stores the current _increment_ value and the instruction associated with the colour identified, so that when returning home, the buggy knows how far to move in this segment and what action has been performed.
 6. The buggy creeps a short distance backwards so that the wall doesn't interfere with its turning and then the colour-associated action is executed (as coded in the instructions.c file).
 7. Finally, the sensor interrupt is cleared and the buggy resumes its forward motion in the main.c while loop until the interrupt is raised again.
 
-The dc_motor.c file contains the code to control the motors on the buggy. Functions are defined to enable movement forward, backwards, and to turn at specified angles. The accuracy of the buggy's turns is dependent on the friction between its wheels and the surface. Consequently, calibration is required to achieve the desired turn angles.
+The dc_motor.c file contains the code to control the motors on the buggy. Functions are defined to enable movement forward, backwards, and to turn at specified angles. The accuracy of the buggy's turns is dependent on the friction between its wheels and the surface, as well as the battery level of the buggy. Consequently, calibration is required to achieve the desired turn angles.
 
 ### Calibration
-Before navigating the maze, two calibration routines are performed. These are included in the calibration.c file.
+Before navigating the maze, two calibration routines are performed. These are included in the calibration.c file. A video is shown at the end of this section.
+
+**Interrupt Calibration:** The buggy stops when a surface is detected in its path, which is determined by the Colour Clicker's Clear reading. Importantly, the Clear reading is highly dependent on the ambient light conditions, which means that the threshold for interrupt trigger must be calibrated before operation. The interrupt threshold calibration follows this structure:
+1. The buggy reads and stores the ambient Clear value, then turns 90°, reads and stores it again, and so on until it has read this value facing in 4 directions at 90° intervals.
+2. The user then places a black card directly in front of the buggy (to simulate the darkest reading at which it would need to interrupt), reading and storing the Clear value.
+3. The interrupt high threshold is then set as the midpoint between the highest ambient brightness reading and the reading against the black card.
+
+This procedure is used to ensure that the buggy does not trigger the interrupt in response to ambient light, while ensuring that it can read the black card as well as all of the brighter colour cards (since the reflection against the black card is the lowest of all cards).
 
 **Motor Calibration:** The motors are run by DC and do not include any closed loop control, which means that we must calibrate them before use. Specifically, this applies to the buggy turning, where achieving repeatable turn angles is important. Therefore, the 90° left/right turns are calibrated upon startup, following this structure:
 1. The buggy turns left 90° according to the default settings.
@@ -40,32 +51,37 @@ Before navigating the maze, two calibration routines are performed. These are in
 3. The buggy repeats steps 1 and 2 until the user is satisfied with the result, at which point they press the two buttons simultaneously - which exits the left turn calibration routine.
 4. Steps 1-3 are now performed to calibrate the 90° right turn. The buggy turns to the right according to the default 90° settings, and then waits for button press. As before, the LHS/RHS buttons correspond to the direction in which to increment the turning magnitude.
 
-It is worth noting that we have separate calibration routines for Left and Right because the motors do not always perform equally.
+It is worth noting that we have separate calibration routines for Left and Right because the motors do not always perform equally. The turns of the motor involve ramping up to a maximum turning speed for all motors, holding for a period of time, then ramping downwards in power to stop the turn. The number being changed by the calibration is the maximum motor power during the hold, not the time the turn is being held. As for turning at other angles, the 135 degree turns to the left and right are calculated as increasing the maximum motor power while turning for each respective side at 90 degrees by a constant factor (identical for both sides), but keeping the holding time at maximum power for turning constant. As for the 180 degree turn, the most consistent results across all surfaces were found by repeating a 90 degree turn twice, rather than doing a smooth single turn.
 
-**Interrupt Calibration:** The buggy stops when a surface is detected in its path, which is determined by the Colour Clicker's Clear reading. Importantly, the Clear reading is highly dependent on the ambient light conditions, which means that the threshold for interrupt trigger must be calibrated before operation. The interrupt threshold calibration follows this structure:
-1. The buggy reads and stores the ambient Clear value, then turns 90°, reads and stores it again, and so on until it has read this value facing in 4 directions at 90° intervals.
-2. The user then places a black card in front of the buggy (to simulate the darkest reading at which it would need to interrupt), reading and storing the Clear value.
-3. The interrupt high threshold is then set as the average between the two highest readings (that is, the average between the highest ambient brightness, and that of the black card).
+This procedure is used to ensure that the buggy does not trigger the interrupt in response to ambient light, while ensuring that it can read the black card as well as all of the brighter colour cards. A video of the calibration is linked to below.
 
-This procedure is used to ensure that the buggy does not trigger the interrupt in response to ambient light, while ensuring that it can read the black card as well as all of the brighter colour cards.
+[Press this link to watch the calibration routine on YouTube](https://youtu.be/75zoIOjzlGE)
+
 
 ### Colour Clicker
 The color.c file contains most of the colour sensing functionality. This includes two main parts:
 1. Colour sensing - readColours() can be called to collect RGBC data from the colour sensor. It reads the colours one at a time, turning on only the LED colour corresponding to the colour being read. This improves the sensor's ability to distinguish between colours. For the Clear reading, all three LEDs are turned on.
-2. Colour deciding - decideColour() implements a decision tree approach to establish what colour is faced. It accesses the normalised colour values and returns an integer as its colour decision - each of the 9 colours having a number assigned to it.
+2. Colour deciding - decideColour() implements a decision tree approach to establish what colour is faced. The decision boundaries for the decision tree were informed by looking at data collected and stored in the excel spreadsheet named "Colour detection data". The function accesses the normalised colour values, transitions through the decision tree and returns an integer as its colour decision - each of the 9 colours having a number assigned to it (in the order of the table mapping instructions to colours found below).
 
-Communication with the colour clicker is performed via an I2C protocol. The functions to enable this communication are contained within the i2c.c file, provided alongside the project brief. 
+Communication with the colour clicker is performed via an I2C protocol for performing activities such as reading colour sensor values and configuring settings. The functions to enable this communication are contained within the i2c.c file, provided alongside the project brief. 
 
 
 ### Returning Home
-During the buggy's travel through the maze, each navigation action is stored in an array. Because there is no direct way to measure distances, time is instead used as a proxy. The time interval spent on each straight is recorded every time a navigation action is performed, and stored in the array alongside the navigation action taken. The idea is that upon reaching the end of the maze (indicated by a white card, or a black wall - dead end), the navigation array is traversed backwards to return to the buggy to the starting location. Naturally, it is coded so that the opposite direction of each turn is performed on the way back.
+During the buggy's travel through the maze, each navigation action is stored in an array. Because there is no direct way to measure distances, time is instead used as a proxy. The time interval spent on each straight is recorded every time a navigation action is performed, and stored in the array alongside the navigation action taken. Upon reaching the end of the maze (indicated by a white card, or a black wall - dead end), the navigation array is traversed backwards to return to the buggy to the starting location. Naturally, it is coded so that the opposite direction of each turn is performed on the way back.
 
-### Future Work and Areas of Improvement
+### Future Work, Areas of Improvement and Attempted Solutions
 Below we have listed the areas that require most continued work.
 
-**Turn Calibration:** Currently, the turn calibration adjusts the _maxPower_ variable within the 90° turn functions. This provides an easy way to increase/decrease the magnitude of the turns. The main downside with this process is that it may not provide minute enough adjustments to achieve an accurate and repeatable turn angle. This is also exacerbated by the way that the turns are performed, where the power is stepped up from 0 to the max power, and thereafter down to 0 again. This means that an increase of 1 in power has a twofold effect as it must be stepped up to and stepped down from. This value is initialised to approximately 30, so a change of 2 units up or down amounts to a considerable change. A method of improving turn accuracy may be to instead adjust the time during which the maximum power is held. This value is currently set to approximately 300 ms, which allows for much smaller percentage changes.
+**Turn Calibration:** Currently, the turn calibration adjusts the _maxPower_ variable within the 90° turn functions. This provides an easy way to increase/decrease the magnitude of the turns. The main downside with this process is that it may not provide precise enough adjustments to achieve an accurate and repeatable turn angle. This is also exacerbated by the way that the turns are performed, where the power is stepped up from 0 to the max power, and thereafter down to 0 again. This means that an increase of 1 in power has a twofold effect as it must be stepped up to and stepped down from. This value is initialised to approximately 30, so a change of 2 units up or down amounts to a considerable change. A method of improving turn accuracy may be to instead adjust the time during which the maximum power is held. This value is currently set to approximately 300 ms, which allows for much smaller percentage changes.
 
-**Route Optimisation:** Currently, when the buggy returns home from the end of the maze, it retraces its steps exactly. In some cases, such as for the yellow card, this means that the buggy will have to move into a dead end just to traverse the same segment going back. Instead, logic could be implemented such that the buggy checks if it is in a known location, excluding redundant moves and instead returning home more directly.
+**Route Optimisation:** Currently, when the buggy returns home from the end of the maze, it retraces its steps exactly. In some cases, such as for the yellow and pink cards, this means that the buggy will have to move into a dead end just to traverse the same segment going back. Instead, logic could be implemented such that when the buggy sees the instruction is pink or yellow, it looks ahead to where the instruction before the yellow / pink card was executed, and heads straight to that location, excluding redundant moves and instead returning home more directly.
+
+As a more advanced case of route optimisation, an algorithm could be implemented to detect any time the buggy crosses over the same point throughout the route. Then upon the return, skip portions of the map that would leave it in the same spot anyway. One way of doing this would be to allocate a large array that would be populated with coordinates of the buggy as it progressed through the route (e.g. marking coordinates after a certain time interval). With a large enough array and frequent enough coordinates measured, once the route has been completed. One could create compare coordinates (either for direct equality or closeness based on e.g. a simple L2 metric - i.e. pythagoras) and find where intersections have occurred, taking care to align the buggy in the proper direction to continue the route home (for example by a simple look aheads in the array to check which direction the buggy was going before skipping a path and where it should go after skipping the path).
+
+**Machine Learning** An attempt was made to apply machine learning algorithms to the colour detection by using python in combination with some collected data. These models were deliberately selected to be simple, so that they would be easy to translate into C code. A decision tree and small neural network were attempted. The decision tree yielded better results than the neural network, but it seemed the model lacked sufficient data to make an optimal choice of decision boundaries, despite attempts to optimise the model through limiting the depth of the tree and increasing the number of samples at a leaf needed to split it. Data was collected in different lighting conditions to try to improve reliability, but in the end determining decision boundaries 'by eye' and moving the buggy sensor right up against the colour to detect was the best solution. If curious the code for the attempt can be found in ml.py and the data in mldata.csv and mllab.csv.
+
+**Smooth 180 degree turn**
+An attempt was made to make a smooth 180 degree turn, stored in the branch turn180. It was found that while it was possible to get a consistent smooth 180 degree turn on one surface by using a constant factor, to do the same on a different surface - despite recalibrating for the 90 degree turn on that surface - would lead to worse inaccuracy than making two 90 degree turns. However, the attempt was rushed due to an approaching deadline so it is is possible something was missed. If you wish to resume the attempt head to line 170 of dc_motor.c in that branch.
 
 END OF PROJECT README
 

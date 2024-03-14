@@ -3,6 +3,8 @@
 
 #include <xc.h>
 #include "dc_motor.h"
+#include "i2c.h"
+#include "lights.h"
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
@@ -30,16 +32,15 @@ unsigned int readClearColor(void);
 
 
 /********************************************//**
- *  Creating a structure of the color values that have been read.
+ *  Creating structures for color values that have been read.
  ***********************************************/
-typedef struct colors { //definition of RGBC structure
+//definition of RGBC structure
+typedef struct colors { 
     unsigned int red; //value read for RED
     unsigned int green; //value read for GREEN
     unsigned int blue; //value read for BLUE
     unsigned int clear; //value read for CLEAR
 } colors;
-
-
 
 //Structure for the normalised colour values:
 typedef struct normColors { 
@@ -49,9 +50,9 @@ typedef struct normColors {
     unsigned int clear;
 } normColors;
 
+// Functions involved in reading colour channels and deciding colour
 void readColors(colors *RGBC);
 void normalizeColors(colors *RGBC, normColors *normRGB);
 char decideColor(normColors *normRGB, colors * RGBC, DC_motor *mL, DC_motor *mR);
-//unsigned int decideColor(normColors *normRGB);
 
 #endif

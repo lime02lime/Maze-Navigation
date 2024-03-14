@@ -3,14 +3,18 @@
 
 #define _XTAL_FREQ 64000000 
 
+#include <xc.h>
 #include "dc_motor.h"
 #include "color.h"
-#include "interact.h"
+#include "lights.h"
 
 extern char turnLeftPower;
 extern char turnRightPower;
 
-int max(int x, int y);
-unsigned int calibrate_brightness_sensor(DC_motor *mL, DC_motor* mR);
+// Calibration functions
+void calibrate_brightness_sensor(DC_motor *mL, DC_motor* mR);
+void leftCali(DC_motor *mL, DC_motor *mR);
+void rightCali(DC_motor *mL, DC_motor *mR);
+unsigned int max(unsigned int x, unsigned int y);
 
 #endif

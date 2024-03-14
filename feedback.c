@@ -2,6 +2,7 @@
 
 #include "feedback.h"
 
+// Initialises both LEDs on clickerboard for feedback
 void initBoardLEDs(void) {
     TRISDbits.TRISD7 = 0;
     LATDbits.LATD7 = 0;
@@ -9,6 +10,7 @@ void initBoardLEDs(void) {
     LATHbits.LATH3 = 0;
 }
 
+// Initialises both buttons on clickerboard for input
 void initButtons(void) {
     TRISFbits.TRISF2 = 1;
     ANSELFbits.ANSELF2=0; //turn off analogue input on pin
@@ -16,17 +18,6 @@ void initButtons(void) {
     ANSELFbits.ANSELF3=0; //turn off analogue input on pin
 }
 
-
-void toggleLEDD7(void) {
-    int current = LATDbits.LATD7;
-    if (current == 0) {
-        LATDbits.LATD7 = 1;
-    }
-    else {
-        LATDbits.LATD7 = 0;
-
-    }
-}
 
 void indicateInstruction(char period) {
     for (int i = 0; i < 2; i++) {
@@ -67,63 +58,3 @@ void checkBattery(void) {
     }
     
 }
-
-// If you still want your old instructions
-
-//            if (colourCode == 1) {
-//                TRISHbits.TRISH3 = 0;
-//                for (char i=0; i<1; i++) {
-//                    LATHbits.LATH3 = 1;
-//                    __delay_ms(150);
-//                    LATHbits.LATH3 = 0;
-//                    __delay_ms(100);
-//                }
-//            }
-//            
-//            if (colourCode == 2) {
-//                TRISHbits.TRISH3 = 0;
-//                for (char i=0; i<2; i++) {
-//                    LATHbits.LATH3 = 1;
-//                    __delay_ms(150);
-//                    LATHbits.LATH3 = 0;
-//                    __delay_ms(100);
-//                }
-//            }
-//            
-//            if (colourCode == 3) {
-//                TRISHbits.TRISH3 = 0;
-//                for (char i=0; i<3; i++) {
-//                    LATHbits.LATH3 = 1;
-//                    __delay_ms(150);
-//                    LATHbits.LATH3 = 0;
-//                    __delay_ms(100);
-//                }
-//            }
-//            
-//            if (colourCode == 4) {
-//                TRISHbits.TRISH3 = 0;
-//                for (char i=0; i<2; i++) {
-//                    LATHbits.LATH3 = 1;
-//                    __delay_ms(150);
-//                    LATHbits.LATH3 = 0;
-//                    __delay_ms(150);
-//                }
-//                LATDbits.LATD7 = 1;
-//                __delay_ms(150);
-//                LATDbits.LATD7 = 0;
-//                __delay_ms(150);
-//            }
-//            
-//            if (colourCode == 6) {
-//                TRISHbits.TRISH3 = 0;
-//                for (char i=0; i<3; i++) {
-//                    LATHbits.LATH3 = 1;
-//                    __delay_ms(150);
-//                    LATHbits.LATH3 = 0;
-//                    __delay_ms(150);
-//                }
-//                LATDbits.LATD7 = 1;
-//                __delay_ms(150);
-//                LATDbits.LATD7 = 0;
-//                __delay_ms(150);
-//            }

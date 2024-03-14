@@ -4,7 +4,8 @@
 
 
 //Here we use a Switch to execute the instructions associated with each colour.
-//Each colour has a value from 0-8.
+//Each colour has been given a code from 0-8 (same order as in the table in the github README)
+// Extra codes added for reversal instructions
 void executeInstruction(DC_motor *mL, DC_motor *mR, char colourCode) {
     switch (colourCode) {
         case 0:
@@ -49,13 +50,15 @@ void executeInstruction(DC_motor *mL, DC_motor *mR, char colourCode) {
     }
 }
 
-//THE FUNCTIONS BELOW GIVE THE SPECIFIC INSTRUCTIONS ASSOCIATED WITH EACH COLOUR
+// =========================
+// The functions below give the specific instructions associated with each colour
+// =========================
 void Red(DC_motor *mL, DC_motor *mR){
-    turnRight(mL, mR, turnRightPower);
+    turnRight(mL, mR);
 }
 
 void Green(DC_motor *mL, DC_motor *mR) {
-    turnLeft(mL, mR, turnLeftPower);
+    turnLeft(mL, mR);
 }
 
 void Blue(DC_motor *mL, DC_motor *mR) {
@@ -63,22 +66,22 @@ void Blue(DC_motor *mL, DC_motor *mR) {
 }
 
 void Yellow(DC_motor *mL, DC_motor *mR) {
-    trundleSquare(mL, mR, square, 0);
-    turnRight(mL, mR, turnRightPower);
+    trundleSquare(mL, mR, 0);
+    turnRight(mL, mR);
 }
 
 void Pink(DC_motor *mL, DC_motor *mR) {
-    trundleSquare(mL, mR, square, 0);
-    turnLeft(mL, mR, turnLeftPower);
+    trundleSquare(mL, mR, 0);
+    turnLeft(mL, mR);
 
 }
 
 void Orange(DC_motor *mL, DC_motor *mR) {
-    turnRight135(mL, mR, turnRightPower);
+    turnRight135(mL, mR);
 }
 
 void LightBlue(DC_motor *mL, DC_motor *mR) {
-    turnLeft135(mL, mR, turnLeftPower);
+    turnLeft135(mL, mR);
 }
 
 void White(DC_motor *mL, DC_motor *mR) {
@@ -92,40 +95,43 @@ void Black(DC_motor *mL, DC_motor *mR) {
 }
 
 // =======================
+// Instructions for the reverse route (that can't be replicated with the above functions alone)
+// =======================
 
 void reverseYellow(DC_motor *mL, DC_motor *mR) {
-    turnRight(mL, mR, turnLeftPower);
-    trundleSquare(mL, mR, square, 1);
+    turnRight(mL, mR);
+    trundleSquare(mL, mR, 1);
     turn180(mL, mR);
 }
 
 void reversePink(DC_motor *mL, DC_motor *mR) {
-    turnLeft(mL, mR, turnRightPower);
-    trundleSquare(mL, mR, square, 1);
+    turnLeft(mL, mR);
+    trundleSquare(mL, mR, 1);
     turn180(mL, mR);
-
 }
 
 void reverseOrange(DC_motor *mL, DC_motor *mR) {
-    turnLeft135(mL, mR, turnRightPower);
+    turnLeft135(mL, mR);
 }
 
 void reverseLightBlue(DC_motor *mL, DC_motor *mR) {
-    turnRight135(mL, mR, turnLeftPower);
+    turnRight135(mL, mR);
 }
 
 
-//This function allows the buggy to retrace its steps to return home.
+// Function for the buggy to retrace its steps to return home.
 void reverseRoute(DC_motor *mL, DC_motor *mR) {
-    // Correcting for final reverse (this reverse can be found in color.c in function decideColour, it has increments of 16)
-//    instruction_array[instruction_array_index-1][1] -= 10;
     
-    // [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    // Reverse mapping where index corresponds to colour code
     char reverseMapping[9] = {1, 0, 2, 9, 10, 11, 12, -1, -1}; // -1 won't execute any instruction, only start the trundling
     for (int i = (instruction_array_index-1); i >= 0; i--) {
         executeInstruction(mL, mR, reverseMapping[instruction_array[i][0]]);
-        timed_trundle(mL, mR, instruction_array[i][1] -= 5); // Constant of 5 needed to compensate for reversal after colour detection
-        fastStop(mL, mR); // stop the buggy
+        int time = (instruction_array[i][1] * 8) - 40;
+        if (time < 0) {
+            time = 0;
+        }
+        timed_trundle(mL, mR, time); // Constant of 40 needed to compensate for reversal after colour detection
+        stop(mL, mR); // stop the buggy
     }
     stop(mL, mR);
     instruction_array_index = 0;

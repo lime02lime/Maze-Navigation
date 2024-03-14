@@ -1,7 +1,5 @@
-#include <xc.h>
-#include "color.h"
-#include "i2c.h"
-#include "interact.h"
+
+#include "lights.h"
 
 
 //initialize the LEDs on the buggy, including the three colours, headlights, break lights, and low lights.
@@ -15,7 +13,7 @@ void init_buttons_LED(void){
     TRISDbits.TRISD4 = 0; // set break lights to output
     
     //Set initial state of LEDs:
-    // (these are defined in interact.h)
+    // (these are defined in lights.h)
     redLED = 0;
     greenLED = 0;
     blueLED = 0;

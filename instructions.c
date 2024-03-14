@@ -126,7 +126,7 @@ void reverseRoute(DC_motor *mL, DC_motor *mR) {
     char reverseMapping[9] = {1, 0, 2, 9, 10, 11, 12, -1, -1}; // -1 won't execute any instruction, only start the trundling
     for (int i = (instruction_array_index-1); i >= 0; i--) {
         executeInstruction(mL, mR, reverseMapping[instruction_array[i][0]]);
-        timed_trundle(mL, mR, instruction_array[i][1] -= 5); // Constant of 5 needed to compensate for reversal after colour detection
+        timed_trundle(mL, mR, (instruction_array[i][1] * 8) - 40); // Constant of 40 needed to compensate for reversal after colour detection
         stop(mL, mR); // stop the buggy
     }
     stop(mL, mR);

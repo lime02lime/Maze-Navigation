@@ -63,12 +63,12 @@ void Timer0_init(void)
     T0CON1bits.T0CS=0b010; // Fosc/4
     T0CON1bits.T0ASYNC=1; // see datasheet errata - needed to ensure correct operation when Fosc/4 used as clock source
     // f_interrupt = 64000000/(4*Prescaler*2^16)
-    T0CON1bits.T0CKPS=0b0101; // 1:32 prescaler, means 8 overflows a second so timing precise to 125 ms, increment overflows after 2 hours
+    T0CON1bits.T0CKPS=0b0010; // 1:32 prescaler is 0b0101, means 8 overflows a second so timing precise to 125 ms, increment overflows after 2 hours
     T0CON0bits.T016BIT=1;	// 16 bit mode	
 	
     // Initialising timer registers
     TMR0H=0;            //write High reg first, update happens when low reg is written to
-    TMR0L=0;
+    TMR0L=3036;
     T0CON0bits.T0EN=1;	//start the timer
 }
 
@@ -83,9 +83,9 @@ void __interrupt(high_priority) High_ISR() {
         clearInterrupt(); //clears the interrupt on the colour clicker
         PIR0bits.INT0IF = 0; //clears the interrupt on the picKit.
         
-        // Stop further light readings from re-triggering interrupt by disabling global interrupts
+        // Disable brightness interrupts from INT0
         //this is later re-enabled in the main loop after handling the interrupt.
-        INTCONbits.GIE=0; 
+        PIE0bits.INT0IE = 0;
     }
     //if timer overflow interrupt is raised
     if (PIR0bits.TMR0IF) { 

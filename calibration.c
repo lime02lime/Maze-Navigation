@@ -46,7 +46,7 @@ unsigned int calibrate_brightness_sensor(DC_motor *mL, DC_motor* mR) {
 }
 
 // Motor calibration left turn
-char leftCali(DC_motor *mL, DC_motor *mR){
+void leftCali(DC_motor *mL, DC_motor *mR){
     // Wait for button press to start
     while(PORTFbits.RF2);
     while (PORTFbits.RF2 || PORTFbits.RF3) { //while both buttons aren't pressed, continue calibrating.
@@ -71,7 +71,7 @@ char leftCali(DC_motor *mL, DC_motor *mR){
 }
 
 // Motor calibration right turn
-char rightCali(DC_motor *mL, DC_motor *mR){
+void rightCali(DC_motor *mL, DC_motor *mR){
     // Wait for button press to start
     while(PORTFbits.RF2);
     while (PORTFbits.RF2 || PORTFbits.RF3) { //while both buttons aren't pressed, continue calibrating.
@@ -95,7 +95,7 @@ char rightCali(DC_motor *mL, DC_motor *mR){
 }
 
 // Utility function to return the maximum of two numbers
-int max(int x, int y) {
+unsigned int max(unsigned int x, unsigned int y) {
     if (x > y) {
         return x;
     }

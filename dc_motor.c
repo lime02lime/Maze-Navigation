@@ -87,7 +87,7 @@ void setMotorPWM(DC_motor *m)
 void stop(DC_motor *mL, DC_motor *mR)
 {
     // Look to see what current power is and floor it to nearest 10
-    unsigned int current_power = mL->power;
+    char current_power = mL->power;
     // Decreases speed in increments of 10 every 100 ms
     for (int i=current_power; i>= 0; i--) {
         mL->power = i;
@@ -101,7 +101,7 @@ void stop(DC_motor *mL, DC_motor *mR)
 void slowStop(DC_motor *mL, DC_motor *mR)
 {
     // Look to see what current power is and floor it to nearest 10
-    unsigned int current_power = mL->power;
+    char current_power = mL->power;
     // Decreases speed in increments of 10 every 100 ms
     for (int i=current_power; i>= 0; i--) {
         mL->power = i;
@@ -117,7 +117,7 @@ void slowStop(DC_motor *mL, DC_motor *mR)
 // =====================
 
 
-void turn(DC_motor *mL, DC_motor *mR, char direction, char max_power, char max_power_hold) {
+void turn(DC_motor *mL, DC_motor *mR, char direction, char max_power, unsigned int max_power_hold) {
     // Check if motors are on, if they are then stop the car
     if (mL->power != 0 || mR->power != 0) {
         slowStop(mL, mR);
@@ -160,193 +160,29 @@ void turn(DC_motor *mL, DC_motor *mR, char direction, char max_power, char max_p
 }
 
 void turnLeft(DC_motor *mL, DC_motor *mR) {
-    turn(mL, mR, 0, turnLeftPower, 280 * 8); // max power hold is in increments, to convert from ms to increments multiply by 8
+    turn(mL, mR, 0, turnLeftPower, 0.280 * 64); // max power hold is in increments, to convert from ms to increments multiply by 8
 }
 void turnRight(DC_motor *mL, DC_motor *mR) {
-    turn(mL, mR, 1, turnRightPower, 250 * 8);
+    turn(mL, mR, 1, turnRightPower, 0.250 * 64);
 }
 void turn180(DC_motor *mL, DC_motor *mR) {
 //    turn(mL, mR, 0, 30, 480); 
-    turn(mL, mR, 0, turnLeftPower, 280 * 8);
-    turn(mL, mR, 0, turnLeftPower, 280 * 8);
+    turn(mL, mR, 0, turnLeftPower, 0.280 * 64);
+    turn(mL, mR, 0, turnLeftPower, 0.280 * 64);
 }
 void turnLeft135(DC_motor *mL, DC_motor *mR) {
-    turn(mL, mR, 0, (turnLeftPower*10/9)-1, 410 * 8);
+    turn(mL, mR, 0, (turnLeftPower*10/9)-1, 0.410 * 64);
 }
 void turnRight135(DC_motor *mL, DC_motor *mR) {
-    turn(mL, mR, 1, turnRightPower*(10/9), 410 * 8);
+    turn(mL, mR, 1, turnRightPower*(10/9), 0.410 * 64);
 }
-//
-////function to make the robot turn left 
-//void turnLeft(DC_motor *mL, DC_motor *mR, char power)
-//{
-//    // Check if motors are on, if they are then stop the car
-//    if (mL->power != 0 || mR->power != 0) {
-//        stop(mL, mR);
-//    }
-//    
-//    // Sets motors to turn in opposite directions to maintain buggy position
-//    mL->direction = 0;
-//    mR->direction = 1;
-//    
-//    // Gradually increases power in the motors
-//    for (int i = 0; i < power; i++) {
-//        mL->power = i;
-//        mR->power = i;
-//        setMotorPWM(mL);
-//        setMotorPWM(mR);
-//        __delay_ms(12);
-//        
-//    }
-//    // holds maximum power
-//    __delay_ms(280);
-//    
-//    // Gradually decreases power in the motors to a stop
-//    for (int i = power; i >= 0; i--) {
-//        mL->power = i;
-//        mR->power = i;
-//        setMotorPWM(mL);
-//        setMotorPWM(mR);
-//        __delay_ms(5);
-//        
-//    }
-//
-//}
-//
-//
-////function to make the robot turn right 
-//void turnRight(DC_motor *mL, DC_motor *mR, char power)
-//{   
-//    // If motors are on then stop the car
-//    if (mL->power != 0 || mR->power != 0) {
-//        stop(mL, mR);
-//    }
-//    
-//     // Sets motors to turn in opposite directions to maintain buggy position
-//    mL->direction = 1;
-//    mR->direction = 0;
-//    
-//    // Gradually increases power in the motors
-//    for (int i = 0; i < power; i++) {
-//        mL->power = i;
-//        mR->power = i;
-//        setMotorPWM(mL);
-//        setMotorPWM(mR);
-//        __delay_ms(12);
-//        
-//    }
-//    // holds maximum power
-//    __delay_ms(250);
-//    
-//    // Gradually decreases power in the motors to a stop
-//    for (int i = power; i >= 0; i--) {
-//        mL->power = i;
-//        mR->power = i;
-//        setMotorPWM(mL);
-//        setMotorPWM(mR);
-//        __delay_ms(5);
-//        
-//    }
-//
-//}
-//
-//
-////function to make the robot turn left 
-//void turn180(DC_motor *mL, DC_motor *mR)
-//{
-////    turnRight(mL, mR, turnRightPower);
-////    __delay_ms(100);
-////    turnRight(mL, mR, turnRightPower);
-////    __delay_ms(100);
-//    turnLeft(mL, mR, turnLeftPower);
-//    __delay_ms(100);
-//    turnLeft(mL, mR, turnLeftPower);
-//    __delay_ms(500);
-//    
-//}
-//
-//
-////function to make the robot turn left 
-//void turnLeft135(DC_motor *mL, DC_motor *mR, char turnLeftPower)
-//{
-//    // Check if motors are on, if they are then stop the car
-//    if (mL->power != 0 || mR->power != 0) {
-//        stop(mL, mR);
-//    }
-//    
-//    // Sets motors to turn in opposite directions to maintain buggy position
-//    mL->direction = 0;
-//    mR->direction = 1;
-//    int maxpower = (turnLeftPower*10/9)-1;
-//    
-//    // Gradually increases power in the motors
-//    for (int i = 0; i < maxpower; i++) {
-//        mL->power = i;
-//        mR->power = i;
-//        setMotorPWM(mL);
-//        setMotorPWM(mR);
-//        __delay_ms(15);
-//        
-//    }
-//    // holds maximum power
-//    __delay_ms(410);
-//    
-//    // Gradually decreases power in the motors to a stop
-//    for (int i = maxpower; i >= 0; i--) {
-//        mL->power = i;
-//        mR->power = i;
-//        setMotorPWM(mL);
-//        setMotorPWM(mR);
-//        __delay_ms(5);
-//        
-//    }
-//
-//}
-//
-//
-////function to make the robot turn right 135
-//void turnRight135(DC_motor *mL, DC_motor *mR, char turnRightPower)
-//{
-//    // Check if motors are on, if they are then stop the car
-//    if (mL->power != 0 || mR->power != 0) {
-//        stop(mL, mR);
-//    }
-//    
-//    // Sets motors to turn in opposite directions to maintain buggy position
-//    mL->direction = 1;
-//    mR->direction = 0;
-//    int maxpower = (turnRightPower*10/9);
-//    
-//    // Gradually increases power in the motors
-//    for (int i = 0; i < maxpower; i++) {
-//        mL->power = i;
-//        mR->power = i;
-//        setMotorPWM(mL);
-//        setMotorPWM(mR);
-//        __delay_ms(5);
-//        
-//    }
-//    // holds maximum power
-//    __delay_ms(410);
-//    
-//    // Gradually decreases power in the motors to a stop
-//    for (int i = maxpower; i >= 0; i--) {
-//        mL->power = i;
-//        mR->power = i;
-//        setMotorPWM(mL);
-//        setMotorPWM(mR);
-//        __delay_ms(5);
-//        
-//    }
-//
-//}
 
 // =====================
 // Motor movement involving going in straight lines
 // =====================
 
-void move(DC_motor *mL, DC_motor *mR, char direction, char power, char increments) { // Setting a negative value of increments will mean not timing the movement
-    increment = 0;
+void move(DC_motor *mL, DC_motor *mR, char direction, char power, int increments) { // Setting a negative value of increments will mean not timing the movement
+    int start_increment = increment;
     // Set motor directions
     mL->direction = direction;
     mR->direction = direction;
@@ -369,193 +205,30 @@ void move(DC_motor *mL, DC_motor *mR, char direction, char power, char increment
             mR->power = i;
             setMotorPWM(mL);
             setMotorPWM(mR);
-            __delay_ms(5);
+             __delay_ms(5);
         }
     }
     if (increments < 0) { // Checks to see if you want to time this movement
-        // Do nothing
+        // Let it keep trundling
     }
     else {
-        while (increment < increments);
+        while (increment-start_increment < increments);
         stop(mL, mR);
     }
 }
 
-//function to make the robot go straight
-void fullSpeedAhead(DC_motor *mL, DC_motor *mR) {
-    move(mL, mR, 1, 100, -1);
-}
 void trundle(DC_motor *mL, DC_motor *mR) {
     move(mL, mR, 1, 18, -1);
 }
-// A square is a time interval
+// A square is a time interval of 22 
 void trundleSquare(DC_motor *mL, DC_motor *mR, char direction) {
-    move(mL, mR, direction, 20, square);
+    move(mL, mR, direction, 20, 22 * 8);
 }
 void timed_trundle(DC_motor *mL, DC_motor *mR, int increments) {
     move(mL, mR, 1, 18, increments);
 }
 void creep(DC_motor *mL, DC_motor *mR, int increments, char direction) {
-    move(mL, mR, direction, 18, increments);
+    move(mL, mR, direction, 12, increments);
 }
 
-////function to make the robot go straight
-//void fullSpeedAhead(DC_motor *mL, DC_motor *mR)
-//{
-//    // Ensure motor directions are forward
-//    mL->direction = 1;
-//    mR->direction = 1;
-//    // Get current power
-//    unsigned int current_power = mL->power;
-//    // Increase speed in increments of 1 every 5 ms
-//    for (int i=current_power; i<= 100; i++) {
-//        mL->power = i;
-//        mR->power = i;
-//        setMotorPWM(mL);
-//        setMotorPWM(mR);
-//        __delay_ms(5);
-//    }
-//    
-//}
-//
-//
-//void trundle(DC_motor *mL, DC_motor *mR)
-//{
-//    // Ensure motor directions are forward
-//    mL->direction = 1;
-//    mR->direction = 1;
-//    // Get current power
-//    char current_power = mL->power;
-//    char trundle_power = 18;
-//    // Increase speed in increments of 1 every 5 ms
-//    if (trundle_power > current_power) {
-//        for (int i=current_power; i<= trundle_power; i++) {
-//            mL->power = i;
-//            mR->power = i;
-//            setMotorPWM(mL);
-//            setMotorPWM(mR);
-//            __delay_ms(5);
-//        }
-//    }
-//    else {
-//        for (int i=current_power; i>= trundle_power; i--) {
-//            mL->power = i;
-//            mR->power = i;
-//            setMotorPWM(mL);
-//            setMotorPWM(mR);
-//            __delay_ms(5);
-//        }
-//    }
-//    
-//}
-//
-//
-//void creep(DC_motor *mL, DC_motor *mR, int increments, char direction) {
-//    if (mL->power != 0 || mR->power != 0) {
-//        stop(mL, mR);
-//    }
-//    increment = 0;
-//    // Ensure motor directions are forward
-//    mL->direction = direction;
-//    mR->direction = direction;
-//    // Get current power
-//    char current_power = mL->power;
-//    char creep_power;
-//    if (direction==1 ) {
-//        creep_power = 18;
-//    } else {
-//        creep_power = 10;
-//    }
-//    
-//    // Increase speed in increments of 1 every 5 ms
-//    if (creep_power > current_power) {
-//        for (int i=current_power; i<= creep_power; i++) {
-//            mL->power = i;
-//            mR->power = i;
-//            setMotorPWM(mL);
-//            setMotorPWM(mR);
-//            __delay_ms(5);
-//        }
-//    }
-//    else {
-//        for (int i=current_power; i>= creep_power; i--) {
-//            mL->power = i;
-//            mR->power = i;
-//            setMotorPWM(mL);
-//            setMotorPWM(mR);
-//            __delay_ms(5);
-//        }
-//    }
-//    while (increment < increments);
-//    stop(mL, mR);
-//    
-//}
-//
-//
-//void timed_trundle(DC_motor *mL, DC_motor *mR, int increments) {
-//    if (mL->power != 0 || mR->power != 0) {
-//        stop(mL, mR);
-//    }
-//    increment = 0;
-//    // Ensure motor directions are forward
-//    mL->direction = 1;
-//    mR->direction = 1;
-//    // Get current power
-//    char current_power = mL->power;
-//    char trundle_power = 18;
-//    // Increase speed in increments of 1 every 5 ms
-//    if (trundle_power > current_power) {
-//        for (int i=current_power; i<= trundle_power; i++) {
-//            mL->power = i;
-//            mR->power = i;
-//            setMotorPWM(mL);
-//            setMotorPWM(mR);
-//            __delay_ms(5);
-//        }
-//    }
-//    else {
-//        for (int i=current_power; i>= trundle_power; i--) {
-//            mL->power = i;
-//            mR->power = i;
-//            setMotorPWM(mL);
-//            setMotorPWM(mR);
-//            __delay_ms(5);
-//        }
-//    }
-//    
-//    while (increment < increments);
-//    stop(mL, mR);
-//}
-//
-//
-//// Square is a time interval
-//void trundleSquare(DC_motor *mL, DC_motor *mR, char square, char direction) {
-//    // Make sure to bring motor to a stop it isn't already
-//    if (mL->power != 0 || mR->power != 0) {
-//        stop(mL, mR);
-//    }
-//    // Ensure motor directions are forward
-//    if (direction == 0) {
-//        mL->direction = 0;
-//        mR->direction = 0;
-//    }
-//    else {
-//        mL->direction = 1;
-//        mR->direction = 1;
-//    }
-//    // Increase speed in increments of 1 every 5 ms
-//    for (int i=0; i<= 20; i++) {
-//        mL->power = i;
-//        mR->power = i;
-//        setMotorPWM(mL);
-//        setMotorPWM(mR);
-//        __delay_ms(5);
-//    }
-//    
-//    // Goes in reverse until time exceeds duration needed to cover square
-//    char start_increment = increment;
-//    while (increment - start_increment < square);
-//    stop(mL, mR);
-//    
-//}
 

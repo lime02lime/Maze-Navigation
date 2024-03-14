@@ -31,7 +31,6 @@
 int increment = 0; // this is the 'base' time counter, increments every 0.125 seconds
 char wall_detected = 0; // Flag changed when wall detected through color clicker interrupt
 
-char square = 22; // increments needed to traverse a square
 char instruction_array[20][2]; // array to store history of instructions
 char instruction_array_index = 0; // stores index of last instruction performed
 char reverseRouteFlag = 0; // flag for main loop to know when to activate route reversa routine
@@ -105,7 +104,7 @@ void main(void){
         
         if (wall_detected) { // raised in ISR once wall detected.
             // Record how long the buggy has trundled for
-            char time_trundled = increment;
+            int time_trundled = increment;
             stop(&motorL, &motorR); // stop the buggy
 
             // Read colour
@@ -121,7 +120,7 @@ void main(void){
             // Adds instruction (defined by colour code) to history
             instruction_array[instruction_array_index][0] = colourCode;
             // Add trundle duration before interrupt to history
-            instruction_array[instruction_array_index][1] = time_trundled;
+            instruction_array[instruction_array_index][1] = time_trundled / 8; // Dividing by 8 to ease up storage for char
             instruction_array_index += 1;
             
             // Carry out instruction and turn the light back on
@@ -131,7 +130,7 @@ void main(void){
             //reset all of the flags, variables and interrupts            
             wall_detected = 0;
             clearInterrupt(); 
-            INTCONbits.GIE=1; // Allow interrupts again now that instruction execution has finished
+            PIE0bits.INT0IE = 1; // Allow brightness interrupts again now that instruction execution has finished
             LATDbits.LATD7 = 0; //turn off the picKit LED that was turned on by the interrupt
             increment = 0; // reset timer
             

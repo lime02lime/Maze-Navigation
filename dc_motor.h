@@ -8,7 +8,6 @@
 extern int increment;
 extern char turnLeftPower;
 extern char turnRightPower;
-extern char square;
 
 //definition of DC_motor structure
 typedef struct DC_motor { 
@@ -26,14 +25,14 @@ void setMotorPWM(DC_motor *m);
 void stop(DC_motor *mL, DC_motor *mR);
 void slowStop(DC_motor *mL, DC_motor *mR);
 // Turning functions
-void turn(DC_motor *mL, DC_motor *mR, char direction, char max_power, char max_power_hold);
+void turn(DC_motor *mL, DC_motor *mR, char direction, char max_power, unsigned int max_power_hold);
 void turnLeft(DC_motor *mL, DC_motor *mR);
 void turnRight(DC_motor *mL, DC_motor *mR);
 void turnLeft135(DC_motor *mL, DC_motor *mR);
 void turnRight135(DC_motor *mL, DC_motor *mR);
 void turn180(DC_motor *mL, DC_motor *mR);
 // Functions for going forwards and backwards
-void fullSpeedAhead(DC_motor *mL, DC_motor *mR);
+void move(DC_motor *mL, DC_motor *mR, char direction, char power, int increments);
 void trundle(DC_motor *mL, DC_motor *mR);
 void trundleSquare(DC_motor *mL, DC_motor *mR, char direction);
 void timed_trundle(DC_motor *mL, DC_motor *mR, int increments);

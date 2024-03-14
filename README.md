@@ -83,6 +83,9 @@ As a more advanced case of route optimisation, an algorithm could be implemented
 **Smooth 180 degree turn**
 An attempt was made to make a smooth 180 degree turn, stored in the branch turn180. It was found that while it was possible to get a consistent smooth 180 degree turn on one surface by using a constant factor, to do the same on a different surface - despite recalibrating for the 90 degree turn on that surface - would lead to worse inaccuracy than making two 90 degree turns. However, the attempt was rushed due to an approaching deadline so it is is possible something was missed. If you wish to resume the attempt head to line 170 of dc_motor.c in that branch.
 
+### Final Notes
+**Testing flags** To faciliate testing, a number of flags were defined at the top of the main.c file to shorten the time intervals between tests and make them more convenient to perform. Flags include preventing the buggy from moving forward between instructions, skipping calibration and instead using some default values, and using a blinking LED to indicate the colour code of the instruction about to be performed. Please be aware of these flags and use them for your convenience.
+
 END OF PROJECT README
 
 

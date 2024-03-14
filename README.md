@@ -28,7 +28,7 @@ Once the sensor interrupt is triggered, the buggy quickly halts and raises a fla
 1. Records the colour readings from the sensor and stores these in the RGBC Structure.
 2. Normalises the readings to the brightness (in our case this is taken as the sum of the RGB components) and stores these values in the normRGB Structure.
 3. Decides what colour the card is through a decision tree process (elaborated in the Colour Clicker section).
-4. Most colours are difficult to distinguish from a distance, which gets the buggy to creep slowly right up against the wall, performing steps 1-3 again in order to decide on a colour, before moving on to step 5.
+4. Most colours are difficult to distinguish from a distance, which gets the buggy to creep slowly right up against the colour card, performing steps 1-3 again in order to decide on a colour, before moving on to step 5.
 5. Stores the current _increment_ value and the instruction associated with the colour identified, so that when returning home, the buggy knows how far to move in this segment and what action has been performed.
 6. The buggy creeps a short distance backwards so that the wall doesn't interfere with its turning and then the colour-associated action is executed (as coded in the instructions.c file).
 7. Finally, the sensor interrupt is cleared and the buggy resumes its forward motion in the main.c while loop until the interrupt is raised again.

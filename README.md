@@ -12,6 +12,10 @@ The overarching functionality of the buggy, coded in the main.c file is structur
 5. Finally it clears interrupts and resumes its forward motion (back to step #3).
 6. Once the final White card or a Black dead end are detected, the buggy returns to home to the starting point by reversing the instructions that took it to that White / Black card.
 
+A video of the buggy navigating a sample maze is linked below. The calibration routine is separate in order to reduce the file size, and is linked in the Calibration section further down.
+
+[Press this link to watch the complete maze run on YouTube](https://youtu.be/NJkiyJc0TDg)
+
 ### Wall Detection and Interrupts
 **Surface Detection:**
 The buggy's forward motion is halted when a surface is detected in its path. This detection is based on an interrupt triggered by the INT pin from the TCS3471 colour sensor, based on how many times a Clear reading from the detector has exceeded a certain brightness threshold. This is connected through the buggy to the RB0 pin on the picKit to trigger an interrupt which is configured through the Peripheral Port Select (PPS) module of the microcontroller. As a surface gets closer, more of the light emitted from the buggy LEDs will be reflected from the surface and therefore the Clear readings increase in value. The interrupts.c file contains the initialisation of the interrupts as well as the Interrupt Service Routine. When this interrupt is triggered, the buggy is quickly halted to avoid collision with the surface. The threshold for the sensor interrupt is also configured here. This value is highly dependent on the ambient lighting conditions, and is therefore configured with an initial calibration routine.
@@ -32,7 +36,7 @@ Once the sensor interrupt is triggered, the buggy quickly halts and raises a fla
 The dc_motor.c file contains the code to control the motors on the buggy. Functions are defined to enable movement forward, backwards, and to turn at specified angles. The accuracy of the buggy's turns is dependent on the friction between its wheels and the surface, as well as the battery level of the buggy. Consequently, calibration is required to achieve the desired turn angles.
 
 ### Calibration
-Before navigating the maze, two calibration routines are performed. These are included in the calibration.c file.
+Before navigating the maze, two calibration routines are performed. These are included in the calibration.c file. A video is shown at the end of this section.
 
 **Interrupt Calibration:** The buggy stops when a surface is detected in its path, which is determined by the Colour Clicker's Clear reading. Importantly, the Clear reading is highly dependent on the ambient light conditions, which means that the threshold for interrupt trigger must be calibrated before operation. The interrupt threshold calibration follows this structure:
 1. The buggy reads and stores the ambient Clear value, then turns 90°, reads and stores it again, and so on until it has read this value facing in 4 directions at 90° intervals.
@@ -48,6 +52,10 @@ This procedure is used to ensure that the buggy does not trigger the interrupt i
 4. Steps 1-3 are now performed to calibrate the 90° right turn. The buggy turns to the right according to the default 90° settings, and then waits for button press. As before, the LHS/RHS buttons correspond to the direction in which to increment the turning magnitude.
 
 It is worth noting that we have separate calibration routines for Left and Right because the motors do not always perform equally. The turns of the motor involve ramping up to a maximum turning speed for all motors, holding for a period of time, then ramping downwards in power to stop the turn. The number being changed by the calibration is the maximum motor power during the hold, not the time the turn is being held. As for turning at other angles, the 135 degree turns to the left and right are calculated as increasing the maximum motor power while turning for each respective side at 90 degrees by a constant factor (identical for both sides), but keeping the holding time at maximum power for turning constant. As for the 180 degree turn, the most consistent results across all surfaces were found by repeating a 90 degree turn twice, rather than doing a smooth single turn.
+
+This procedure is used to ensure that the buggy does not trigger the interrupt in response to ambient light, while ensuring that it can read the black card as well as all of the brighter colour cards. A video of the calibration is linked to below.
+
+[Press this link to watch the calibration routine on YouTube](https://youtu.be/75zoIOjzlGE)
 
 
 ### Colour Clicker

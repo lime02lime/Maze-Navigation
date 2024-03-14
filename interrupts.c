@@ -35,14 +35,12 @@ void interrupts_init(DC_motor *mL, DC_motor *mR, char skip_calibration)
     //set persistence register
     color_writetoaddr(0x0C, 0b0011); // 3 clear channel values outside of threshold range will trigger interrupt.
     
-//    INTCONbits.IPEN=1; //enable priority levels on interrupts
     
 // =====================================    
 // Configuring timer interrupts
 // =====================================
     PIE0bits.TMR0IE = 1;
     PIR0bits.TMR0IF = 0; // set initial interrupt flag
-//    IPR0bits.TMR0IP = 0; // Setting the priority of this interrupt to low
     INTCONbits.PEIE=1; //peripheral interrupts enable
     
     

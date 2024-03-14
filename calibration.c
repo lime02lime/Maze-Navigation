@@ -3,8 +3,9 @@
 
 
 // Calibrates brightness
-unsigned int calibrate_brightness_sensor(DC_motor *mL, DC_motor* mR) {
+void calibrate_brightness_sensor(DC_motor *mL, DC_motor* mR) {
     // Wait for user input to start calibration routine
+
     while (PORTFbits.RF2);
     __delay_ms(1000);
     
@@ -31,16 +32,26 @@ unsigned int calibrate_brightness_sensor(DC_motor *mL, DC_motor* mR) {
     unsigned int blackBrightness = readClearColor();
     
     if (finalmax > blackBrightness) {
-        // If ambient brightness is brighter than brightness with black card, car will shake its head, because that shouldn't happen
+        // If ambient brightness is brighter than brightness with black card, car will shake its head, because that shouldn't happen - black cannot be detected by brightness interrupt now
         turnRight(mL, mR);
         turnLeft(mL, mR);
-        while (PORTFbits.RF2); //wait for button press (something has gone wrong if this happens)
+        // Instead set a default value
+        color_writetoaddr(0x06, 0b00000000); //upper thresh, lower byte 
+        color_writetoaddr(0x07, 0b00000010); //upper  thresh, upper byte 
+        while (PORTFbits.RF2); //wait for button press
     } else {
         // Take interrupt threshold as midpoint between ambient brightness and brightness with motor reading black card
         unsigned int average = (finalmax + blackBrightness) / 2;
         __delay_ms(1000);
+        
+        // Extract upper and lower threshold from answer
+        char upper_threshold = (average & 0b1111111100000000) >> 8;
+        char lower_threshold = average & 0b0000000011111111;
+
+        // Write thresholds to clicker
+        color_writetoaddr(0x06, lower_threshold); //upper thresh, lower byte
+        color_writetoaddr(0x07, upper_threshold); //upper  thresh, upper byte
         while (PORTFbits.RF2);
-        return average;
     }
     
 }

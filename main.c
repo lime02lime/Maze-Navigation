@@ -21,9 +21,9 @@
 // Flags used to activate / deactivate functionality for testing
 #define PAUSE_BETWEEN_INSTRUCTIONS 0 // Introduce pause after execution of instruction broken with button RF2 press
 #define NO_TRUNDLING 0 // No forward movement between instructions
-#define SKIP_CALIBRATION 1 // Skipping motor and brightness calibration
-#define INDICATE_INSTRUCTION 1 // Blink LED number of times corresponding to colour code
-#define CHECK_BATTERY 1 // Whether to check and indicate battery level
+#define SKIP_CALIBRATION 0 // Skipping motor and brightness calibration
+#define INDICATE_INSTRUCTION 0 // Blink LED number of times corresponding to colour code
+#define CHECK_BATTERY 0 // Whether to check and indicate battery level
 
 // =================
 // Setting globals
@@ -74,19 +74,25 @@ void main(void){
     motorR.negDutyHighByte = &CCPR4H;
     setMotorPWM(&motorR);
     
+    Timer0_init(); //configure timer settings 
+    interrupts_init(&motorL, &motorR, SKIP_CALIBRATION); //initialise colour sensor and timer interrupts
+    LEDturnON(); 
+    
     // Checking battery
     if (CHECK_BATTERY) {
         checkBattery();
     }
-    // Motor calibration
+    
     if (!SKIP_CALIBRATION) {
+        // brightness calibration
+        calibrate_brightness_sensor(&motorL, &motorR);
+        // Motor calibration
         leftCali(&motorL, &motorR);
         __delay_ms(500);
         rightCali(&motorL, &motorR);
     } 
-    // Brightness calibration
-    interrupts_init(&motorL, &motorR, SKIP_CALIBRATION); //initialise colour sensor interrupts.
-    Timer0_init(); //initialise timer overflow interrupts.
+    
+    
     
     //turn on all 3 colours of the tri-colour LED + headlights
     LEDturnON(); 
@@ -94,6 +100,9 @@ void main(void){
     
     while (PORTFbits.RF2); //wait until button press to start.
     increment = 0; //resetting the timer counter upon start
+    // Clearing any flags sparked by interrupts during calibration
+    LATDbits.LATD7 = 0;
+    wall_detected=0;
     
     // ======================================
     // Main while loop

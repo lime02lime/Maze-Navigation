@@ -12,7 +12,7 @@ extern char turnLeftPower;
 extern char turnRightPower;
 
 // Calibration functions
-unsigned int calibrate_brightness_sensor(DC_motor *mL, DC_motor* mR);
+void calibrate_brightness_sensor(DC_motor *mL, DC_motor* mR);
 void leftCali(DC_motor *mL, DC_motor *mR);
 void rightCali(DC_motor *mL, DC_motor *mR);
 unsigned int max(unsigned int x, unsigned int y);

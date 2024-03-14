@@ -26,15 +26,10 @@ void interrupts_init(DC_motor *mL, DC_motor *mR, char skip_calibration)
         color_writetoaddr(0x07, 0b00000010); //upper  thresh, upper byte 
     }
     else { // calibrating
+        // Some high placeholder values to hold temporarily (since brightness calibration relies on timers to be initialised fully so can't be done here)
+        color_writetoaddr(0x06, 0b00000000); //upper thresh, lower byte 
+        color_writetoaddr(0x07, 0b10000000); //upper  thresh, upper byte 
         // Start brightness calibration routine
-        unsigned int threshold = calibrate_brightness_sensor(mL, mR);
-        // Extract upper and lower threshold from answer
-        char upper_threshold = (threshold & 0b1111111100000000) >> 8;
-        char lower_threshold = threshold & 0b0000000011111111;
-
-        // Write thresholds to clicker
-        color_writetoaddr(0x06, lower_threshold); //upper thresh, lower byte
-        color_writetoaddr(0x07, upper_threshold); //upper  thresh, upper byte
     }
 
     //set persistence register

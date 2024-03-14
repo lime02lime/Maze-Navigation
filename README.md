@@ -32,7 +32,7 @@ Once the sensor interrupt is triggered, the buggy quickly halts and raises a fla
 The dc_motor.c file contains the code to control the motors on the buggy. Functions are defined to enable movement forward, backwards, and to turn at specified angles. The accuracy of the buggy's turns is dependent on the friction between its wheels and the surface. Consequently, calibration is required to achieve the desired turn angles.
 
 ### Calibration
-Before navigating the maze, two calibration routines are performed. These are included in the calibration.c file.
+Before navigating the maze, two calibration routines are performed. These are included in the calibration.c file. A video is shown at the end of this section.
 
 **Motor Calibration:** The motors are run by DC and do not include any closed loop control, which means that we must calibrate them before use. Specifically, this applies to the buggy turning, where achieving repeatable turn angles is important. Therefore, the 90° left/right turns are calibrated upon startup, following this structure:
 1. The buggy turns left 90° according to the default settings.
@@ -47,7 +47,9 @@ It is worth noting that we have separate calibration routines for Left and Right
 2. The user then places a black card in front of the buggy (to simulate the darkest reading at which it would need to interrupt), reading and storing the Clear value.
 3. The interrupt high threshold is then set as the average between the two highest readings (that is, the average between the highest ambient brightness, and that of the black card).
 
-This procedure is used to ensure that the buggy does not trigger the interrupt in response to ambient light, while ensuring that it can read the black card as well as all of the brighter colour cards.
+This procedure is used to ensure that the buggy does not trigger the interrupt in response to ambient light, while ensuring that it can read the black card as well as all of the brighter colour cards. A video of the calibration is linked to below.
+
+[Press this link to watch the video on YouTube](https://youtu.be/75zoIOjzlGE)
 
 ### Colour Clicker
 The color.c file contains most of the colour sensing functionality. This includes two main parts:

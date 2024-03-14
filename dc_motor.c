@@ -166,7 +166,7 @@ void turnRight(DC_motor *mL, DC_motor *mR) {
     turn(mL, mR, 1, turnRightPower, 0.250 * 64);
 }
 void turn180(DC_motor *mL, DC_motor *mR) {
-    turn(mL, mR, 0, turnLeftPower, 0.70 * 64); 
+    turn(mL, mR, 0, turnLeftPower, 0.68 * 64);
 //    turn(mL, mR, 0, turnLeftPower, 0.280 * 64);
 //    turn(mL, mR, 0, turnLeftPower, 0.280 * 64);
 }

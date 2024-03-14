@@ -10,7 +10,7 @@ The overarching functionality of the buggy, coded in the main.c file is structur
 3. The buggy moves forward until interrupted by sensing a colour card close in front of it.
 4. Once interrupted, it reads the color, normalizes the readings, decides what the color is, and executes the corresponding action code.
 5. Finally it clears interrupts and resumes its forward motion (back to step #3).
-6. Once the final White card or a Black dead end are detected, the buggy returns to home to the starting point by reversing the instructions that took it to that White / Black card.
+6. Once the final White card or a Black dead end are detected, the buggy returns home to the starting point by reversing the instructions that took it to that White / Black card.
 
 A video of the buggy navigating a sample maze is linked below. The calibration routine is separate in order to reduce the file size, and is linked in the Calibration section further down.
 

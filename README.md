@@ -6,11 +6,12 @@ The objective of this project is to code and configure the hardware for a buggy 
 
 The overarching functionality of the buggy, coded in the main.c file is structured as follows:
 1. Initialize modules (LEDs, motors, and light sensor) and interrupts.
-2. Press button RF2 to begin maze navigation.
-3. The buggy moves forward until interrupted by sensing a colour card close in front of it.
-4. Once interrupted, it reads the color, normalizes the readings, decides what the color is, and executes the corresponding action code.
-5. Finally it clears interrupts and resumes its forward motion (back to step #3).
-6. Once the final White card or a Black dead end are detected, the buggy returns home to the starting point by reversing the instructions that took it to that White / Black card.
+2. Execute calibration routine
+3. Press button RF2 to begin maze navigation.
+4. The buggy moves forward until interrupted by sensing a colour card close in front of it.
+5. Once interrupted, it reads the color, normalizes the readings, decides what the color is, and executes the corresponding action code.
+6. Finally it clears interrupts and resumes its forward motion (back to step #3).
+7. Once the final White card or a Black dead end are detected, the buggy returns home to the starting point by reversing the instructions that took it to that White / Black card.
 
 A video of the buggy navigating a sample maze is linked below. The calibration routine is separate in order to reduce the file size, and is linked in the Calibration section further down.
 

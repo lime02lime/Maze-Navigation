@@ -123,14 +123,44 @@ void reverseLightBlue(DC_motor *mL, DC_motor *mR) {
 void reverseRoute(DC_motor *mL, DC_motor *mR) {
     
     // Reverse mapping where index corresponds to colour code
-    char reverseMapping[9] = {1, 0, 2, 9, 10, 11, 12, -1, -1}; // -1 won't execute any instruction, only start the trundling
+    char reverseMapping[9] = {1, 0, 2, 9, 10, 6, 5, -1, -1}; // -1 won't execute any instruction, only start the trundling
     for (int i = (instruction_array_index-1); i >= 0; i--) {
-        executeInstruction(mL, mR, reverseMapping[instruction_array[i][0]]);
-        int time = (instruction_array[i][1] * 8) - 40;
-        if (time < 0) {
-            time = 0;
+        int time;
+        if (instruction_array[i][0] == 3) { // YELLOW
+            time = (instruction_array[i][1] * 8) - 40;
+            int adjusted_time = time - 22 * 8; // We know from motor.c that square is 22*8 increments
+            if (adjusted_time >= 0) {
+                turnLeft(mL, mR);
+                timed_trundle(mL, mR, adjusted_time);
+            }
+            else {
+                turnRight(mL, mR);
+                timed_trundle(mL, mR, adjusted_time);
+                turn180(mL, mR); // since will otherwise be facing opposite direction to where it would be if following the proper route
+            }
         }
-        timed_trundle(mL, mR, time); // Constant of 40 needed to compensate for reversal after colour detection
+        if (instruction_array[i][0] == 4) { // PINK
+            time = (instruction_array[i][1] * 8) - 40;
+            int adjusted_time = time - 22 * 8; // We know from motor.c that square is 22*8 increments
+            if (adjusted_time >= 0) {
+                turnRight(mL, mR);
+                timed_trundle(mL, mR, adjusted_time);
+            }
+            else {
+                turnLeft(mL, mR);
+                timed_trundle(mL, mR, adjusted_time);
+                turn180(mL, mR);
+            }
+        }
+        else {
+            executeInstruction(mL, mR, reverseMapping[instruction_array[i][0]]);
+            time = (instruction_array[i][1] * 8) - 40;
+            if (time < 0) {
+                time = 0;
+            }
+            timed_trundle(mL, mR, time); // Constant of 40 needed to compensate for reversal after colour detection
+        }
+        
         stop(mL, mR); // stop the buggy
     }
     stop(mL, mR);

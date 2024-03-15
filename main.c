@@ -21,8 +21,8 @@
 // Flags used to activate / deactivate functionality for testing
 #define PAUSE_BETWEEN_INSTRUCTIONS 0 // Introduce pause after execution of instruction broken with button RF2 press
 #define NO_TRUNDLING 0 // No forward movement between instructions
-#define SKIP_CALIBRATION 0 // Skipping motor and brightness calibration
-#define INDICATE_INSTRUCTION 0 // Blink LED number of times corresponding to colour code
+#define SKIP_CALIBRATION 1 // Skipping motor and brightness calibration
+#define INDICATE_INSTRUCTION 1 // Blink LED number of times corresponding to colour code
 #define CHECK_BATTERY 0 // Whether to check and indicate battery level
 
 // =================
